@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+
 import Camera from "./pages/CameraPage"
-import GraphicScreen from "./GraphicScreen"
+import GraphicScreen from "./pages/GraphicScreen"
 
 export default function App() {
   return (

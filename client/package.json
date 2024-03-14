@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/stack": "^6.3.28",
     "@react-three/drei": "^9.102.3",
     "@react-three/fiber": "^8.15.19",
     "@types/three": "^0.162.0",
