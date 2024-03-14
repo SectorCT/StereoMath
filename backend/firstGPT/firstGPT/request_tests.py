@@ -26,4 +26,17 @@ completion = client.chat.completions.create(
   #stream=True
 )
 
-print(completion.choices[0].message.content, end="")
+solution = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+      {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+      {"role": "user", "content": test1},
+      {"role": "user", "content": \
+       "Дай ми стъпките на решението на задачата средно дълго без да решаваш точните стойности само с обяснение обградено в {\"\"}"}
+  ],
+  max_tokens = 300
+  #stream=True
+)
+
+print(completion.choices[0].message.content)
+print(solution.choices[0].message.content)

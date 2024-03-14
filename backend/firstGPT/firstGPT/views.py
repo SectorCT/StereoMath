@@ -25,6 +25,17 @@ def solution(request):
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
 
+    solution = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+            {"role": "user", "content": problem},
+            {"role": "user", "content": \
+            "Дай ми стъпките на решението на задачата средно дълго без да решаваш точните стойности само с обяснение обградено в {\"\"}"}
+        ],
+        max_tokens = 300
+        #stream=True
+    )
     for i in range(6):
         completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
