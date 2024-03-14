@@ -4,15 +4,14 @@ import { Canvas } from '@react-three/fiber';
 
 function MainModel() {
   return (
-    <View style = {styles.container}>
-        <Canvas>
+        <Canvas style = {styles.container} >
+            <ambientLight />
+            <pointLight position={[10, 10, 10]} />
             <mesh>
                 <sphereGeometry />
                 <meshStandardMaterial color="orange" />
-                <ambientLight />
             </mesh> 
         </Canvas>
-    </View>
   )
 }
 
