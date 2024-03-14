@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react'
+import { StyleSheet, Text,TextInput, View } from 'react-native';
 
-function mainModel() {
+function MainModel() {
   return (
-    <View>mainModel</View>
+    <View />
   )
 }
 
-export default mainModel
+export default MainModel;
