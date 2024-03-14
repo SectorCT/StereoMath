@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text,TextInput, View } from 'react-native';
+import { Canvas } from '@react-three/fiber';
 
 function MainModel() {
   return (
     <View style = {styles.container}>
-        <Text style={styles.header}>Photo Stereo</Text>
+        <Canvas>
+            <mesh>
+                <sphereGeometry />
+                <meshStandardMaterial color="orange" />
+                <ambientLight />
+            </mesh> 
+        </Canvas>
     </View>
   )
 }
@@ -12,7 +19,7 @@ function MainModel() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ff0000',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         width: "100%",

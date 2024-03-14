@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "expo": "~50.0.13",
+    "expo-camera": "~14.1.1",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
-    "react-native": "0.73.5",
-    "expo-camera": "~14.1.1"
+    "react-native": "0.73.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
