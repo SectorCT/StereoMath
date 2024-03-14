@@ -6,7 +6,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from openai import OpenAI
-from regex_checks import r_check
+from .regex_checks import r_check
 
 load_dotenv()
 
@@ -37,7 +37,7 @@ def solution(request):
         #stream=True
     )
     for i in range(6):
-        completion = client.chat.completions.create(
+        completion = client.chat.completions.create(    
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
