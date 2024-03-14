@@ -4,7 +4,7 @@ import MainModel from "./MainModel";
 
 export default function GraphicScreen(){
     return (
-        <View>
+        <View style = {styles.container}>
             <MainModel />
             <BottomSheet />
         </View>

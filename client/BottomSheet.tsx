@@ -85,7 +85,6 @@ const BottomSheet = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#FF0000',
     width: '100%',
     alignItems: 'center', // Center content horizontally
