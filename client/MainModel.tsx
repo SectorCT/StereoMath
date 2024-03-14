@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, PanResponder, View, Dimensions } from 'react-native';
+import { StyleSheet, PanResponder, View, Dimensions} from 'react-native';
 import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
+
 import { Quaternion, Vector3, Euler } from 'three';
+
 
 
 // vertex type
@@ -10,8 +12,6 @@ type Vertex = {
 	y: number,
 	z: number,
 }
-
-const orbitRadius = 10;
 
 // Create a component for handling the camera
 function CameraController({ position }: { position: [number, number, number] }) {
@@ -25,12 +25,14 @@ function CameraController({ position }: { position: [number, number, number] }) 
 }
 
 function MainModel() {
+	let orbitRadius = 10;
 	let angleXOrbit = 45;
 	let angleYOrbit = 45;
 	const position = [0, 0, 5] as [number, number, number];
 	const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 0, 5]);
 
 	const lastPosition = useRef({ x: 0, y: 0 });
+	const lastDistance = useRef(0);
 
 	async function updateCameraPosition() {
 		let newX = orbitRadius * Math.sin(angleXOrbit) * Math.cos(angleYOrbit);
@@ -45,35 +47,60 @@ function MainModel() {
 
 	const panResponder = useRef(PanResponder.create({
 		onStartShouldSetPanResponder: () => true,
-		onMoveShouldSetPanResponder: () => true,  // Ensure it responds to single finger
+		onMoveShouldSetPanResponder: () => true,
 		onPanResponderMove: async (event, gestureState) => {
-			// Adjust sensitivity if needed
-			const sensitivity = 0.01;
-			const dx = gestureState.moveX - lastPosition.current.x;
-			const dy = gestureState.moveY - lastPosition.current.y;
+			if (gestureState.numberActiveTouches === 1) {
+				// Adjust sensitivity if needed
+				const sensitivity = 0.01;
+				const dx = gestureState.moveX - lastPosition.current.x;
+				const dy = gestureState.moveY - lastPosition.current.y;
 
-			if (lastPosition.current.x === 0 && lastPosition.current.y === 0) {
+				if (lastPosition.current.x === 0 && lastPosition.current.y === 0) {
+					lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
+					return;
+				}
+
+				angleXOrbit += -dx * sensitivity;
+				angleYOrbit += dy * sensitivity;
+
 				lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
-				return;
+
+				// cap angleYOrbit to avoid gimbal lock no less than -45 degrees and no more than 45 degrees
+				angleYOrbit = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, angleYOrbit));
+
+				await updateCameraPosition();
+			} else if (gestureState.numberActiveTouches === 2) {
+				if (lastDistance.current === 0) {
+					lastDistance.current = Math.hypot(
+						event.nativeEvent.touches[0].pageX - event.nativeEvent.touches[1].pageX,
+						event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
+					);
+					return;
+				}
+
+				const distance = Math.hypot(
+					event.nativeEvent.touches[0].pageX - event.nativeEvent.touches[1].pageX,
+					event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
+				);
+
+				const sensitivity = 0.01;
+				const delta = distance - lastDistance.current;
+				orbitRadius -= delta * sensitivity;
+				orbitRadius = Math.max(2, Math.min(20, orbitRadius));
+
+				lastDistance.current = distance;
+				await updateCameraPosition();
 			}
-
-			angleXOrbit += -dx * sensitivity;
-			angleYOrbit += dy * sensitivity;
-
-			lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
-
-			// cap angleYOrbit to avoid gimbal lock no less than -45 degrees and no more than 45 degrees
-			angleYOrbit = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, angleYOrbit));
-
-			await updateCameraPosition();
 		},
 		onPanResponderRelease: () => {
 			// Reset last position at the end of the gesture
 			lastPosition.current = { x: 0, y: 0 };
+			lastDistance.current = 0;
 		},
 		onPanResponderTerminate: () => {
 			// Also reset on termination of the gesture
 			lastPosition.current = { x: 0, y: 0 };
+			lastDistance.current = 0;
 		},
 	})).current;
 
@@ -93,18 +120,21 @@ function MainModel() {
 
 const data = {
 	"vertices": {
-	  "A": [0, 0, 0],
-	  "B": [3, 0, 0],
-	  "C": [1.5, 2.598, 0],
-	  "Q": [1.5, 0.866, 3.464]
+	  "A": [0,0,0],
+	  "B": [3,0,0],
+	  "C": [1.5, 0, 2.598],
+	  "Q": [1.5, 1.732, 1.732],
+	  "H": [1.5, 0, 0.866]
 	},
 	"edges": [
 	  ["A", "B"],
-	  ["B", "C"],
-	  ["C", "A"],
+	  ["A", "C"],
 	  ["A", "Q"],
+	  ["B", "C"],
 	  ["B", "Q"],
-	  ["C", "Q"]
+	  ["C", "Q"],
+	  ["C", "H"],
+	  ["Q", "H"]
 	]
   };
 
@@ -128,7 +158,7 @@ function SceneContent() {
 			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 				let vertex = data.vertices[vertexName];
 				// Use the vertexName as a key, or if not unique, combine it with the index
-				return <mesh key={vertexName + index}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] })}</mesh>;
+				return <mesh key={vertexName + index}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] }, vertexName)}</mesh>;
 			})}
 
 			{data.edges && data.edges.map((edge, index) => {
@@ -181,13 +211,15 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
 	);
 }
 
-function drawVertex(vertex: Vertex) {
-	return (
-		<mesh position={[vertex.x, vertex.y, vertex.z]}>
-			<sphereGeometry args={[0.1, 16, 16]} />
-			<meshStandardMaterial color="black" />
-		</mesh>
-	);
+function drawVertex(vertex: Vertex, index: string) {
+    return (
+        <>
+            <mesh position={[vertex.x, vertex.y, vertex.z]}>
+                <sphereGeometry args={[0.1, 16, 16]} />
+                <meshStandardMaterial color="black" />
+            </mesh>
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
