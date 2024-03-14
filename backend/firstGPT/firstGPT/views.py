@@ -20,23 +20,27 @@ def solution(request):
     problem = jsonBody['problem']
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
-    
-    # The request
+
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a mathematician and you are going to solve stereometry problems."},
-            {"role": "user", "content": "Zadacha"},
-            {"role": "system", "content": "You must give me the coordinates of the 3d figure in a 3d coordinate space. The output must be in JSON file."},
-        ],
-        stream=True
-        )
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+        {"role": "user", "content": problem},
+        {"role": "user", "content": \
+        "Дай ми координатите на върховете на фигурата в JSON формат и кои двойки точки се свързват в отсечки. Отговори само с JSON файла без нищо друго. На английски език в този формат: {le_format}"},
+    ],
+    max_tokens = 300
+    )
+    # Format check
+    
+    # ends here
+    # Completion test
+    if(completion.choices[0].finish_reason == "stop"):
+        return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content}, status=200)
+    else:
+        return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)
     # ends here
     
-    
-    
-
-
 
 @api_view(['POST'])
 @csrf_exempt
