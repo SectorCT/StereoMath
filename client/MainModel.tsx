@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, PanResponder, View, Dimensions } from 'react-native';
-import { Canvas, Euler, Vector3, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
+import { Quaternion, Vector3, Euler } from 'three';
+
 
 // vertex type
 type Vertex = {
@@ -10,12 +11,11 @@ type Vertex = {
 	z: number,
 }
 
-const orbitRadius = 5;
+const orbitRadius = 10;
 
 // Create a component for handling the camera
 function CameraController({ position }: { position: [number, number, number] }) {
 	const { camera } = useThree();
-	console.log("camera", camera);
 	useEffect(() => {
 		camera.position.set(...position);
 		camera.lookAt(0, 0, 0);
@@ -40,7 +40,6 @@ function MainModel() {
 		position[0] = newX;
 		position[1] = newY;
 		position[2] = newZ;
-		console.log("position", position);
 		await setCameraPosition([...position]);
 	}
 
@@ -92,6 +91,23 @@ function MainModel() {
 	);
 }
 
+const data = {
+	"vertices": {
+	  "A": [0, 0, 0],
+	  "B": [3, 0, 0],
+	  "C": [1.5, 2.598, 0],
+	  "Q": [1.5, 0.866, 3.464]
+	},
+	"edges": [
+	  ["A", "B"],
+	  ["B", "C"],
+	  ["C", "A"],
+	  ["A", "Q"],
+	  ["B", "Q"],
+	  ["C", "Q"]
+	]
+  };
+
 function SceneContent() {
 	return (
 		<>
@@ -101,17 +117,32 @@ function SceneContent() {
 				<planeGeometry args={[50, 50, 50, 50]} />
 				<meshBasicMaterial color="#f9c74f" wireframe />
 			</mesh>
-			<mesh position={[0, 0, 0]} rotation={[1.5 * Math.PI, 0, 0] as Euler}>
+			<mesh position={[0, 0, 0]} rotation={[1.5 * Math.PI, 0, 0] as EulerType}>
 				<planeGeometry args={[50, 50, 50, 50]} />
 				<meshBasicMaterial color="pink" wireframe />
 			</mesh>
-			<mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0] as Euler}>
+			<mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0] as EulerType}>
 				<planeGeometry args={[50, 50, 50, 50]} />
 				<meshBasicMaterial color="#80ffdb" wireframe />
 			</mesh>
-			{drawVertex({ x: 0, y: 0, z: 0 })}
-			{drawVertex({ x: 1, y: 1, z: 1 })}
-			{connectVertices({ x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })}
+			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
+				let vertex = data.vertices[vertexName];
+				// Use the vertexName as a key, or if not unique, combine it with the index
+				return <mesh key={vertexName + index}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] })}</mesh>;
+			})}
+
+			{data.edges && data.edges.map((edge, index) => {
+				let vertex1 = data.vertices[edge[0] as keyof typeof data.vertices];
+				let vertex2 = data.vertices[edge[1] as keyof typeof data.vertices];
+
+				if (vertex1 && vertex2) {
+					return connectVertices(
+						{ x: vertex1[0], y: vertex1[1], z: vertex1[2] },
+						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
+						edge[0] + edge[1] + index.toString() // Use the edge name as a key
+					);
+				}
+			})}
 
 		</>
 	);
@@ -126,25 +157,26 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vertex, vertex2: Vertex) {
-	let lineLength = calculate3DDistance(vertex1, vertex2);
-	let linePosition = [(vertex1.x + vertex2.x) / 2, (vertex1.y + vertex2.y) / 2, (vertex1.z + vertex2.z) / 2] as Vector3;
+function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
+	let distance = calculate3DDistance(vertex1, vertex2);
 
-	let deltaX = vertex2.x - vertex1.x;
-	let deltaY = vertex2.y - vertex1.y;
-	let deltaZ = vertex2.z - vertex1.z;
+	// Midpoint calculation
+	let midX = (vertex1.x + vertex2.x) / 2;
+	let midY = (vertex1.y + vertex2.y) / 2;
+	let midZ = (vertex1.z + vertex2.z) / 2;
 
-	// Adjusting the rotation calculations
-	let yaw = Math.atan2(deltaX, deltaZ);  // Rotate around Y-axis
-	let pitch = Math.atan2(Math.sqrt(deltaX * deltaX + deltaZ * deltaZ), deltaY); // Rotate around X-axis
+	// Create a vector for the direction
+	let direction = new Vector3(vertex2.x - vertex1.x, vertex2.y - vertex1.y, vertex2.z - vertex1.z);
+	direction.normalize();
 
-	// Since we don't use roll, it's set to 0
-	let lineRotation = [-pitch, -yaw, 0] as Euler; // Rotation in radians
+	// Create a quaternion for the rotation
+	let quaternion = new Quaternion();
+	quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction);
 
 	return (
-		<mesh position={linePosition} rotation={lineRotation}>
-			<boxGeometry args={[lineLength, 0.05, 0.05]} />
-			<meshBasicMaterial color="black" />
+		<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
+			<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
+			<meshStandardMaterial color="black" />
 		</mesh>
 	);
 }
