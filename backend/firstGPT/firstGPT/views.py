@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import json
 from openai import OpenAI
 from dotenv import apiKey
+from regex_checks import r_check
 
 load_dotenv()
 client = OpenAI(api_key=apiKey)
@@ -21,19 +22,22 @@ def solution(request):
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
 
-    completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
-        {"role": "user", "content": problem},
-        {"role": "user", "content": \
-        "Дай ми координатите на върховете на фигурата в JSON формат и кои двойки точки се свързват в отсечки. Отговори само с JSON файла без нищо друго. На английски език в този формат: {le_format}"},
-    ],
-    max_tokens = 300
-    )
-    # Format check
-    
-    # ends here
+    for i in range(6):
+        completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+                {"role": "user", "content": problem},
+                {"role": "user", "content": \
+                "Дай ми координатите на върховете на фигурата в JSON формат и кои двойки точки се свързват в отсечки. Отговори само с JSON файла без нищо друго. На английски език в този формат: {le_format}"},
+            ],
+            max_tokens = 300
+        )
+        # Format check
+        check = r_check(completion.choices[0].message.content)
+        if check == 0:
+            break
+        # ends here
     # Completion test
     if(completion.choices[0].finish_reason == "stop"):
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content}, status=200)
