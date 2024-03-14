@@ -69,12 +69,16 @@ function SceneContent() {
       <pointLight position={[10, 10, 10]} intensity={2} />
       <mesh position={[0,0,0]}>
         <planeGeometry args={[5, 5, 5, 5]} />
-        <meshBasicMaterial color="black" wireframe />
+        <meshBasicMaterial color="#f9c74f" wireframe />
       </mesh>
-      {/* {drawVertex({ x: 0, y: 0, z: 0 })}
-      {drawVertex({ x: 1, y: 1, z: 1 })}
-      {connectVertices({ x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })} */}
-
+      <mesh position={[0,0,0]} rotation={[1.5 * Math.PI, 0, 0] as Euler}>
+        <planeGeometry args={[5, 5, 5, 5]} />
+        <meshBasicMaterial color="pink" wireframe />
+      </mesh>
+      <mesh position={[0,0,0]} rotation={[0, Math.PI / 2, 0] as Euler}>
+        <planeGeometry args={[5, 5, 5, 5]} />
+        <meshBasicMaterial color="#80ffdb" wireframe />
+      </mesh>
     </>
   );
 }
@@ -113,7 +117,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex) {
 function drawVertex(vertex: Vertex) {
   return (
     <mesh position={[vertex.x, vertex.y, vertex.z]}>
-      <sphereGeometry args={[0.1, 16, 16]} />
+      <sphereGeometry args={[0.1, 0, 0]} />
       <meshStandardMaterial color="black" />
     </mesh>
   );
