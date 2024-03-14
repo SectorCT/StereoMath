@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Camera from "./CameraPage"
+import CameraPage from "./pages/CameraPage"
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Camera/>
+      <CameraPage/>
     </View>
   );
 }
