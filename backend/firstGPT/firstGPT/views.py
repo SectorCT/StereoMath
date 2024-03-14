@@ -6,11 +6,14 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from openai import OpenAI
-from dotenv import apiKey
 from regex_checks import r_check
 
 load_dotenv()
-client = OpenAI(api_key=apiKey)
+
+api_key = os.getenv("api_key")
+le_format = os.getenv("le_format")
+
+client = OpenAI(api_key=api_key)
 
 @api_view(['POST'])
 @csrf_exempt
