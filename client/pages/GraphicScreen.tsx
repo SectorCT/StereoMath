@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from "react-native";
-import BottomSheet from "./BottomSheet";
-import MainModel from "./MainModel";
+import BottomSheet from "../BottomSheet";
+import MainModel from "../MainModel";
 import { Suspense } from "react";
 
 export default function GraphicScreen(){
