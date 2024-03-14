@@ -17,7 +17,7 @@ function SceneContent() {
       <pointLight position={[10, 10, 10]} intensity={2} />
       <mesh position={[0, 0, 0]} rotation={[(Math.PI / 4), 0, 0]}>
         <boxGeometry />
-        <meshStandardMaterial color="orange" />
+        <meshStandardMaterial color="blue" />
       </mesh>
     </>
   );
