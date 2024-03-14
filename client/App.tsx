@@ -5,7 +5,7 @@ import Camera from "./pages/CameraPage"
 export default function App() {
   return (
     <View style={styles.container}>
-      <Camera/>
+      
     </View>
   );
 }
