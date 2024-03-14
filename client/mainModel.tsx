@@ -4,10 +4,10 @@ import { Canvas } from '@react-three/fiber';
 
 function MainModel() {
   return (
-        <Canvas style = {styles.container} >
+        <Canvas style = {styles.container} shadows >
             <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            <mesh>
+            <pointLight position={[10, 10, 10]} intensity = {2} />
+            <mesh position={[0,0,0]}>
                 <sphereGeometry />
                 <meshStandardMaterial color="orange" />
             </mesh> 
@@ -17,10 +17,6 @@ function MainModel() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
         width: "100%",
     },
     header: {
