@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Animated, PanResponder, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
 const screenHeight = Dimensions.get('window').height;
 const sheetMaxHeight = screenHeight - 200;
@@ -71,6 +71,9 @@ const BottomSheet = () => {
 
   return (
     <View style={styles.container}>
+      {/* View behind the sheetContainer */}
+      <View style={styles.contentView} />
+
       <Animated.View style={[styles.sheetContainer, animatedStyles]}>
         <View style={styles.dragbarContainer} {...panResponder.panHandlers}>
           <View style={styles.dragBar} />
@@ -87,6 +90,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center', // Center content horizontally
     justifyContent: 'flex-end', // Align content to the bottom of the container
+  },
+  contentView: {
+    ...StyleSheet.absoluteFillObject, // Fill the entire container
+    backgroundColor: 'transparent', // Set the background color to transparent
   },
   sheetContainer: {
     backgroundColor: '#219ebc',
@@ -107,6 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     paddingTop: 20,
     alignItems: 'center',
+    position: 'absolute',
     elevation: 2,
   },
   dragBar: {

@@ -1,11 +1,16 @@
 import { Text, View, StyleSheet } from "react-native";
 import BottomSheet from "./BottomSheet";
+import MainModel from "./MainModel";
+import { Suspense } from "react";
 
 export default function GraphicScreen(){
     return (
-        <View>
+        <Suspense fallback = {<Text>Loading...</Text>}>
+        <View style = {styles.container}>
+            <MainModel />
             <BottomSheet />
         </View>
+        </Suspense>
     )
 }
 
