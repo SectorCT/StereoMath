@@ -1,4 +1,4 @@
-import requests, os
+import os
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
@@ -36,7 +36,7 @@ def solution(request):
                 {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
                 {"role": "user", "content": problem},
                 {"role": "user", "content": \
-                "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
+                 "Give me a brief explanation of how to solve this question everything in JSON placed in [] and every paragraph placed in \"\""}
             ],
             max_tokens = 1000
             #stream=True
@@ -51,7 +51,7 @@ def solution(request):
                 {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
                 {"role": "user", "content": problem},
                 {"role": "user", "content": \
-                "Дай ми координатите на върховете на фигурата в JSON формат и кои двойки точки се свързват в отсечки. Отговори само с JSON файла без нищо друго. На английски език в този формат: {le_format}"},
+                "Give me the 3d coordinates of the figure and the pairs of vertices connected by a line without anything else in JSON in this format: {le_format}"},
             ],
             max_tokens = 300
         )
@@ -60,10 +60,11 @@ def solution(request):
         if check == 0:
             break
         # ends here
+    print(completion.choices[0].finish_reason)
     # Completion test
     if(completion.choices[0].finish_reason == "stop"):
-        completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "").replace("\n", "")
-        solution.choices[0].message.content = solution.choices[0].message.content.replace("\\", "").replace("\n", "")
+        #c_message = json.loads(completion.choices[0].message.content)
+        #s_message = json.loads(solution.choices[0].message.content)
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)

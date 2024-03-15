@@ -38,7 +38,7 @@ def r_check(api_response):
         return -1
 
 def r_solution_check(solution):
-    pattern = r'\[(\"([^"])*\",*)*\]'
+    pattern = r'\[\W*(\"[^\[\]]*\",*)*\W*\]'
 
     if re.match(pattern, solution):
         print("Solution pattern matched.")
