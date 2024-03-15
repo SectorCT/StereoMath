@@ -5,8 +5,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../Navigation";
 
 interface Props {
-  navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
-  route: {};
+  navigation: StackNavigationProp<NavStackParamList, "TextInputPage">;
+  route: { };
 }
 
 function TextInputPage({ navigation, route }: Props) {
