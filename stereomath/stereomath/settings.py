@@ -30,6 +30,12 @@ ALLOWED_HOSTS = ['last-backend.com', 'last-backend-1f7df3077d54.herokuapp.com']
 
 import os
 
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'stereomath.stereomath.settings')
+
+application = get_wsgi_application()
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/static/'
