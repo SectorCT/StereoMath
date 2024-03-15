@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text,TextInput, View } from 'react-native';
 
-function TextInputPage() {
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavStackParamList } from "../Navigation";
+
+interface Props {
+  navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
+  route: { };
+}
+function TextInputPage({navigation, route} : Props) {
     const [inputValue, onChangeValue] = useState('');
   return (
     <>
