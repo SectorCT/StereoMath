@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
-import { data } from './MainModel';
 import { FlatList } from 'react-native-gesture-handler';
+import { figureData } from './Types';
 
 const screenHeight = Dimensions.get('window').height;
 const sheetMaxHeight = screenHeight - 200;
@@ -13,7 +13,7 @@ const MIN_Y = 0;
 
 const THRESHOLD = 60;
 
-const BottomSheet = () => {
+const BottomSheet = ({data} : {data : figureData}) => {
   const lastRef = useRef<number>(0);
   const sheetRef = useRef<Animated.Value>(new Animated.Value(0)).current;
 
@@ -70,6 +70,7 @@ const BottomSheet = () => {
       extrapolate: 'clamp',
     }),
   };
+  console.log(data.solution);
 
   return (
     <View style={styles.container}>
