@@ -9,16 +9,16 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.0",
     "@react-navigation/native": "^6.1.16",
     "@react-navigation/stack": "^6.3.28",
     "@react-three/drei": "^9.102.3",
     "@react-three/fiber": "^8.15.19",
     "@types/three": "^0.162.0",
     "expo": "~50.0.13",
+    "expo-camera": "~14.1.1",
     "expo-file-system": "~16.0.8",
     "expo-gl": "~13.6.0",
-    "@expo/vector-icons": "^14.0.0",
-    "expo-camera": "~14.1.1",
     "expo-image-manipulator": "^11.8.0",
     "expo-status-bar": "~1.11.1",
     "expo-three": "^7.0.0",
@@ -28,6 +28,7 @@
     "react-native-safe-area-context": "^4.9.0",
     "react-native-screens": "^3.29.0",
     "react-native-svg": "^15.1.0",
+    "tesseract.js": "^5.0.5",
     "three": "^0.145.0"
   },
   "devDependencies": {

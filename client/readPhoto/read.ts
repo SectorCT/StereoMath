@@ -1,6 +1,6 @@
 import * as Tesseract from 'tesseract.js';
 
-const recognizeTextFromImage = async (imagePath: string) => {
+export const recognizeTextFromImage = async (imagePath: string) => {
     try {
         const result = await Tesseract.recognize(
             imagePath,
@@ -15,5 +15,5 @@ const recognizeTextFromImage = async (imagePath: string) => {
     }
 };
 
-const imagePath = 'C:\\Users\\35987\\Pictures\\Screenshots\\TestImage.png';
-recognizeTextFromImage(imagePath);
+// const imagePath = 'C:\\Users\\35987\\Pictures\\Screenshots\\TestImage.png';
+// recognizeTextFromImage(imagePath);
