@@ -24,7 +24,7 @@ function CameraController({ position }: { position: [number, number, number] }) 
 	return null; // This component does not render anything itself
 }
 
-function MainModel() {
+function MainModel({setShownEdge, animateEdge}: {setShownEdge: (edge: string | null) => void, animateEdge: (edge: string) => void}){
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
@@ -112,7 +112,7 @@ function MainModel() {
 	return (
 		<View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.container}>
-				<SceneContent selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey}/>
+				<SceneContent selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} setShownEdge={setShownEdge} animateEdge={animateEdge}/>
 				<CameraController position={cameraPosition} />
 			</Canvas>
 		</View>
@@ -139,7 +139,7 @@ const data = {
 	]
   };
 
-function SceneContent({ selectedEdgeKey, setSelectedEdgeKey }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void }){
+  function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, setShownEdge, animateEdge }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, setShownEdge: (edge: string | null) => void, animateEdge: (edge: string) => void}) {
 	return (
 		<>
 			<ambientLight />
@@ -173,7 +173,9 @@ function SceneContent({ selectedEdgeKey, setSelectedEdgeKey }: { selectedEdgeKey
 						edge[0] + edge[1] + index.toString(), // Use the edge name as a key
 						edge[0] + edge[1] + index.toString() + "HIT",
 						selectedEdgeKey,
-						setSelectedEdgeKey
+						setSelectedEdgeKey,
+						setShownEdge,
+						animateEdge
 					);
 				}
 			})}
@@ -191,7 +193,7 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void){
+function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, setShownEdge : (edge: string | null) => void, animateEdge: (edge: string) => void){
 	let distance = calculate3DDistance(vertex1, vertex2);
 
 	// Midpoint calculation
@@ -220,12 +222,16 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: st
 				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
 				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
 			</mesh>
-			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key)}}>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key); animateEdge(removeLastChar(key))}}>
 				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
 				<meshStandardMaterial  opacity={0} transparent={true} /> 
 			</mesh>
 		</>
 	);
+}
+
+function removeLastChar(inputString: string) {
+    return inputString.substring(0, inputString.length - 1);
 }
 
 function drawVertex(vertex: Vertex, index: string) {
