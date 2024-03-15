@@ -12,6 +12,9 @@ from regex_checks import r_check
 load_dotenv()
 client = OpenAI(api_key=apiKey)
 
+api_key = os.getenv("api_key")
+le_format = os.getenv("le_format")
+
 @api_view(['POST'])
 @csrf_exempt
 def solution(request):
