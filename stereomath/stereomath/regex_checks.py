@@ -36,3 +36,13 @@ def r_check(api_response):
     else:
         print("Pattern not matched.")
         return -1
+
+def r_solution_check(solution):
+    pattern = r'\[("([^"][^\[][^\]])*",*)*\]'
+
+    if re.match(pattern, solution):
+        print("Solution pattern matched.")
+        return 0
+    else:
+        print("Solution pattern not matched.")
+        return -1
