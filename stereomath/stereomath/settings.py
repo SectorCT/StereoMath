@@ -25,7 +25,7 @@ SECRET_KEY = 'REMOVED_DJANGO_SECRET'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['stereomath.com', 'stereomath-backend-abf70aec932f.herokuapp.com']
+ALLOWED_HOSTS = ['last-backend.com', 'last-backend-1f7df3077d54.herokuapp.com']
 
 
 import os
