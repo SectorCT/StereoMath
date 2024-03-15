@@ -5,6 +5,9 @@ import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
 import { Quaternion, Vector3, Euler } from 'three';
 
 
+const SENSITIVITY = 0.01;
+const ORBIT_RADIUS_MIN = 2;
+const ORBIT_RADIUS_MAX = 20;
 
 // vertex type
 type Vertex = {
@@ -51,7 +54,6 @@ function MainModel() {
 		onPanResponderMove: async (event, gestureState) => {
 			if (gestureState.numberActiveTouches === 1) {
 				// Adjust sensitivity if needed
-				const sensitivity = 0.01;
 				const dx = gestureState.moveX - lastPosition.current.x;
 				const dy = gestureState.moveY - lastPosition.current.y;
 
@@ -60,8 +62,8 @@ function MainModel() {
 					return;
 				}
 
-				angleXOrbit += -dx * sensitivity;
-				angleYOrbit += dy * sensitivity;
+				angleXOrbit += -dx * SENSITIVITY;
+				angleYOrbit += dy * SENSITIVITY;
 
 				lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
 
@@ -83,9 +85,9 @@ function MainModel() {
 					event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
 				);
 
-				const sensitivity = 0.01;
+				
 				const delta = distance - lastDistance.current;
-				orbitRadius -= delta * sensitivity;
+				orbitRadius -= delta * SENSITIVITY * 2;
 				orbitRadius = Math.max(2, Math.min(20, orbitRadius));
 
 				lastDistance.current = distance;
@@ -205,7 +207,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
 
 	return (
 		<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
-			<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
+			<cylinderGeometry args={[0.01, 0.01, distance, 32]} />
 			<meshStandardMaterial color="black" />
 		</mesh>
 	);
@@ -215,7 +217,7 @@ function drawVertex(vertex: Vertex, index: string) {
     return (
         <>
             <mesh position={[vertex.x, vertex.y, vertex.z]}>
-                <sphereGeometry args={[0.1, 16, 16]} />
+                <sphereGeometry args={[0.02, 16, 16]} />
                 <meshStandardMaterial color="black" />
             </mesh>
         </>
