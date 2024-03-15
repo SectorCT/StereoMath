@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
-import { Camera, CameraType } from 'expo-camera';
+import { StyleSheet, Text, View, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { Camera, CameraType, FlashMode } from 'expo-camera';
+import Button from '../Button';
+import ResizableCenteredView from '../resizableView';
 
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
@@ -10,10 +12,12 @@ export default function App() {
     const [hasPermission, setHasPermission] = useState(false);
     const [cameraRatio, setCameraRatio] = useState('16:9'); // Default to 16:9
     const [cameraRatioNumber, setCameraRatioNumber] = useState(16/9); // Default to 16:9
+    const [isCameraReady, setIsCameraReady] = useState(false);
 
+    const [flashState, setFlashState] = useState(false);
+    
     const prepareRatio = async () => {
         let desiredRatio = "16:9";
-        console.log(Platform.OS === 'android', cameraRef.current);
         if (Platform.OS === 'android' && cameraRef.current) {
             const ratios = await cameraRef.current.getSupportedRatiosAsync();
             // ...additional code to find the best ratio...
@@ -28,14 +32,11 @@ export default function App() {
 
 
                 const diff = Math.abs(aspectRatio - screenAspectRatio);
-                console.log(diff)
                 if (diff < minDiff) {
                     minDiff = diff;
                     bestRatio = ratio;
                 }
             }
-            console.log(ratios);
-            console.log(bestRatio);
 
             const parts = bestRatio.split(':');
             const ratioWidth = parseInt(parts[0], 10);
@@ -45,13 +46,22 @@ export default function App() {
         }
     };
 
+    function toggleFlash(){
+        setFlashState(!flashState);
+    }
+
+    useEffect(() => {
+        if(isCameraReady){
+            prepareRatio();
+        }
+    }, [isCameraReady]);
+
     useEffect(() => {
         (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
 
         })();
-        setTimeout(() => prepareRatio(), 10);
         
     }, []);
 
@@ -64,8 +74,21 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <Camera style={StyleSheet.compose(styles.camera, {width: width, height: width * cameraRatioNumber})} type={CameraType.back} ratio={cameraRatio} ref={cameraRef}>
-
+            <Camera 
+                style={StyleSheet.compose(styles.camera, {width: width, height: width * cameraRatioNumber})} 
+                type={CameraType.back} 
+                ratio={cameraRatio} 
+                ref={cameraRef}
+                flashMode={flashState ? FlashMode.torch : FlashMode.off}
+                zoom={0}
+                onCameraReady={() => setIsCameraReady(true)}
+            >
+                <ResizableCenteredView/>
+                <View style={styles.buttonsContainer}>
+                    <Button title='' size={40} onPress={()=>{}} icon="keyboard" color='white' stylesProp={{paddingBottom: 40}}/>
+                    <Button title='' size={70} onPress={()=>{}} icon="circle" color='red' stylesProp={{paddingBottom: 40}}/>
+                    <Button title='' size={40} onPress={() => {toggleFlash()}} icon={flashState ? "flash" : "flash-off"} color='white' stylesProp={{paddingBottom: 40}}/>
+                </View>
             </Camera>
         </View>
     );
@@ -79,5 +102,12 @@ const styles = StyleSheet.create({
     camera: {
         width: width,
         height: width * screenAspectRatio,
+        flexDirection: "column-reverse"
     },
+    buttonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+        paddingHorizontal: 10
+    }
 });
