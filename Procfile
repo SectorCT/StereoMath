@@ -1,1 +1,1 @@
-web: gunicorn firstGPT.wsgi
+web: gunicorn stereomath.stereomath.wsgi --log-file -
