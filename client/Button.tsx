@@ -15,7 +15,7 @@ export default function Button({title, onPress, icon, size, color, stylesProp}:
     return (
         <TouchableOpacity onPress={onPress} style={StyleSheet.compose(styles.button, stylesProp)}>
             <MaterialCommunityIcons name={icon} size={size} color={color} />
-            <Text style={styles.text}>{title}</Text>
+            {title ?? <Text style={styles.text}>{title}</Text>}
         </TouchableOpacity>
     );
 }
