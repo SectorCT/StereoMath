@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import json
 from openai import OpenAI
 from .regex_checks import r_check
+from .regex_checks import r_solution_check
 
 load_dotenv()
 
@@ -28,17 +29,21 @@ def solution(request):
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
 
-    solution = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
-            {"role": "user", "content": problem},
-            {"role": "user", "content": \
-            "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
-        ],
-        max_tokens = 1000
-        #stream=True
-    )
+    for i in range(6):
+        solution = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+                {"role": "user", "content": problem},
+                {"role": "user", "content": \
+                "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
+            ],
+            max_tokens = 1000
+            #stream=True
+        )
+        check = r_solution_check(solution.choices[0].message.content)
+        if check == 0:
+            break
     for i in range(6):
         completion = client.chat.completions.create(    
             model="gpt-3.5-turbo",
@@ -57,6 +62,10 @@ def solution(request):
         # ends here
     # Completion test
     if(completion.choices[0].finish_reason == "stop"):
+        completion.choices[0].message.content = completion.choices[0].message.content.replace("\n", "")
+        completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "")
+        solution.choices[0].message.content = solution.choices[0].message.content.replace("\n", "")
+        solution.choices[0].message.content = solution.choices[0].message.content.replace("\\", "")
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)

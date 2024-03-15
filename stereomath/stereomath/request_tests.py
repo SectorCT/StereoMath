@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 from regex_checks import r_check
+from regex_checks import r_solution_check
 
 load_dotenv()
 
@@ -33,13 +34,17 @@ solution = client.chat.completions.create(
       {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
       {"role": "user", "content": test1},
       {"role": "user", "content": \
-       "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
+      "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
+
   ],
   max_tokens = 1000
   #stream=True
 )
 
+completion.choices[0].message.content = completion.choices[0].message.content.replace("\n", "")
+completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "")
 print(completion.choices[0].message.content)
 print(solution.choices[0].message.content)
 
 r_check(completion.choices[0].message.content)
+r_solution_check(solution.choices[0].message.content)
