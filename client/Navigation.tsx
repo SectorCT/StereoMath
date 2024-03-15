@@ -5,25 +5,26 @@ import { createStackNavigator } from "@react-navigation/stack";
 import CameraPage from "./pages/CameraPage";
 import GraphicScreen from "./pages/GraphicScreen";
 import TextInputPage from "./pages/TextInputPage";
+import { View, Text } from "react-native";
 
-export type HomeStackParamList = {
-	CameraPage: undefined;
+import { figureData } from "./Types";
+
+export type NavStackParamList = {
 	GraphicScreen: {
-		friendshipId: string;
-		friendName: string;
+		data: figureData;
 	};
+	CameraPage: undefined;
     TextInputPage: undefined;
 };
 
-const HomeStack = createStackNavigator<HomeStackParamList>();
+const NavStack = createStackNavigator<NavStackParamList>();
 
-export default function HomeStackContainer() {
+export default function NavStackContainer() {
 	return (
-		
-		<HomeStack.Navigator>
-			<HomeStack.Screen name="CameraPage" component={CameraPage} options={{ headerShown: false }} />
-            <HomeStack.Screen name="GraphicScreen" component={GraphicScreen} options={{ headerShown: false }} />
-            <HomeStack.Screen name="TextInputPage" component={TextInputPage} options={{ headerShown: false }} />
-		</HomeStack.Navigator>
+		<NavStack.Navigator>
+			<NavStack.Screen name="CameraPage" component={CameraPage} options={{ headerShown: false }} />
+            <NavStack.Screen name="TextInputPage" component={TextInputPage} options={{ headerShown: false }} />
+			<NavStack.Screen name="GraphicScreen" component={GraphicScreen} options={{ headerShown: false }} />
+		</NavStack.Navigator>
 	);
 }
