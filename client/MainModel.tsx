@@ -190,7 +190,7 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
 						edge[0] + edge[1] + index.toString(),
 						edge[0] + edge[1] + index.toString() + "HIT",
-						edge[0] + ", " + edge[1],
+						edge[0] + edge[1],
 						selectedEdgeKey,
 						setSelectedEdgeKey,
 						animateEdge
@@ -237,7 +237,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: st
 				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
 				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
 			</mesh>
-			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key) ;animateEdge(nameOfEdge)}}>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {setSelectedEdgeKey(key) ;animateEdge(nameOfEdge)}}>
 				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
 				<meshStandardMaterial  opacity={0} transparent={true} /> 
 			</mesh>
