@@ -87,7 +87,7 @@ const BottomSheet = () => {
                   <Text style={styles.solutionIndexText}>{index + 1}</Text>
                 </View>
                 <View style={styles.solutionContent} >
-                  <Text style={styles.solutionContentText}>{name}</Text>
+                  <Text style={styles.solutionContentText} key={name}>{name}</Text>
                 </View>
               </View>
             ))}
