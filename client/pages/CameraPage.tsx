@@ -21,15 +21,15 @@ import ResizableCenteredView from "../resizableView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../Navigation";
 
+import { recognizeTextFromImage } from "../readPhoto/read";
+
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
-  route: { };
+  route: {};
 }
-
-
 
 export default function CameraPage({ navigation, route }: Props) {
   const cameraRef = useRef<Camera>(null);
@@ -40,10 +40,19 @@ export default function CameraPage({ navigation, route }: Props) {
   const [flashState, setFlashState] = useState(false);
   const [capturedPhoto, setCapturedPhoto] =
     useState<CameraCapturedPicture | null>(null);
-  const [resizableDimensions, setResizableDimensions] = useState({ width: 100, height: 100 });
-  const [resizablePosition, setResizablePosition] = useState({ top: 0, left: 0 });
- 
-  const handleResize = (dimensions: { width: number; height: number }, position: { top: number; left: number }) => {
+  const [resizableDimensions, setResizableDimensions] = useState({
+    width: 100,
+    height: 100,
+  });
+  const [resizablePosition, setResizablePosition] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  const handleResize = (
+    dimensions: { width: number; height: number },
+    position: { top: number; left: number }
+  ) => {
     setResizableDimensions(dimensions);
     setResizablePosition(position);
   };
@@ -93,9 +102,10 @@ export default function CameraPage({ navigation, route }: Props) {
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      setCapturedPhoto(photo);
+      // setCapturedPhoto(photo);
+      recognizeTextFromImage(photo.uri);
     } else {
-      console.error('Camera reference is not available.');
+      console.error("Camera reference is not available.");
     }
   };
 
@@ -105,47 +115,48 @@ export default function CameraPage({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
-      
-        <Camera
-          style={StyleSheet.compose(styles.camera, {
-            width: width,
-            height: width * cameraRatioNumber,
-          })}
-          type={CameraType.back}
-          ratio={cameraRatio}
-          ref={cameraRef}
-          flashMode={flashState ? FlashMode.torch : FlashMode.off}
-          zoom={0}
-          onCameraReady={() => setIsCameraReady(true)}
-        >
-          <ResizableCenteredView onResize={handleResize} />
-          <View style={styles.buttonsContainer}>
-            <Button
-              title=""
-              size={40}
-              onPress={() => {navigation.navigate("TextInputPage")}}
-              icon="keyboard"
-              color="white"
-              stylesProp={{ paddingBottom: 40 }}
-            />
-            <Button
-              title=""
-              size={70}
-              onPress={handleCapturePress}
-              icon="circle"
-              color="red"
-              stylesProp={{ paddingBottom: 40 }}
-            />
-            <Button
-              title=""
-              size={40}
-              onPress={toggleFlash}
-              icon={flashState ? "flash" : "flash-off"}
-              color="white"
-              stylesProp={{ paddingBottom: 40 }}
-            />
-          </View>
-        </Camera>
+      <Camera
+        style={StyleSheet.compose(styles.camera, {
+          width: width,
+          height: width * cameraRatioNumber,
+        })}
+        type={CameraType.back}
+        ratio={cameraRatio}
+        ref={cameraRef}
+        flashMode={flashState ? FlashMode.torch : FlashMode.off}
+        zoom={0}
+        onCameraReady={() => setIsCameraReady(true)}
+      >
+        <ResizableCenteredView onResize={handleResize} />
+        <View style={styles.buttonsContainer}>
+          <Button
+            title=""
+            size={40}
+            onPress={() => {
+              navigation.navigate("TextInputPage");
+            }}
+            icon="keyboard"
+            color="white"
+            stylesProp={{ paddingBottom: 40 }}
+          />
+          <Button
+            title=""
+            size={70}
+            onPress={handleCapturePress}
+            icon="circle"
+            color="red"
+            stylesProp={{ paddingBottom: 40 }}
+          />
+          <Button
+            title=""
+            size={40}
+            onPress={toggleFlash}
+            icon={flashState ? "flash" : "flash-off"}
+            color="white"
+            stylesProp={{ paddingBottom: 40 }}
+          />
+        </View>
+      </Camera>
     </View>
   );
 }
