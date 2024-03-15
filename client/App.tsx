@@ -1,16 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 
-import Camera from "./pages/CameraPage"
-import GraphicScreen from "./pages/GraphicScreen"
+import { NavigationContainer } from '@react-navigation/native';
 
+import NavStack from "./Navigation"
+
+
+console.warn = () => {};
+console.error = () => {};
+
+// Use ErrorBoundary in your App component
 export default function App() {
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        <GraphicScreen />
-      </View>
-    </NavigationContainer>
+      <NavigationContainer>
+        <NavStack />
+      </NavigationContainer>
   );
 }
 

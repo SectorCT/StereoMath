@@ -2,11 +2,15 @@ import { Text, View, StyleSheet } from "react-native";
 import BottomSheet from "../BottomSheet";
 import MainModel from "../MainModel";
 import GraphicNavbar from "../GraphicNavbar";
+
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavStackParamList } from "../Navigation";
+
 import { Suspense } from "react";
 
 import { figureData } from "../Types";
 
-const data = {
+const data1 = {
     "vertices": {
         "A": [0, 0, 0],
         "B": [3, 0, 0],
@@ -29,12 +33,26 @@ const data = {
         ["Ако BG е височината на триъгълника ABQ, то CH ще бъде равно на GH. Тъй като ABQ е правоъгълен триъгълник, можем да използваме   Питагоровата теорема, за да намерим дължината на BG или GH. След  това използваме подобност на триъгълници, за да намерим дължината  на GH."]
 } as figureData;
 
-export default function GraphicScreen() {
+interface Props {
+    navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
+    route: { params: { data: figureData } };
+}
+
+export default function GraphicScreen({ navigation, route }: Props) {
+    if (route.params === undefined) {
+        return (
+            <View style={styles.container}>
+                <Text>Error: no data provided</Text>
+            </View>
+        )
+    }
+    const data = route.params.data;
+
     return (
         <Suspense fallback={<Text>Loading...</Text>}>
             <View style={styles.container}>
                 <GraphicNavbar />
-                <MainModel data={data} />
+                <MainModel data={data1} />
                 <BottomSheet />
             </View>
         </Suspense>
