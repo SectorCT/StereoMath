@@ -96,11 +96,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
 	  };
   
 	const animateEdge = (edge: string) => {
-		console.log("Animating edge:", edge);
 		setShownEdge(edge);
-
-		console.log("Shown edge:", shownEdge, " with value:", edgesValues[shownEdge == null ? 0 : shownEdge]);
-		console.log("Edges values:", edgesValues);
 		// Configure the animation
 		fadeAnim.setValue(1); // Reset the animated value to 1
 		Animated.timing(fadeAnim, {

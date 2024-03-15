@@ -4,6 +4,8 @@
 node_modules/
 package-lock.json
 
+ENV.tsx
+
 # Expo
 # .expo/
 dist/

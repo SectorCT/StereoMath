@@ -2,14 +2,14 @@ import * as Tesseract from 'tesseract.js';
 
 export const recognizeTextFromImage = async (imagePath: string) => {
     try {
+        console.log(imagePath);
         const result = await Tesseract.recognize(
             imagePath,
-            'eng+bul', // Use 'rus' for Russian, 'bul' for Bulgarian, 'srp' for Serbian, etc.
+            'eng', // Use 'rus' for Russian, 'bul' for Bulgarian, 'srp' for Serbian, etc.
             {
-                //logger: m => console.log(m),
+                logger: m => console.log(m),
             }
         );
-        console.log("Recognized Text:", result.data.text);
     } catch (error) {
         console.error(error);
     }
