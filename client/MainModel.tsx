@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, PanResponder, View, Dimensions} from 'react-native';
 import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
 
-import { Quaternion, Vector3, Euler } from 'three';
+import { Quaternion, Vector3, Euler, Color } from 'three';
 
 
 
@@ -24,7 +24,8 @@ function CameraController({ position }: { position: [number, number, number] }) 
 	return null; // This component does not render anything itself
 }
 
-function MainModel() {
+function MainModel({animateEdge}: { animateEdge: (edge: string) => void}){
+	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
 	let angleYOrbit = 45;
@@ -84,8 +85,8 @@ function MainModel() {
 				);
 
 				const sensitivity = 0.01;
-				const delta = distance - lastDistance.current;
-				orbitRadius -= delta * sensitivity;
+				const delta = distance/lastDistance.current;
+				orbitRadius *= (2-delta);
 				orbitRadius = Math.max(2, Math.min(20, orbitRadius));
 
 				lastDistance.current = distance;
@@ -111,7 +112,7 @@ function MainModel() {
 	return (
 		<View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.container}>
-				<SceneContent />
+				<SceneContent selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} animateEdge={animateEdge}/>
 				<CameraController position={cameraPosition} />
 			</Canvas>
 		</View>
@@ -138,7 +139,7 @@ const data = {
 	]
   };
 
-function SceneContent() {
+  function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void}) {
 	return (
 		<>
 			<ambientLight />
@@ -169,7 +170,11 @@ function SceneContent() {
 					return connectVertices(
 						{ x: vertex1[0], y: vertex1[1], z: vertex1[2] },
 						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
-						edge[0] + edge[1] + index.toString() // Use the edge name as a key
+						edge[0] + edge[1] + index.toString(), // Use the edge name as a key
+						edge[0] + edge[1] + index.toString() + "HIT",
+						selectedEdgeKey,
+						setSelectedEdgeKey,
+						animateEdge
 					);
 				}
 			})}
@@ -187,7 +192,7 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
+function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void){
 	let distance = calculate3DDistance(vertex1, vertex2);
 
 	// Midpoint calculation
@@ -203,11 +208,24 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
 	let quaternion = new Quaternion();
 	quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction);
 
+	const [colorEdge, setColorEdge] = useState("black");
+
+	const transparentColor = new Color("green");
+	transparentColor.lerp(new Color("red"), 0.3);
+
+	const selectedColor = new Color("blue");
+
 	return (
-		<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
-			<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
-			<meshStandardMaterial color="black" />
-		</mesh>
+		<>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
+				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
+				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
+			</mesh>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key) ;animateEdge(key)}}>
+				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
+				<meshStandardMaterial  opacity={0} transparent={true} /> 
+			</mesh>
+		</>
 	);
 }
 

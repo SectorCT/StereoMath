@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
-    shadowColor: '#52006A',
     alignItems: 'center', // Center content horizontally
   },
   dragbarContainer: {
