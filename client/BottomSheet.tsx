@@ -114,10 +114,6 @@ const BottomSheet = () => {
   );
 };
 
-const formatEdges = (edges : any) => {
-  return edges.map((edge: any) => edge.join('')).join(' ');
-};
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FF0000',
