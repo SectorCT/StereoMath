@@ -20,10 +20,20 @@ import * as ImageManipulator from "expo-image-manipulator";
 import Button from "../Button";
 import ResizableCenteredView from "../resizableView";
 
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavStackParamList } from "../Navigation";
+
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
-export default function App() {
+interface Props {
+  navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
+  route: { };
+}
+
+
+
+export default function CameraPage({ navigation, route }: Props) {
   const cameraRef = useRef<Camera>(null);
   const [hasPermission, setHasPermission] = useState(false);
   const [cameraRatio, setCameraRatio] = useState("16:9"); // Default to 16:9
@@ -151,7 +161,7 @@ export default function App() {
             <Button
               title=""
               size={40}
-              onPress={() => {}}
+              onPress={() => {navigation.navigate("TextInputPage")}}
               icon="keyboard"
               color="white"
               stylesProp={{ paddingBottom: 40 }}
