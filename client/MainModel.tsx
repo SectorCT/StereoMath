@@ -119,7 +119,7 @@ function MainModel({animateEdge}: { animateEdge: (edge: string) => void}){
 	);
 }
 
-const data = {
+export const data = {
 	"vertices": {
 	  "A": [0,0,0],
 	  "B": [3,0,0],
@@ -136,8 +136,16 @@ const data = {
 	  ["C", "Q"],
 	  ["C", "H"],
 	  ["Q", "H"]
-	]
-  };
+	],
+	"solution" :[
+		"За да намерим дължината на CH, трябва да използваме теоремата на Питагор, като нека си наречем CH за \(x\).",
+		"Сега ще намерим дължината на цялата височина QH, като използваме основен триъгълник АВQ, където можем да намерим BQ използвайки Питагоровата теорема.",
+		"Също така, можем да намерим HQ, като разделим BQ на 2, тъй като H е сред точката на BQ.",
+		"Следователно QH е сумата на \(HQ\) и \(CH\).",
+		"Използвайки тези стойности, можем да съставим уравнение за \(CH\) и го решим.",
+	],
+
+};
 
   function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void}) {
 	return (
