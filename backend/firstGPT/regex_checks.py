@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_key = os.getenv("api_key")
+open_ai_api_key = os.getenv("open_ai_api_key")
 le_format = os.getenv("le_format")
 
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=open_ai_api_key)
 
 test = "Дадена е правилна четириъгълна призма ACBDA1B1C1D1 с основен ръб Ab = 3 и околен ръб AA1 = 4. Намерете косинуса на ъгъл между AD1 и BC."
 

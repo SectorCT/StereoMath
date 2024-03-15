@@ -1,13 +1,14 @@
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+from regex_checks import r_check
 
 load_dotenv()
 
-api_key = os.getenv("api_key")
+open_ai_api_key = os.getenv("open_ai_api_key")
 le_format = os.getenv("le_format")
 
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=open_ai_api_key)
 
 test = "Дадена е правилна четириъгълна призма ACBDA1B1C1D1 с основен ръб Ab = 3 и околен ръб AA1 = 4. Намерете косинуса на ъгъл между AD1 и BC."
 test1 = "Дадена е првилна триъгълна пирамида ABCQ с основен ръб AB = 3 и околен ръб AQ = 4 и QH, като H е пресечната точка на диагоналите на основата. Намерете CH."
@@ -32,7 +33,7 @@ solution = client.chat.completions.create(
       {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
       {"role": "user", "content": test1},
       {"role": "user", "content": \
-       "Дай ми стъпките на решението на задачата средно дълго без да решаваш точните стойности само с обяснение обградено в {\"\"}"}
+       "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
   ],
   max_tokens = 300
   #stream=True
@@ -40,3 +41,5 @@ solution = client.chat.completions.create(
 
 print(completion.choices[0].message.content)
 print(solution.choices[0].message.content)
+
+r_check(completion.choices[0].message.content)

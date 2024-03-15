@@ -10,10 +10,10 @@ from .regex_checks import r_check
 
 load_dotenv()
 
-api_key = os.getenv("api_key")
+open_ai_api_key = os.getenv("open_ai_api_key")
 le_format = os.getenv("le_format")
 
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=open_ai_api_key)
 
 api_key = os.getenv("api_key")
 le_format = os.getenv("le_format")
@@ -34,7 +34,7 @@ def solution(request):
             {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
             {"role": "user", "content": problem},
             {"role": "user", "content": \
-            "Дай ми стъпките на решението на задачата средно дълго без да решаваш точните стойности само с обяснение обградено в {\"\"}"}
+            "Дай ми стъпките на решението на задачата, обградени в [] средно дълго без да решаваш точните стойности само с обяснение обградено обяснено точка по точка като всяка точка е в отделние \"\"."}
         ],
         max_tokens = 300
         #stream=True
