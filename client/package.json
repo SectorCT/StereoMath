@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.1.16",
     "@react-navigation/stack": "^6.3.28",
     "@react-three/drei": "^9.102.3",
     "@react-three/fiber": "^8.15.19",
@@ -24,6 +25,8 @@
     "react": "18.2.0",
     "react-native": "0.73.5",
     "react-native-gesture-handler": "^2.15.0",
+    "react-native-safe-area-context": "^4.9.0",
+    "react-native-screens": "^3.29.0",
     "react-native-svg": "^15.1.0",
     "three": "^0.145.0"
   },
