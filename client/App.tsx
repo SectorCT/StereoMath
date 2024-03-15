@@ -6,9 +6,11 @@ import GraphicScreen from "./pages/GraphicScreen"
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <GraphicScreen />
-    </View>
+    <NavigationContainer>
+      <View style={styles.container}>
+        <GraphicScreen />
+      </View>
+    </NavigationContainer>
   );
 }
 
