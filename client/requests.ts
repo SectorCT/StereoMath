@@ -38,9 +38,9 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
 
         // Check if resData has the necessary properties
         if (resData && resData.coordinates && resData.solution && typeof resData.success === 'boolean') {
-            const vertices =coordinates["vertices"];
+            const vertices = coordinates["vertices"];
             const edges = coordinates["edges"];
-            const solution = resData["solution"];
+            const solution = await JSON.parse(resData["solution"]);
             const success = resData["success"];
             console.log('Request successful:',  {
                     vertices: vertices,

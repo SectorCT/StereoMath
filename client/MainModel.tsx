@@ -6,14 +6,12 @@ import { Quaternion, Vector3, Euler, Color } from 'three';
 
 import { figureData } from './Types';
 
-// vertex type
 type Vertex = {
 	x: number,
 	y: number,
 	z: number,
 }
 
-// Create a component for handling the camera
 function CameraController({ position, shapeCenter, centerCameraAroundShape }: 
 	{ 
 		position: [number, number, number], 
@@ -29,9 +27,9 @@ function CameraController({ position, shapeCenter, centerCameraAroundShape }:
 		);
 		if (centerCameraAroundShape) camera.lookAt(...shapeCenter);
 		else camera.lookAt(0, 0, 0);
-	}, [position, centerCameraAroundShape]); // Update when position changes
+	}, [position, centerCameraAroundShape]); 
 
-	return null; // This component does not render anything itself
+	return null; 
 }
 
 const ORBIT_RADIUS_MIN = 2;
@@ -44,6 +42,7 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 		data: figureData
 		centerCameraAroundShape: boolean
 	}){
+	console.log("MainModel data: ", typeof(data.solution), data.solution);
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
@@ -69,7 +68,6 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 		onMoveShouldSetPanResponder: () => true,
 		onPanResponderMove: async (event, gestureState) => {
 			if (gestureState.numberActiveTouches === 1) {
-				// Adjust sensitivity if needed
 				const sensitivity = 0.01;
 				const dx = gestureState.moveX - lastPosition.current.x;
 				const dy = gestureState.moveY - lastPosition.current.y;
@@ -84,7 +82,6 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 
 				lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
 
-				// cap angleYOrbit to avoid gimbal lock no less than -45 degrees and no more than 45 degrees
 				angleYOrbit = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, angleYOrbit));
 
 				await updateCameraPosition();
@@ -112,12 +109,10 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 			}
 		},
 		onPanResponderRelease: () => {
-			// Reset last position at the end of the gesture
 			lastPosition.current = { x: 0, y: 0 };
 			lastDistance.current = 0;
 		},
 		onPanResponderTerminate: () => {
-			// Also reset on termination of the gesture
 			lastPosition.current = { x: 0, y: 0 };
 			lastDistance.current = 0;
 		},
@@ -183,7 +178,6 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 			</mesh>
 			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 				let vertex = data.vertices[vertexName];
-				// Use the vertexName as a key, or if not unique, combine it with the index
 				return <mesh key={vertexName}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] })}</mesh>;
 			})}
 
@@ -195,9 +189,9 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 					return connectVertices(
 						{ x: vertex1[0], y: vertex1[1], z: vertex1[2] },
 						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
-						edge[0] + edge[1] + index.toString(), // Use the edge name as a key
+						edge[0] + edge[1] + index.toString(),
 						edge[0] + edge[1] + index.toString() + "HIT",
-						edge[0] + edge[1],
+						edge[0] + ", " + edge[1],
 						selectedEdgeKey,
 						setSelectedEdgeKey,
 						animateEdge
@@ -221,16 +215,13 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, nameOfEdge: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void){
 	let distance = calculate3DDistance(vertex1, vertex2);
 
-	// Midpoint calculation
 	let midX = (vertex1.x + vertex2.x) / 2;
 	let midY = (vertex1.y + vertex2.y) / 2;
 	let midZ = (vertex1.z + vertex2.z) / 2;
 
-	// Create a vector for the direction
 	let direction = new Vector3(vertex2.x - vertex1.x, vertex2.y - vertex1.y, vertex2.z - vertex1.z);
 	direction.normalize();
 
-	// Create a quaternion for the rotation
 	let quaternion = new Quaternion();
 	quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction);
 
