@@ -35,6 +35,16 @@ export default function App() {
   const [capturedPhoto, setCapturedPhoto] =
     useState<CameraCapturedPicture | null>(null);
 
+    const [resizableDimensions, setResizableDimensions] = useState({ width: 100, height: 100 });
+    const [resizablePosition, setResizablePosition] = useState({ top: 0, left: 0 });
+ 
+    const handleResize = (dimensions: { width: number; height: number }, position: { top: number; left: number }) => {
+      setResizableDimensions(dimensions);
+      setResizablePosition(position);
+  };
+
+  
+
   const prepareRatio = async () => {
     let desiredRatio = "16:9";
     if (Platform.OS === "android" && cameraRef.current) {
@@ -88,34 +98,36 @@ export default function App() {
     return <Text>No access to camera</Text>;
   }
 
-  const takePicture = async (desiredWidth: number, desiredHeight: number) => {
+  const takePicture = async () => {
     if (cameraRef.current) {
-      const options = { quality: 1, base64: true, width: 300 }; // Define options as needed
-      const photo = await cameraRef.current.takePictureAsync(options);
-      const { width, height } = photo;
-      const x = (width - desiredWidth) / 2; // Calculate the x-coordinate of the desired portion
-      const y = (height - desiredHeight) / 2; // Calculate the y-coordinate of the desired portion
-      const croppedPhoto = await ImageManipulator.manipulateAsync(
-        photo.uri,
-        [
-          {
-            crop: {
-              originX: x,
-              originY: y,
-              width: desiredWidth,
-              height: desiredHeight,
-            },
-          },
-        ],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-      );
-      setCapturedPhoto(croppedPhoto);
+        const x = resizablePosition.left; // Assuming the position is relative to the screen
+        const y = resizablePosition.top;
+        const photo = await cameraRef.current.takePictureAsync();
+        
+        const croppedPhoto = await ImageManipulator.manipulateAsync(
+            photo.uri,
+            [
+                {
+                    crop: {
+                        originX: x,
+                        originY: y,
+                        width: resizableDimensions.width,
+                        height: resizableDimensions.height,
+                    },
+                },
+            ],
+            { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        setCapturedPhoto(croppedPhoto);
+    } else {
+        console.error('Camera reference is not available.');
     }
-  };
+};
 
-  const handleCapturePress = () => {
-    takePicture(100, 100);
-  };
+
+   const handleCapturePress = () => {
+       takePicture();
+   };
 
   return (
     <View style={styles.container}>
@@ -134,7 +146,7 @@ export default function App() {
           zoom={0}
           onCameraReady={() => setIsCameraReady(true)}
         >
-          <ResizableCenteredView />
+        <ResizableCenteredView onResize={handleResize} />
           <View style={styles.buttonsContainer}>
             <Button
               title=""
