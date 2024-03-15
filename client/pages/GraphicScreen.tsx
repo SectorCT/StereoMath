@@ -97,7 +97,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
 				<View style={styles.container}>
 					<GraphicNavbar navigation={navigation} toggleCameraFocus={toggleCenterCameraAroundShape}/>
 					<MainModel data={data} animateEdge={animateEdge} centerCameraAroundShape={centerCameraAroundShape}/>
-					<BottomSheet />
+					<BottomSheet  data = {data}/>
 					<Animated.View
 						style={[
 							styles.animationContainer,
