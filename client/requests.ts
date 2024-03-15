@@ -26,8 +26,7 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
         if (!response.ok) {
             throw new Error('Failed to fetch');
         }
-        
-        console.log('Response:', response);
+    
         const resData = await response.json();
         const coordinates = await JSON.parse(resData["coordinates"]);
 
@@ -40,11 +39,6 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
             // const solution = resData["solution"];
             const solution = await JSON.parse(resData["solution"]);
             const success = resData["success"];
-            console.log('Request successful:',  {
-                    vertices: vertices,
-                    edges: edges,
-                    solution: solution
-                } as figureData, );
             return {
                 data: {
                     vertices: vertices,
