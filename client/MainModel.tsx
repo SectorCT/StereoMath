@@ -4,7 +4,7 @@ import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
 
 import { Quaternion, Vector3, Euler, Color } from 'three';
 
-
+import { figureData } from './Types';
 
 // vertex type
 type Vertex = {
@@ -24,7 +24,15 @@ function CameraController({ position }: { position: [number, number, number] }) 
 	return null; // This component does not render anything itself
 }
 
-function MainModel({animateEdge}: { animateEdge: (edge: string) => void}){
+const ORBIT_RADIUS_MIN = 2;
+const ORBIT_RADIUS_MAX = 20;
+
+
+function MainModel({animateEdge, data}: 
+	{ 
+		animateEdge: (edge: string) => void
+		data: figureData
+	}){
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
@@ -84,10 +92,10 @@ function MainModel({animateEdge}: { animateEdge: (edge: string) => void}){
 					event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
 				);
 
-				const sensitivity = 0.01;
+				
 				const delta = distance/lastDistance.current;
 				orbitRadius *= (2-delta);
-				orbitRadius = Math.max(2, Math.min(20, orbitRadius));
+				orbitRadius = Math.max(ORBIT_RADIUS_MIN, Math.min(ORBIT_RADIUS_MAX, orbitRadius));
 
 				lastDistance.current = distance;
 				await updateCameraPosition();
@@ -112,34 +120,21 @@ function MainModel({animateEdge}: { animateEdge: (edge: string) => void}){
 	return (
 		<View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.container}>
-				<SceneContent selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} animateEdge={animateEdge}/>
+				<SceneContent data={data} selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} animateEdge={animateEdge}/>
 				<CameraController position={cameraPosition} />
 			</Canvas>
 		</View>
 	);
 }
 
-const data = {
-	"vertices": {
-	  "A": [0,0,0],
-	  "B": [3,0,0],
-	  "C": [1.5, 0, 2.598],
-	  "Q": [1.5, 1.732, 1.732],
-	  "H": [1.5, 0, 0.866]
-	},
-	"edges": [
-	  ["A", "B"],
-	  ["A", "C"],
-	  ["A", "Q"],
-	  ["B", "C"],
-	  ["B", "Q"],
-	  ["C", "Q"],
-	  ["C", "H"],
-	  ["Q", "H"]
-	]
-  };
 
-  function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void}) {
+  function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge, data }: 
+	{ 
+		data: figureData,
+		selectedEdgeKey: string | null, 
+		setSelectedEdgeKey: (key: string | null) => void, 
+		animateEdge: (edge: string) => void
+	}) {
 	return (
 		<>
 			<ambientLight />
@@ -159,7 +154,7 @@ const data = {
 			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 				let vertex = data.vertices[vertexName];
 				// Use the vertexName as a key, or if not unique, combine it with the index
-				return <mesh key={vertexName + index}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] }, vertexName)}</mesh>;
+				return <mesh key={vertexName}>{drawVertex({ x: vertex[0], y: vertex[1], z: vertex[2] })}</mesh>;
 			})}
 
 			{data.edges && data.edges.map((edge, index) => {
@@ -229,7 +224,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: st
 	);
 }
 
-function drawVertex(vertex: Vertex, index: string) {
+function drawVertex(vertex: Vertex) {
     return (
         <>
             <mesh position={[vertex.x, vertex.y, vertex.z]}>
