@@ -25,10 +25,16 @@ SECRET_KEY = 'django-insecure-n^72n(%=et6#gb(sr_gvu$6s1#u8=t^fehvn&99+8h-wgf5m(!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['stereomath.com', 'stereomath-backend-abf70aec932f.herokuapp.com']
+ALLOWED_HOSTS = ['last-backend.com', 'last-backend-1f7df3077d54.herokuapp.com']
 
 
 import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'stereomath.stereomath.settings')
+
+application = get_wsgi_application()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
