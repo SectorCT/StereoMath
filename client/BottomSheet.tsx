@@ -13,7 +13,7 @@ const MIN_Y = 0;
 
 const THRESHOLD = 60;
 
-const BottomSheet = ({data} : {data : figureData}) => {
+const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [key: string]: number } }) => {
   const lastRef = useRef<number>(0);
   const sheetRef = useRef<Animated.Value>(new Animated.Value(0)).current;
 
@@ -70,6 +70,7 @@ const BottomSheet = ({data} : {data : figureData}) => {
       extrapolate: 'clamp',
     }),
   };
+
   console.log(data.solution);
 
   return (
@@ -102,7 +103,7 @@ const BottomSheet = ({data} : {data : figureData}) => {
                   <Text style={styles.solutionIndexText}>{item[0] + item[1]}</Text>
                 </View>
                 <View style={styles.valueContent}>
-                  <Text style={styles.valueContentText}>17</Text>
+                  <Text style={styles.valueContentText}>{edgesValues[item.join()]}</Text>
                 </View>
               </View>
             ))}
