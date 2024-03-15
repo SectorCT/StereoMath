@@ -38,7 +38,7 @@ def solution(request):
                 {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
                 {"role": "user", "content": problem},
                 {"role": "user", "content": \
-                 "Give me a brief explanation of how to solve this question everything in JSON placed in [] and every paragraph placed in \"\""}
+                 "Give me a brief explanation without calculating the actual values how to solve this question everything in JSON placed in [] and every paragraph placed in \"\""}
             ],
             max_tokens = 1000
             #stream=True
