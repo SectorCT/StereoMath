@@ -2,12 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, PanResponder, View, Dimensions} from 'react-native';
 import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
 
-import { Quaternion, Vector3, Euler } from 'three';
+import { Quaternion, Vector3, Euler, Color } from 'three';
 
 
-const SENSITIVITY = 0.01;
-const ORBIT_RADIUS_MIN = 2;
-const ORBIT_RADIUS_MAX = 20;
 
 // vertex type
 type Vertex = {
@@ -28,6 +25,7 @@ function CameraController({ position }: { position: [number, number, number] }) 
 }
 
 function MainModel() {
+	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
 	let angleYOrbit = 45;
@@ -54,6 +52,7 @@ function MainModel() {
 		onPanResponderMove: async (event, gestureState) => {
 			if (gestureState.numberActiveTouches === 1) {
 				// Adjust sensitivity if needed
+				const sensitivity = 0.01;
 				const dx = gestureState.moveX - lastPosition.current.x;
 				const dy = gestureState.moveY - lastPosition.current.y;
 
@@ -62,8 +61,8 @@ function MainModel() {
 					return;
 				}
 
-				angleXOrbit += -dx * SENSITIVITY;
-				angleYOrbit += dy * SENSITIVITY;
+				angleXOrbit += -dx * sensitivity;
+				angleYOrbit += dy * sensitivity;
 
 				lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
 
@@ -85,9 +84,9 @@ function MainModel() {
 					event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
 				);
 
-				
-				const delta = distance - lastDistance.current;
-				orbitRadius -= delta * SENSITIVITY * 2;
+				const sensitivity = 0.01;
+				const delta = distance/lastDistance.current;
+				orbitRadius *= (2-delta);
 				orbitRadius = Math.max(2, Math.min(20, orbitRadius));
 
 				lastDistance.current = distance;
@@ -113,7 +112,7 @@ function MainModel() {
 	return (
 		<View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.container}>
-				<SceneContent />
+				<SceneContent selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey}/>
 				<CameraController position={cameraPosition} />
 			</Canvas>
 		</View>
@@ -140,7 +139,7 @@ const data = {
 	]
   };
 
-function SceneContent() {
+function SceneContent({ selectedEdgeKey, setSelectedEdgeKey }: { selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void }){
 	return (
 		<>
 			<ambientLight />
@@ -171,7 +170,10 @@ function SceneContent() {
 					return connectVertices(
 						{ x: vertex1[0], y: vertex1[1], z: vertex1[2] },
 						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
-						edge[0] + edge[1] + index.toString() // Use the edge name as a key
+						edge[0] + edge[1] + index.toString(), // Use the edge name as a key
+						edge[0] + edge[1] + index.toString() + "HIT",
+						selectedEdgeKey,
+						setSelectedEdgeKey
 					);
 				}
 			})}
@@ -189,7 +191,7 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
+function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void){
 	let distance = calculate3DDistance(vertex1, vertex2);
 
 	// Midpoint calculation
@@ -205,11 +207,24 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string) {
 	let quaternion = new Quaternion();
 	quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction);
 
+	const [colorEdge, setColorEdge] = useState("black");
+
+	const transparentColor = new Color("green");
+	transparentColor.lerp(new Color("red"), 0.3);
+
+	const selectedColor = new Color("blue");
+
 	return (
-		<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
-			<cylinderGeometry args={[0.01, 0.01, distance, 32]} />
-			<meshStandardMaterial color="black" />
-		</mesh>
+		<>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
+				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
+				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
+			</mesh>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key)}}>
+				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
+				<meshStandardMaterial  opacity={0} transparent={true} /> 
+			</mesh>
+		</>
 	);
 }
 
@@ -217,7 +232,7 @@ function drawVertex(vertex: Vertex, index: string) {
     return (
         <>
             <mesh position={[vertex.x, vertex.y, vertex.z]}>
-                <sphereGeometry args={[0.02, 16, 16]} />
+                <sphereGeometry args={[0.1, 16, 16]} />
                 <meshStandardMaterial color="black" />
             </mesh>
         </>
