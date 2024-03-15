@@ -29,6 +29,8 @@ def solution(request):
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
 
+    check_c = 1
+    check_s = 1
     for i in range(6):
         solution = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -41,8 +43,8 @@ def solution(request):
             max_tokens = 1000
             #stream=True
         )
-        check = r_solution_check(solution.choices[0].message.content)
-        if check == 0:
+        check_c = r_solution_check(solution.choices[0].message.content)
+        if check_c == 0:
             break
     for i in range(6):
         completion = client.chat.completions.create(    
@@ -56,13 +58,13 @@ def solution(request):
             max_tokens = 300
         )
         # Format check
-        check = r_check(completion.choices[0].message.content)
-        if check == 0:
+        check_s = r_check(completion.choices[0].message.content)
+        if check_s == 0:
             break
         # ends here
     print(completion.choices[0].finish_reason)
     # Completion test
-    if(completion.choices[0].finish_reason == "stop"):
+    if(completion.choices[0].finish_reason == "stop" and check_c == 0 and check_s == 0):
         #c_message = json.loads(completion.choices[0].message.content)
         #s_message = json.loads(solution.choices[0].message.content)
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
