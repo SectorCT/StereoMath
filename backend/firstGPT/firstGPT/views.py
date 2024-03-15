@@ -6,11 +6,14 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from openai import OpenAI
-from dotenv import apiKey
-from regex_checks import r_check
+from .regex_checks import r_check
 
 load_dotenv()
-client = OpenAI(api_key=apiKey)
+
+api_key = os.getenv("api_key")
+le_format = os.getenv("le_format")
+
+client = OpenAI(api_key=api_key)
 
 api_key = os.getenv("api_key")
 le_format = os.getenv("le_format")
@@ -25,8 +28,19 @@ def solution(request):
     if not problem:
         return JsonResponse({'success': False, 'message': 'Problem is missing'}, status=400)
 
+    solution = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+            {"role": "user", "content": problem},
+            {"role": "user", "content": \
+            "Дай ми стъпките на решението на задачата средно дълго без да решаваш точните стойности само с обяснение обградено в {\"\"}"}
+        ],
+        max_tokens = 300
+        #stream=True
+    )
     for i in range(6):
-        completion = client.chat.completions.create(
+        completion = client.chat.completions.create(    
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
@@ -48,30 +62,3 @@ def solution(request):
         return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)
     # ends here
     
-
-@api_view(['POST'])
-@csrf_exempt
-def generate_text(request):
-    if request.method == 'POST':
-        data = request.POST.get('data', '')
-        
-        api_key = 'YOUR_API_KEY_HERE'
-        
-        endpoint = 'https://api.openai.com/v1/engines/davinci/completions'
-        
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {api_key}'
-        }
-        
-        payload = {
-            'prompt': data,
-            'max_tokens': 50
-        }
-        
-        response = requests.post(endpoint, headers=headers, json=payload)
-        
-        if response.status_code == 200:
-            return JsonResponse({'result': response.json()['choices'][0]['text']})
-        else:
-            return JsonResponse({'error': 'Failed to generate text'}, status=500)
