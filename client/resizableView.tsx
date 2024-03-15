@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect} from 'react';
 import { View, PanResponder, StyleSheet, Dimensions } from 'react-native';
 
 
 const topOffset = 150;
 
-export default function ResizableCenteredView() {
+export default function ResizableCenteredView({onResize} : {
+	onResize:(dimensions: { width: number; height: number }, position: { top: number; left: number }) => void
+}) {
 	const initialWidth = 100;
 	const initialHeight = 100;
 
@@ -31,6 +33,11 @@ export default function ResizableCenteredView() {
 			}
 		})
 	).current;
+
+	useEffect(() => {
+        onResize(dimensions, position);
+    }, [dimensions, position]);
+
 
 	return (
 		<View style={styles.container}>
