@@ -10,6 +10,8 @@ type Vertex = {
   z: number,
 }
 
+const orbitRadius = 5;
+
 // Create a component for handling the camera
 function CameraController({ position }: { position: [number, number, number] }) {
   const { camera } = useThree();
@@ -23,6 +25,7 @@ function CameraController({ position }: { position: [number, number, number] }) 
 }
 
 function MainModel() {
+  let angleAtOrbit = 0;
   const position = [0, 0, 5] as [number, number, number];
   const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 0, 5]);
 
@@ -31,11 +34,11 @@ function MainModel() {
     onMoveShouldSetPanResponder: () => true,  // Ensure it responds to single finger
     onPanResponderMove: async (event, gestureState) => {
       // Adjust sensitivity if needed
-      const sensitivity = 0.001;
+      const sensitivity = 0.0001;
+      angleAtOrbit += gestureState.dx * sensitivity;
 
-      // Calculate new position
-      const newX = position[0] - gestureState.dx * sensitivity;
-      const newY = position[1] + gestureState.dy * sensitivity;
+      let newX = Math.cos(angleAtOrbit) * orbitRadius;
+      let newY = Math.sin(angleAtOrbit) * orbitRadius;
 
       position[0] = newX;
       position[1] = 5;
@@ -65,8 +68,8 @@ function SceneContent() {
       <ambientLight />
       <pointLight position={[10, 10, 10]} intensity={2} />
       <mesh position={[0,0,0]}>
-        <boxGeometry />
-        <meshBasicMaterial color="black" />
+        <planeGeometry args={[5, 5, 5, 5]} />
+        <meshBasicMaterial color="black" wireframe />
       </mesh>
       {/* {drawVertex({ x: 0, y: 0, z: 0 })}
       {drawVertex({ x: 1, y: 1, z: 1 })}
