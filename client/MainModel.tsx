@@ -42,7 +42,6 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 		data: figureData
 		centerCameraAroundShape: boolean
 	}){
-	console.log("MainModel data: ", typeof(data.solution), data.solution);
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
