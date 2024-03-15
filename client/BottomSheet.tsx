@@ -97,7 +97,7 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
           </View>
           <Text style= {styles.header}>VALUES</Text>
           <ScrollView horizontal = {true} contentContainerStyle = {styles.valueContainer}>
-            {data.edges.map((item, index) => (
+            {data.edges?.map((item, index) => (
               <View style={styles.valueBox} key={index}>
                 <View style={styles.valueIndex}>
                   <Text style={styles.solutionIndexText}>{item[0] + item[1]}</Text>
