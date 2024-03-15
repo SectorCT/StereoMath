@@ -133,7 +133,7 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 			});
 		}
 
-		setShapeCenter([xSum / vertexCount, ySum / vertexCount, zSum / vertexCount]);
+		setShapeCenter([xSum / vertexCount, zSum / vertexCount, ySum / vertexCount]);
 	}
 
 	useEffect(() => {
