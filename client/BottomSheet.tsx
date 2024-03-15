@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { data } from './MainModel';
 
 const screenHeight = Dimensions.get('window').height;
 const sheetMaxHeight = screenHeight - 200;
@@ -50,7 +51,7 @@ const BottomSheet = () => {
         }
       }
     },
-    
+
   });
 
   const autoSpring = (value: number) => {
@@ -71,12 +72,25 @@ const BottomSheet = () => {
 
   return (
     <View style={styles.container}>
-      {/* View behind the sheetContainer */}
       <View style={styles.contentView} />
 
       <Animated.View style={[styles.sheetContainer, animatedStyles]}>
         <View style={styles.dragbarContainer} {...panResponder.panHandlers}>
-          <View style={styles.dragBar} />
+          <View style={styles.dragBar}>
+          </View>
+        </View>
+        <Text style={styles.header}>Solution</Text>
+        <View style={styles.solutionContainer}>
+          {data.solution.map((name, index) => (
+              <View style={styles.solutionRow} key={index}>      
+                <View style={styles.solutionIndex} >
+                  <Text style={styles.solutionIndexText}>{index + 1}</Text>
+                </View>
+                <View style={styles.solutionContent} >
+                  <Text style={styles.solutionContentText}>{name}</Text>
+                </View>
+              </View>
+            ))}
         </View>
       </Animated.View>
     </View>
@@ -114,6 +128,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     elevation: 2,
+    shadowColor: "transparent",
   },
   dragBar: {
     width: '50%',
@@ -121,6 +136,54 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
   },
+  header: {
+    color: "white",
+    position: "relative",
+    top: 80,
+    left: "-20%",
+    fontSize: 30,
+    textTransform: "uppercase",
+    fontWeight: "bold",
+  },
+  solutionContainer: {
+    display: 'flex',
+    position: 'relative',
+    top: 100,
+  },
+  solutionRow: {
+    display: 'flex',
+    flexDirection: "row",
+    backgroundColor: "#00b4d8",
+    marginBottom: 10,
+    borderRadius: 10,
+    width: "90%",
+  },
+  solutionContent:{
+    color: 'white',
+    alignItems: 'center',
+    flex:6, 
+    backgroundColor: 'pink',
+    padding: 10,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15
+  },
+  solutionContentText: {
+
+  },
+  solutionIndex:{
+    color: "black",
+    backgroundColor: 'white',
+    padding: 10,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: 15,
+    borderTopLeftRadius: 15
+  },
+  solutionIndexText: {
+    fontSize: 25
+  },
+
 });
 
 
