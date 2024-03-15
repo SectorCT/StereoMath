@@ -1,1 +1,1 @@
-web: gunicorn stereomath.wsgi
+web: gunicorn stereomath.wsgi --log-file -
