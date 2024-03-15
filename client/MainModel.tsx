@@ -25,32 +25,64 @@ function CameraController({ position }: { position: [number, number, number] }) 
 }
 
 function MainModel() {
-  let angleAtOrbit = 0;
+  let angleXOrbit = 45;
+  let angleYOrbit = 45;
   const position = [0, 0, 5] as [number, number, number];
   const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 0, 5]);
+
+  const lastPosition = useRef({ x: 0, y: 0 });
+
+  async function updateCameraPosition() {
+    let newX = orbitRadius * Math.sin(angleXOrbit) * Math.cos(angleYOrbit);
+      let newY = orbitRadius * Math.sin(angleYOrbit);
+      let newZ = orbitRadius * Math.cos(angleXOrbit) * Math.cos(angleYOrbit);
+
+      position[0] = newX;
+      position[1] = newY;
+      position[2] = newZ;
+      console.log("position", position);
+      await setCameraPosition([...position]);
+  }
 
   const panResponder = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,  // Ensure it responds to single finger
     onPanResponderMove: async (event, gestureState) => {
       // Adjust sensitivity if needed
-      const sensitivity = 0.0001;
-      angleAtOrbit += gestureState.dx * sensitivity;
+      const sensitivity = 0.01;
+      const dx = gestureState.moveX - lastPosition.current.x;
+      const dy = gestureState.moveY - lastPosition.current.y;
 
-      let newX = Math.cos(angleAtOrbit) * orbitRadius;
-      let newY = Math.sin(angleAtOrbit) * orbitRadius;
+      if (lastPosition.current.x === 0 && lastPosition.current.y === 0) {
+        lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
+        return;
+      }
 
-      position[0] = newX;
-      position[1] = 5;
-      position[2] = newY;
-      console.log("position", position);
-      await setCameraPosition([...position]);
-    }
+      angleXOrbit += -dx * sensitivity;
+      angleYOrbit += dy * sensitivity;
+
+      lastPosition.current = { x: gestureState.moveX, y: gestureState.moveY };
+
+      // cap angleYOrbit to avoid gimbal lock no less than -45 degrees and no more than 45 degrees
+      angleYOrbit = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, angleYOrbit));
+
+      await updateCameraPosition();
+    },
+    onPanResponderRelease: () => {
+      // Reset last position at the end of the gesture
+      lastPosition.current = { x: 0, y: 0 };
+    },
+    onPanResponderTerminate: () => {
+      // Also reset on termination of the gesture
+      lastPosition.current = { x: 0, y: 0 };
+    },
   })).current;
 
   useEffect(() => {
-    console.log("cameraPosition", cameraPosition);
-  }, [cameraPosition]);
+    updateCameraPosition();
+  }, []);
+
+  
 
   return (
     <View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
@@ -68,20 +100,25 @@ function SceneContent() {
       <ambientLight />
       <pointLight position={[10, 10, 10]} intensity={2} />
       <mesh position={[0,0,0]}>
-        <planeGeometry args={[5, 5, 5, 5]} />
+        <planeGeometry args={[50, 50, 50, 50]} />
         <meshBasicMaterial color="#f9c74f" wireframe />
       </mesh>
       <mesh position={[0,0,0]} rotation={[1.5 * Math.PI, 0, 0] as Euler}>
-        <planeGeometry args={[5, 5, 5, 5]} />
+        <planeGeometry args={[50, 50, 50, 50]} />
         <meshBasicMaterial color="pink" wireframe />
       </mesh>
       <mesh position={[0,0,0]} rotation={[0, Math.PI / 2, 0] as Euler}>
-        <planeGeometry args={[5, 5, 5, 5]} />
+        <planeGeometry args={[50, 50, 50, 50]} />
         <meshBasicMaterial color="#80ffdb" wireframe />
       </mesh>
+      {drawVertex({ x: 0, y: 0, z: 0 })}
+      {drawVertex({ x: 1, y: 1, z: 1 })}
+      {connectVertices({ x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 })}
+
     </>
   );
 }
+
 
 function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
   let xDistance = vertex2.x - vertex1.x;
@@ -117,7 +154,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex) {
 function drawVertex(vertex: Vertex) {
   return (
     <mesh position={[vertex.x, vertex.y, vertex.z]}>
-      <sphereGeometry args={[0.1, 0, 0]} />
+      <sphereGeometry args={[0.1, 16, 16]} />
       <meshStandardMaterial color="black" />
     </mesh>
   );
@@ -126,6 +163,7 @@ function drawVertex(vertex: Vertex) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    backgroundColor: '#e9ecef',
   },
   header: {
     fontSize: 30,
