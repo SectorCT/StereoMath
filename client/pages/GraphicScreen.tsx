@@ -60,7 +60,41 @@ export default function GraphicScreen({ navigation, route }: Props) {
 	
 		// return () => clearInterval(interval); // Clear the interval when the component unmounts
 	  }, []); // Empty dependency array means this effect runs once on mount
+	  const [edgesValues, setEdgesValues] = useState<{ [key: string]: number }>({});
 
+	  useEffect(() => {
+		  const calculateEdgeLengths = () => {
+		  const lengths: { [key: string]: number } = {};
+		  // Assuming you have a function to calculate the length of an edge based on its vertices
+		  data?.edges.forEach(edge => {
+			  const edgeKey = edge.join();
+			  // Assuming you have a function calculateEdgeLength that calculates the length of the edge
+			  lengths[edgeKey] = calculateEdgeLength(edge);
+		  });
+		  setEdgesValues(lengths);
+		  };
+  
+		  calculateEdgeLengths();
+	  }, [data?.edges]);
+  
+	  const calculateEdgeLength = (edge: string[]) => {
+		  let vertex1 = edge[0];
+		  let vertex2 = edge[1];
+		  let vertex1Coords = [0, 0, 0];
+		  let vertex2Coords = [0, 0, 0];
+		  for(const [key, value] of Object.entries(data?.vertices?? {})){
+			  if(vertex1 == key){
+				  vertex1Coords = value;
+			  }
+		  }
+		  for(const [key, value] of Object.entries(data?.vertices?? {})){
+			  if(vertex2 == key){
+				  vertex2Coords = value;
+			  }
+		  }
+		  return Math.sqrt(Math.pow(vertex1Coords[0] - vertex2Coords[0], 2) + Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) + Math.pow(vertex1Coords[2] - vertex2Coords[2], 2));
+	  };
+  
 	const animateEdge = (edge: string) => {
 		console.log("Animating edge:", edge);
 		setShownEdge(edge);
@@ -97,7 +131,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
 				<View style={styles.container}>
 					<GraphicNavbar navigation={navigation} toggleCameraFocus={toggleCenterCameraAroundShape}/>
 					<MainModel data={data} animateEdge={animateEdge} centerCameraAroundShape={centerCameraAroundShape}/>
-					<BottomSheet  data = {data}/>
+					<BottomSheet  data = {data} edgesValues = {edgesValues}/>
 					<Animated.View
 						style={[
 							styles.animationContainer,
