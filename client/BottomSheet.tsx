@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { data } from './MainModel';
 
 const screenHeight = Dimensions.get('window').height;
@@ -72,25 +72,27 @@ const BottomSheet = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.contentView} />
-
-      <Animated.View style={[styles.sheetContainer, animatedStyles]}>
-        <View style={styles.dragbarContainer} {...panResponder.panHandlers}>
+      <Animated.View style={[styles.sheetContainer, animatedStyles]} >
+        <View style={styles.dragbarContainer} {...panResponder.panHandlers} pointerEvents='box-only'>
           <View style={styles.dragBar}>
           </View>
         </View>
-        <Text style={styles.header}>Solution</Text>
-        <View style={styles.solutionContainer}>
-          {data.solution.map((name, index) => (
-              <View style={styles.solutionRow} key={index}>      
-                <View style={styles.solutionIndex} >
-                  <Text style={styles.solutionIndexText}>{index + 1}</Text>
+        <View style={styles.contentView}>
+        <ScrollView contentContainerStyle = {styles.scrollView}> 
+          <Text style={styles.header}>Solution</Text>
+          <View style={styles.solutionContainer}>
+            {data.solution.map((name, index) => (
+                <View style={styles.solutionRow} key={index}>      
+                  <View style={styles.solutionIndex} >
+                    <Text style={styles.solutionIndexText}>{index + 1}</Text>
+                  </View>
+                  <View style={styles.solutionContent} >
+                    <Text style={styles.solutionContentText}>{name}</Text>
+                  </View>
                 </View>
-                <View style={styles.solutionContent} >
-                  <Text style={styles.solutionContentText} key={name}>{name}</Text>
-                </View>
-              </View>
-            ))}
+              ))}
+          </View>
+        </ScrollView> 
         </View>
       </Animated.View>
     </View>
@@ -103,10 +105,17 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center', // Center content horizontally
     justifyContent: 'flex-end', // Align content to the bottom of the container
+    display: 'flex',
+    flexDirection: 'column',
   },
   contentView: {
     ...StyleSheet.absoluteFillObject, // Fill the entire container
     backgroundColor: 'transparent', // Set the background color to transparent
+  },
+  scrollView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+
   },
   sheetContainer: {
     backgroundColor: '#219ebc',
@@ -129,6 +138,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     elevation: 2,
     shadowColor: "transparent",
+    zIndex: 2,
   },
   dragBar: {
     width: '50%',
@@ -139,8 +149,7 @@ const styles = StyleSheet.create({
   header: {
     color: "white",
     position: "relative",
-    top: 80,
-    left: "-20%",
+    top: 40,
     fontSize: 30,
     textTransform: "uppercase",
     fontWeight: "bold",
@@ -148,14 +157,15 @@ const styles = StyleSheet.create({
   solutionContainer: {
     display: 'flex',
     position: 'relative',
-    top: 100,
+    top: 60,
+    marginBottom: 120
   },
   solutionRow: {
     display: 'flex',
     flexDirection: "row",
-    backgroundColor: "#00b4d8",
+    backgroundColor: "pink",  
     marginBottom: 10,
-    borderRadius: 10,
+    borderRadius: 15,
     width: "90%",
   },
   solutionContent:{
@@ -165,7 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'pink',
     padding: 10,
     borderTopRightRadius: 15,
-    borderBottomRightRadius: 15
+    borderBottomRightRadius: 15,
   },
   solutionContentText: {
 
