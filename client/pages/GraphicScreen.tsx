@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, View, StyleSheet, Animated, Easing } from "react-native";
+import { Text, View, StyleSheet, Animated, Easing, Dimensions } from "react-native";
 import BottomSheet from "../BottomSheet";
 import MainModel from "../MainModel";
 import GraphicNavbar from "../GraphicNavbar";
+import { Image } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../Navigation";
@@ -22,34 +23,41 @@ function removeLastChar(inputString: string | null) {
 }
 
 export default function GraphicScreen({ navigation, route }: Props) {
-	// if (route.params === undefined) {
-	//     return (
-	//         <View style={styles.container}>
-	//             <Text>Error: no problem provided</Text>
-	//         </View>
-	//     )
-	// }
-	// const problem = route.params.problem;
+	if (route.params === undefined) {
+	    return (
+	        <View style={styles.container}>
+	            <Text>Error: no problem provided</Text>
+	        </View>
+	    )
+	}
+	const problem = route.params.problem;
 
-	const problem = "Дадена е првилна триъгълна пирамида ABCQ с основен ръб AB = 3 и околен ръб AQ = 4 и QH, като H е пресечната точка на диагоналите на основата. Намерете CH.";
+	useEffect(() => {
+        requestSolution(problem).then(({ status, data }) => {
+            setSoultionReady(true);
+            if (status != "success") {
+                return;
+            }
+            setData(data);
+        })
+    } , []);
+
+    
 
 	const [solutionReady, setSoultionReady] = useState(false);
 	const [data, setData] = useState<figureData | null>(null);
-
-	useEffect(() => {
-		requestSolution(problem).then(({ status, data }) => {
-			setSoultionReady(true);
-			if (status != "success") {
-				return;
-			}
-			setData(data);
-		})
-	} , []);
-
-	
+	const [rotatedImageDeg, setRotatedImageDeg] = useState(0);
 
 	const [shownEdge, setShownEdge] = useState<string | null>(null);
 	const fadeAnim = useRef(new Animated.Value(0)).current; // Define the useRef hook here
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+		  setRotatedImageDeg((rotatedImageDeg) => rotatedImageDeg - 3);
+		}, 10); // Increment the counter every 1000 milliseconds (1 second)
+	
+		return () => clearInterval(interval); // Clear the interval when the component unmounts
+	  }, []); // Empty dependency array means this effect runs once on mount
 
 	const animateEdge = (edge: string) => {
 		console.log("Animating edge:", edge);
@@ -65,16 +73,22 @@ export default function GraphicScreen({ navigation, route }: Props) {
 		}).start(); // Start the animation
 	};
 
+
 	return (
 		<Suspense fallback={<Text>Loading...</Text>}>
 			{!solutionReady && (
-				<View>
-					<Text>Waiting...</Text>
+				<View style={styles.loading}>
+					<Image
+        				source={require('../assets/loading.png')}
+        				style={StyleSheet.compose(styles.image, {transform: [{ rotate: `${rotatedImageDeg}deg` }]})}
+      				/>
+					<Text style={styles.waitingText} >Drawing...</Text>
 				</View>
 			)}
 			{solutionReady && data == null && (
-				<View>
-					<Text>Unable To Solve</Text>
+				<View style={styles.loading}>
+					<Image style={styles.image} source={require('../assets/unableToSolve.png')}/>
+					<Text style={styles.waitingText}>Unable To Solve</Text>
 				</View>
 			)}
 			{solutionReady && data !== null && (
@@ -120,4 +134,20 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontSize: 28,
 	},
+	loading:{
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		height: Dimensions.get("window").height,
+		backgroundColor: "#bde0fe"
+	},
+	image:{
+		height: 180,
+    	width: 200,
+	},
+	waitingText:{
+		position: "relative",
+		top: 50,
+		fontSize: 30,
+	}
 });
