@@ -57,7 +57,7 @@ def solution(request):
         # ends here
     # Completion test
     if(completion.choices[0].finish_reason == "stop"):
-        return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content}, status=200)
+        return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)
     # ends here
