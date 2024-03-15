@@ -41,9 +41,7 @@ solution = client.chat.completions.create(
   #stream=True
 )
 
-completion.choices[0].message.content = completion.choices[0].message.content.replace("\n", "")
-completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "")
-print(completion.choices[0].message.content)
+completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "").replace("\n", "")
 print(solution.choices[0].message.content)
 
 r_check(completion.choices[0].message.content)

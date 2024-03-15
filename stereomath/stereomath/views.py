@@ -62,10 +62,8 @@ def solution(request):
         # ends here
     # Completion test
     if(completion.choices[0].finish_reason == "stop"):
-        completion.choices[0].message.content = completion.choices[0].message.content.replace("\n", "")
-        completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "")
-        solution.choices[0].message.content = solution.choices[0].message.content.replace("\n", "")
-        solution.choices[0].message.content = solution.choices[0].message.content.replace("\\", "")
+        completion.choices[0].message.content = completion.choices[0].message.content.replace("\\", "").replace("\n", "")
+        solution.choices[0].message.content = solution.choices[0].message.content.replace("\\", "").replace("\n", "")
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': "Response not available"}, status=500)
