@@ -40,14 +40,19 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
         if (resData && resData.coordinates && resData.solution && typeof resData.success === 'boolean') {
             const vertices = coordinates["vertices"];
             const edges = coordinates["edges"];
-            const solution = resData["solution"];
+            // const solution = resData["solution"];
+            const solution = ["За да намерим дължината на CH, трябва да използваме теоремата на Питагор, като нека си наречем CH за \(x\).",
+            "Сега ще намерим дължината на цялата височина QH, като използваме основен триъгълник АВQ, където можем да намерим BQ използвайки Питагоровата теорема.",
+            "Също така, можем да намерим HQ, като разделим BQ на 2, тъй като H е сред точката на BQ.",
+            "Следователно QH е сумата на \(HQ\) и \(CH\).",
+            "Използвайки тези стойности, можем да съставим уравнение за \(CH\) и го решим."];
             const success = resData["success"];
             console.log('Request successful:',  {
                     vertices: vertices,
                     edges: edges,
                     solution: solution
                 } as figureData, );
-            return { 
+            return {
                 data: {
                     vertices: vertices,
                     edges: edges,
