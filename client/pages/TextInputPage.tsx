@@ -23,7 +23,7 @@ function TextInputPage({ navigation, route }: Props) {
         style={{ flex: 1 }}
       >
         <Button
-          title=""
+          text=""
           onPress={() => navigation.goBack()}
           icon="keyboard-backspace"
           size={24}
@@ -45,12 +45,11 @@ function TextInputPage({ navigation, route }: Props) {
             textAlignVertical="top"
           />
           <View style={styles.solve}>
-            <Text style={styles.solveText}>Solve</Text>
             <Button
               color="black"
               icon="arrow-right-thin"
               size={24}
-              title=""
+              text="Solve"
               onPress={() => {
                 navigation.navigate("GraphicScreen", {
                   problem: inputValue ? inputValue : "",

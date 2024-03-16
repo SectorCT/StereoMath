@@ -182,7 +182,7 @@ export default function CameraPage({ navigation, route }: Props) {
         <ResizableCenteredView onResize={handleResize} />
         <View style={styles.buttonsContainer}>
           <Button
-            title=""
+            text=""
             size={40}
             onPress={() => {
               navigation.navigate("TextInputPage", { problem: "" });
@@ -192,7 +192,7 @@ export default function CameraPage({ navigation, route }: Props) {
             stylesProp={{ paddingBottom: 40 }}
           />
           <Button
-            title=""
+            text=""
             size={70}
             onPress={handleCapturePress}
             icon="circle"
@@ -200,7 +200,7 @@ export default function CameraPage({ navigation, route }: Props) {
             stylesProp={{ paddingBottom: 40 }}
           />
           <Button
-            title=""
+            text=""
             size={40}
             onPress={toggleFlash}
             icon={flashState ? "flash" : "flash-off"}
