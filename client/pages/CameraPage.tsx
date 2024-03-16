@@ -16,7 +16,6 @@ import {
 } from "expo-camera";
 
 import Button from "../Button";
-import ResizableCenteredView from "../resizableView";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../Navigation";
@@ -24,7 +23,7 @@ import { NavStackParamList } from "../Navigation";
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
-import {GOOGLE_API_KEY} from "../ENV"
+import { GOOGLE_API_KEY } from "../ENV";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -101,48 +100,46 @@ export default function CameraPage({ navigation, route }: Props) {
     })();
   }, []);
 
-  const recognizeTextFromImage = async (base64Image : string | undefined) => {
+  const recognizeTextFromImage = async (base64Image: string | undefined) => {
     const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`;
-  
+
     const requestPayload = {
       requests: [
         {
           image: {
             content: base64Image,
           },
-          features: [
-            { type: 'TEXT_DETECTION' }
-          ],
+          features: [{ type: "TEXT_DETECTION" }],
         },
       ],
     };
-  
+
     try {
       const response = await fetch(apiURL, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(requestPayload),
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-  
+
       const responseJson = await response.json();
       if (responseJson.responses[0].fullTextAnnotation) {
         const detectedText = responseJson.responses[0].fullTextAnnotation.text;
-        console.log('Detected Text:', detectedText);
+        console.log("Detected Text:", detectedText);
         setCapturedText(detectedText);
         // Process the detected text as needed
       } else {
-        console.log('No text detected');
+        console.log("No text detected");
       }
     } catch (error) {
-      console.error('Error during text recognition:', error);
+      console.error("Error during text recognition:", error);
     }
   };
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({base64 : true});
+      const photo = await cameraRef.current.takePictureAsync({ base64: true });
       // setCapturedPhoto(photo);
       recognizeTextFromImage(photo.base64);
     } else {
@@ -158,10 +155,10 @@ export default function CameraPage({ navigation, route }: Props) {
     // remove tabs and newlines from the text
     async function passToTextInput() {
       await setCapturedText(capturedText.replace(/[\t\n]/g, ""));
-      navigation.navigate("TextInputPage", { problem: capturedText});
+      navigation.navigate("TextInputPage", { problem: capturedText });
     }
     if (capturedText) {
-    passToTextInput();
+      passToTextInput();
     }
   }, [capturedText]);
 
@@ -179,7 +176,6 @@ export default function CameraPage({ navigation, route }: Props) {
         zoom={0}
         onCameraReady={() => setIsCameraReady(true)}
       >
-        <ResizableCenteredView onResize={handleResize} />
         <View style={styles.buttonsContainer}>
           <Button
             text=""
