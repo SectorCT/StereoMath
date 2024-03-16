@@ -165,7 +165,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
             ]}
           >
             <Text style={styles.animationText}>
-              {shownEdge} = {edgesValues[shownEdge == null ? 0 : shownEdge]}{" "}
+              {shownEdge} = {Math.round(((edgesValues[shownEdge == null ? 0 : shownEdge]) + Number.EPSILON) * 100) / 100}{" "}
             </Text>
           </Animated.View>
         </View>
