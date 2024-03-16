@@ -14,12 +14,22 @@ type Vertex = {
 }
 
 // Create a component for handling the camera
-function CameraController({ position }: { position: [number, number, number] }) {
+function CameraController({ position, shapeCenter, centerCameraAroundShape }: 
+	{ 
+		position: [number, number, number], 
+		shapeCenter: [number, number, number],
+		centerCameraAroundShape: boolean
+	}) {
 	const { camera } = useThree();
 	useEffect(() => {
-		camera.position.set(...position);
-		camera.lookAt(0, 0, 0);
-	}, [position]); // Update when position changes
+		camera.position.set(
+			position[0] + (centerCameraAroundShape ? shapeCenter[0] : 0),
+			position[1] + (centerCameraAroundShape ? shapeCenter[1] : 0),
+			position[2] + (centerCameraAroundShape ? shapeCenter[2] : 0)
+		);
+		if (centerCameraAroundShape) camera.lookAt(...shapeCenter);
+		else camera.lookAt(0, 0, 0);
+	}, [position, centerCameraAroundShape]); // Update when position changes
 
 	return null; // This component does not render anything itself
 }
@@ -28,10 +38,11 @@ const ORBIT_RADIUS_MIN = 2;
 const ORBIT_RADIUS_MAX = 20;
 
 
-function MainModel({animateEdge, data}: 
+function MainModel({animateEdge, data, centerCameraAroundShape}: 
 	{ 
 		animateEdge: (edge: string) => void
 		data: figureData
+		centerCameraAroundShape: boolean
 	}){
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	let orbitRadius = 10;
@@ -43,15 +54,14 @@ function MainModel({animateEdge, data}:
 	const lastPosition = useRef({ x: 0, y: 0 });
 	const lastDistance = useRef(0);
 
+	const [shapeCenter, setShapeCenter] = useState([0, 0, 0] as [number, number, number]);
+
 	async function updateCameraPosition() {
 		let newX = orbitRadius * Math.sin(angleXOrbit) * Math.cos(angleYOrbit);
 		let newY = orbitRadius * Math.sin(angleYOrbit);
 		let newZ = orbitRadius * Math.cos(angleXOrbit) * Math.cos(angleYOrbit);
 
-		position[0] = newX;
-		position[1] = newY;
-		position[2] = newZ;
-		await setCameraPosition([...position]);
+		await setCameraPosition([newX, newY, newZ]);
 	}
 
 	const panResponder = useRef(PanResponder.create({
@@ -113,7 +123,27 @@ function MainModel({animateEdge, data}:
 		},
 	})).current;
 
+	function calculateShapeCenter() {
+		let xSum = 0;
+		let ySum = 0;
+		let zSum = 0;
+		let vertexCount = 0;
+
+		if (data.vertices) {
+			Object.keys(data.vertices).forEach((vertexName) => {
+				let vertex = data.vertices[vertexName];
+				xSum += vertex[0];
+				ySum += vertex[1];
+				zSum += vertex[2];
+				vertexCount++;
+			});
+		}
+
+		setShapeCenter([xSum / vertexCount, ySum / vertexCount, zSum / vertexCount]);
+	}
+
 	useEffect(() => {
+		calculateShapeCenter();
 		updateCameraPosition();
 	}, []);
 
@@ -121,7 +151,7 @@ function MainModel({animateEdge, data}:
 		<View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.container}>
 				<SceneContent data={data} selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} animateEdge={animateEdge}/>
-				<CameraController position={cameraPosition} />
+				<CameraController position={cameraPosition} shapeCenter={shapeCenter} centerCameraAroundShape={centerCameraAroundShape}/>
 			</Canvas>
 		</View>
 	);
@@ -167,6 +197,7 @@ function MainModel({animateEdge, data}:
 						{ x: vertex2[0], y: vertex2[1], z: vertex2[2] },
 						edge[0] + edge[1] + index.toString(), // Use the edge name as a key
 						edge[0] + edge[1] + index.toString() + "HIT",
+						edge[0] + edge[1],
 						selectedEdgeKey,
 						setSelectedEdgeKey,
 						animateEdge
@@ -187,7 +218,7 @@ function calculate3DDistance(vertex1: Vertex, vertex2: Vertex): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void){
+function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: string, nameOfEdge: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void){
 	let distance = calculate3DDistance(vertex1, vertex2);
 
 	// Midpoint calculation
@@ -216,7 +247,7 @@ function connectVertices(vertex1: Vertex, vertex2: Vertex, key: string, key2: st
 				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
 				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
 			</mesh>
-			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key) ;animateEdge(key)}}>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {console.log("Vertex1 ",vertex1, "   ","Vertex2 ",vertex2); setSelectedEdgeKey(key) ;animateEdge(nameOfEdge)}}>
 				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
 				<meshStandardMaterial  opacity={0} transparent={true} /> 
 			</mesh>

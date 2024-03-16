@@ -1,11 +1,18 @@
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import Button from "./Button";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavStackParamList } from "./Navigation";
 
-export default function GraphicNavbar(){
+interface Props {
+	navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
+    toggleCameraFocus: () => void;
+}
+
+export default function GraphicNavbar({navigation, toggleCameraFocus}: Props){
     return (
         <View style = {styles.container}>
-            <Button title="" onPress={() => console.log("Back")} icon="keyboard-backspace" size={24} color="black"  stylesProp={styles.button}/>
-            <Button title="" onPress={() => console.log("Back")} icon="keyboard-backspace" size={24} color="black"  stylesProp={styles.button}/>
+            <Button title="" onPress={() => navigation.goBack()} icon="keyboard-backspace" size={24} color="black"  stylesProp={styles.button}/>
+            <Button title="" onPress={() => toggleCameraFocus()} icon="image-filter-center-focus-weak" size={24} color="black"  stylesProp={styles.button}/>
         </View>
     )
 }
@@ -27,6 +34,6 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         paddingHorizontal: 20,
         justifyContent: 'space-between',
-        width: Dimensions.get("window").width,
+        width: Dimensions.get("screen").width,
     },
 });
