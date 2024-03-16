@@ -18,10 +18,6 @@ interface Props {
 	route: { params: { problem: string } };
 }
 
-function removeLastChar(inputString: string | null) {
-	if (inputString != null) return inputString.substring(0, inputString.length - 1);
-}
-
 export default function GraphicScreen({ navigation, route }: Props) {
 	if (route.params === undefined) {
 	    return (
@@ -49,14 +45,20 @@ export default function GraphicScreen({ navigation, route }: Props) {
 	const [rotatedImageDeg, setRotatedImageDeg] = useState(0);
 
 	const [shownEdge, setShownEdge] = useState<string | null>(null);
-	const fadeAnim = useRef(new Animated.Value(0)).current; // Define the useRef hook here
+	const fadeAnim = useRef(new Animated.Value(0)).current;
+
+	const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(false);
+
+	function toggleCenterCameraAroundShape() {
+		setCenterCameraAroundShape(!centerCameraAroundShape);
+	}
 
 	useEffect(() => {
-		const interval = setInterval(() => {
-		  setRotatedImageDeg((rotatedImageDeg) => rotatedImageDeg - 3);
-		}, 10); // Increment the counter every 1000 milliseconds (1 second)
+		// const interval = setInterval(() => {
+		//   setRotatedImageDeg((rotatedImageDeg) => rotatedImageDeg - 3);
+		// }, 10); // Increment the counter every 1000 milliseconds (1 second)
 	
-		return () => clearInterval(interval); // Clear the interval when the component unmounts
+		// return () => clearInterval(interval); // Clear the interval when the component unmounts
 	  }, []); // Empty dependency array means this effect runs once on mount
 
 	const animateEdge = (edge: string) => {
@@ -93,7 +95,8 @@ export default function GraphicScreen({ navigation, route }: Props) {
 			)}
 			{solutionReady && data !== null && (
 				<View style={styles.container}>
-					<MainModel data={data} animateEdge={animateEdge} />
+					<GraphicNavbar navigation={navigation} toggleCameraFocus={toggleCenterCameraAroundShape}/>
+					<MainModel data={data} animateEdge={animateEdge} centerCameraAroundShape={centerCameraAroundShape}/>
 					<BottomSheet />
 					<Animated.View
 						style={[
@@ -103,7 +106,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
 							},
 						]}
 					>
-						<Text style={styles.animationText}>{removeLastChar(shownEdge)} </Text>
+						<Text style={styles.animationText}>{shownEdge} </Text>
 					</Animated.View>
 				</View>
 			)}
@@ -125,20 +128,22 @@ const styles = StyleSheet.create({
 		backgroundColor: "#219ebc",
 		padding: 10,
 		borderRadius: 5,
-		width: "15%",
-		aspectRatio: 1,
+		width: "auto",
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	animationText: {
 		color: "white",
+		width: "auto",
 		fontSize: 28,
 	},
 	loading:{
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: Dimensions.get("window").height,
+		height: Dimensions.get("screen").height,
+		marginTop: 0,
+		padding: 0,
 		backgroundColor: "#bde0fe"
 	},
 	image:{
