@@ -46,7 +46,7 @@ function TextInputPage({ navigation, route }: Props) {
           />
           <View style={styles.solve}>
             <Button
-              color="black"
+              color="lightgray"
               icon="arrow-right-thin"
               size={24}
               text="Solve"
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     borderColor: "white",
+    color: "lightgray",
     borderWidth: 1,
     padding: 15,
     borderRadius: 15,

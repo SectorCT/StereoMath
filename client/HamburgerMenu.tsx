@@ -20,7 +20,7 @@ export default function HamburgerMenu() {
 
   return (
     <Button
-      title=""
+      text=""
       onPress={handleMenuClick}
       size={24}
       icon="menu"
