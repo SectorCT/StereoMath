@@ -70,9 +70,6 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
       extrapolate: 'clamp',
     }),
   };
-
-  console.log(data.solution);
-
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.sheetContainer, animatedStyles]} >
