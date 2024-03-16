@@ -98,7 +98,7 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
                   <Text style={styles.solutionIndexText}>{item[0] + item[1]}</Text>
                 </View>
                 <View style={styles.valueContent}>
-                  <Text style={styles.valueContentText}>{edgesValues[item.join('')]}</Text>
+                  <Text style={styles.valueContentText}>{Math.round((edgesValues[item.join('')] + Number.EPSILON) * 100) / 100}</Text>
                 </View>
               </View>
             ))}

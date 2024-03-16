@@ -33,30 +33,11 @@ interface Props {
 export default function CameraPage({ navigation, route }: Props) {
   const cameraRef = useRef<Camera>(null);
   const [hasPermission, setHasPermission] = useState(false);
-  const [cameraRatio, setCameraRatio] = useState("16:9"); // Default to 16:9
-  const [cameraRatioNumber, setCameraRatioNumber] = useState(16 / 9); // Default to 16:9
+  const [cameraRatio, setCameraRatio] = useState("20:9"); // Default to 16:9
+  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9); // Default to 16:9
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
-
-  const [capturedPhoto, setCapturedPhoto] =
-    useState<CameraCapturedPicture | null>(null);
-  const [resizableDimensions, setResizableDimensions] = useState({
-    width: 100,
-    height: 100,
-  });
-  const [resizablePosition, setResizablePosition] = useState({
-    top: 0,
-    left: 0,
-  });
-
-  const handleResize = (
-    dimensions: { width: number; height: number },
-    position: { top: number; left: number }
-  ) => {
-    setResizableDimensions(dimensions);
-    setResizablePosition(position);
-  };
 
   const prepareRatio = async () => {
     let desiredRatio = "16:9";
