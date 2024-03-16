@@ -14,10 +14,6 @@ interface Props {
 function TextInputPage({ navigation, route }: Props) {
   const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-    console.log("TextInputPage: inputValue:", inputValue);
-  }, [inputValue]);
-
   return (
     <>
       <View style={styles.main}>
@@ -34,7 +30,6 @@ function TextInputPage({ navigation, route }: Props) {
         />
         <Button color='black' icon='arrow-right-thin' size={24} title='' onPress={() => {
           navigation.navigate("GraphicScreen", {problem:inputValue})
-          console.log("Navigating to GraphicScreen");
         }}/>
       </View>
     </>

@@ -23,21 +23,34 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
                 problem: problem
             })
         });
-        console.log("got response");
-
+        
         if (!response.ok) {
+            console.log(response.status)
             throw new Error('Failed to fetch');
         }
+        
+        
+        const resData = await response.json();
+        console.log('Response:', resData);
+        const coordinates = await JSON.parse(resData["coordinates"]);
 
-        const resData: resDataType = await response.json();
+
 
         // Check if resData has the necessary properties
         if (resData && resData.coordinates && resData.solution && typeof resData.success === 'boolean') {
-            const { coordinates, solution, success } = resData;
+            const vertices =coordinates["vertices"];
+            const edges = coordinates["edges"];
+            const solution = resData["solution"];
+            const success = resData["success"];
+            console.log('Request successful:',  {
+                    vertices: vertices,
+                    edges: edges,
+                    solution: solution
+                } as figureData, );
             return { 
                 data: {
-                    vertices: coordinates.vertices,
-                    edges: coordinates.edges,
+                    vertices: vertices,
+                    edges: edges,
                     solution: solution
                 } as figureData, 
                 status: success ? 'success' : 'failure'
@@ -46,7 +59,7 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
             throw new Error('Invalid response data');
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.log('Error:', error);
         return { data: null, status: 'error' };
     }
 }
