@@ -2,9 +2,9 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function Button({title, onPress, icon, size, color, stylesProp}: 
+export default function Button({text, onPress, icon, size, color, stylesProp}: 
     {
-        title: string, 
+        text: string, 
         onPress: () => void, 
         icon: keyof typeof MaterialCommunityIcons.glyphMap, 
         size: number | undefined,
@@ -14,8 +14,8 @@ export default function Button({title, onPress, icon, size, color, stylesProp}:
     ) {
     return (
         <TouchableOpacity onPress={onPress} style={StyleSheet.compose(styles.button, stylesProp)}>
+            <Text style={styles.text}>{text}</Text>
             <MaterialCommunityIcons name={icon} size={size} color={color} />
-            {title ?? <Text style={styles.text}>{title}</Text>}
         </TouchableOpacity>
     );
 }
@@ -29,7 +29,12 @@ const styles = StyleSheet.create({
         // Add any other styling you need for your button
     },
     text: {
+        color: 'white',
+        fontSize: 20,
         marginLeft: 8,
+        textAlign: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
         // Add styling for your text
     },
 });
