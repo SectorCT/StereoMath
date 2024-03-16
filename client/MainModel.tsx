@@ -46,7 +46,6 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 	let orbitRadius = 10;
 	let angleXOrbit = 45;
 	let angleYOrbit = 45;
-	const position = [0, 0, 5] as [number, number, number];
 	const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 0, 5]);
 
 	const lastPosition = useRef({ x: 0, y: 0 });

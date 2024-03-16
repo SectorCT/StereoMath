@@ -14,7 +14,9 @@ export type NavStackParamList = {
 		problem: string;
 	};
 	CameraPage: undefined;
-    TextInputPage: undefined;
+    TextInputPage: {
+		problem: string | null | undefined;
+	};
 };
 
 const NavStack = createStackNavigator<NavStackParamList>();

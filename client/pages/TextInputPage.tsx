@@ -9,11 +9,12 @@ import Button from "../Button";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "TextInputPage">;
-  route: {};
+  route: { params: { problem: string | null | undefined } };
 }
 
 function TextInputPage({ navigation, route }: Props) {
-  const [inputValue, setInputValue] = useState("");
+  const problem = route.params.problem;
+  const [inputValue, setInputValue] = useState(problem);
 
   return (
     <>
@@ -34,7 +35,7 @@ function TextInputPage({ navigation, route }: Props) {
 
           <TextInput
             style={styles.input}
-            value={inputValue}
+            value={inputValue ? inputValue : ""}
             placeholder="Type your hardest stereometric math problem here..."
             placeholderTextColor="lightgray"
             onChangeText={(text) => {
@@ -51,7 +52,9 @@ function TextInputPage({ navigation, route }: Props) {
               size={24}
               title=""
               onPress={() => {
-                navigation.navigate("GraphicScreen", { problem: inputValue });
+                navigation.navigate("GraphicScreen", {
+                  problem: inputValue ? inputValue : "",
+                });
               }}
             />
           </View>
