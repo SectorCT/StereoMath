@@ -19,7 +19,7 @@ function TextInputPage({ navigation, route }: Props) {
   return (
     <>
       <LinearGradient
-        colors={["#4c669f", "#3b5998", "#192f6a"]}
+        colors={["#bde0fe", "#6685c4", "#445f96"]}
         style={{ flex: 1 }}
       >
         <Button
