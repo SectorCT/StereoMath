@@ -7,8 +7,6 @@ import GraphicScreen from "./pages/GraphicScreen";
 import TextInputPage from "./pages/TextInputPage";
 import { View, Text } from "react-native";
 
-import { figureData } from "./Types";
-
 export type NavStackParamList = {
 	GraphicScreen: {
 		problem: string;

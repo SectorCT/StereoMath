@@ -4,6 +4,8 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../Navigation";
 
+import Button from '../Button';
+
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "TextInputPage">;
   route: { };
@@ -30,6 +32,7 @@ function TextInputPage({ navigation, route }: Props) {
           multiline
           textAlignVertical='top'
         />
+        <Button color='black' icon='arrow-right-thin' size={24} title='' onPress={() => {navigation.navigate("GraphicScreen", {problem:inputValue})}}/>
       </View>
     </>
   )
