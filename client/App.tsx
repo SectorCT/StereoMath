@@ -6,10 +6,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import NavStack from "./Navigation"
 
 
-console.warn = () => {};
-console.error = () => {};
+import { LogBox } from 'react-native';
 
-// Use ErrorBoundary in your App component
+LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']); 
+console.error= ()=>{};
+console.warn = ()=>{};
+
 export default function App() {
   return (
       <NavigationContainer>
