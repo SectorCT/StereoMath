@@ -32,7 +32,10 @@ function TextInputPage({ navigation, route }: Props) {
           multiline
           textAlignVertical='top'
         />
-        <Button color='black' icon='arrow-right-thin' size={24} title='' onPress={() => {navigation.navigate("GraphicScreen", {problem:inputValue})}}/>
+        <Button color='black' icon='arrow-right-thin' size={24} title='' onPress={() => {
+          navigation.navigate("GraphicScreen", {problem:inputValue})
+          console.log("Navigating to GraphicScreen");
+        }}/>
       </View>
     </>
   )
