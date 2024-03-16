@@ -174,7 +174,7 @@ export default function CameraPage({ navigation, route }: Props) {
         onCameraReady={() => setIsCameraReady(true)}
       >
         <View style={{ position: "absolute", top: 0, left: 0, width: width, height: "auto", alignItems: "center", justifyContent: "center" , paddingTop:40}}>
-          <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>StereoMath</Text>
+          {/* <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>StereoMath</Text> */}
         </View>
         <View style={styles.buttonsContainer}>
           <Button

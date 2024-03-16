@@ -1,4 +1,5 @@
 import { figureData } from "./Types";
+import { API_URL } from "./ENV";
 
 type resDataType = {
     coordinates: {
@@ -13,7 +14,7 @@ type resDataType = {
 
 export async function requestSolution(problem: string): Promise<{ data: figureData | null, status: string }> {
     try {
-        const response = await fetch('https://stereomath-backend-abf70aec932f.herokuapp.com/solution/', {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

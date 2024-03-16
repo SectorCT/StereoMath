@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    fontSize: 60,
+    fontSize: 50,
     color: "white",
     fontWeight: "bold",
     fontFamily: "sans-serif-light",
