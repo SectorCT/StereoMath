@@ -11,8 +11,8 @@ interface Props {
 export default function GraphicNavbar({navigation, toggleCameraFocus}: Props){
     return (
         <View style = {styles.container}>
-            <Button title="" onPress={() => navigation.goBack()} icon="keyboard-backspace" size={24} color="black"  stylesProp={styles.button}/>
-            <Button title="" onPress={() => toggleCameraFocus()} icon="image-filter-center-focus-weak" size={24} color="black"  stylesProp={styles.button}/>
+            <Button text="" onPress={() => navigation.goBack()} icon="keyboard-backspace" size={24} color="black"  stylesProp={styles.button}/>
+            <Button text="" onPress={() => toggleCameraFocus()} icon="image-filter-center-focus-weak" size={24} color="black"  stylesProp={styles.button}/>
         </View>
     )
 }

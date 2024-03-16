@@ -26,12 +26,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-        // Add any other styling you need for your button
     },
     text: {
         color: 'white',
         fontSize: 20,
         marginLeft: 8,
-        // Add styling for your text
     },
 });
