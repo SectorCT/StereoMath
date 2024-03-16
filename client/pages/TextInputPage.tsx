@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 15,
     borderRadius: 15,
-    textAlignVertical: "top", // Adjust the text to start from the top
+    textAlignVertical: "top",
   },
   solve: {
     display: "flex",
