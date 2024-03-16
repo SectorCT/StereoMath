@@ -13,6 +13,7 @@ type resDataType = {
 }
 
 export async function requestSolution(problem: string): Promise<{ data: figureData | null, status: string }> {
+    console.log(API_URL);
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -25,6 +26,7 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
         });
         
         if (!response.ok) {
+            console.log(response.status);
             throw new Error('Failed to fetch');
         }
     
