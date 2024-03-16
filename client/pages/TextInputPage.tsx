@@ -31,7 +31,7 @@ function TextInputPage({ navigation, route }: Props) {
           stylesProp={styles.backBtn}
         />
         <View style={styles.main}>
-          <Text style={styles.header}>Photo Stereo</Text>
+          <Text style={styles.header}>StereoMath</Text>
 
           <TextInput
             style={styles.input}

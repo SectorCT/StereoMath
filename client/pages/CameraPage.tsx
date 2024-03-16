@@ -164,6 +164,7 @@ export default function CameraPage({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>StereoMath</Text>
       <Camera
         style={StyleSheet.compose(styles.camera, {
           width: width,
@@ -213,6 +214,14 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     height: width * screenAspectRatio,
+  },
+  header: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "white",
+    backgroundColor: "black",
+    padding: 10,
   },
   camera: {
     width: width,
