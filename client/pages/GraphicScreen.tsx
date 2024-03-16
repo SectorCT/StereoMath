@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Text, View, StyleSheet, Animated, Easing } from "react-native";
 import BottomSheet from "../BottomSheet";
 import MainModel from "../MainModel";
@@ -36,13 +36,17 @@ export default function GraphicScreen({ navigation, route }: Props) {
 	const [solutionReady, setSoultionReady] = useState(false);
 	const [data, setData] = useState<figureData | null>(null);
 
-	requestSolution(problem).then(({ status, data }) => {
-		setSoultionReady(true);
-		if (status != "success") {
-			return;
-		}
-		setData(data);
-	})
+	useEffect(() => {
+		requestSolution(problem).then(({ status, data }) => {
+			setSoultionReady(true);
+			if (status != "success") {
+				return;
+			}
+			setData(data);
+		})
+	} , []);
+
+	
 
 	const [shownEdge, setShownEdge] = useState<string | null>(null);
 	const fadeAnim = useRef(new Animated.Value(0)).current; // Define the useRef hook here
