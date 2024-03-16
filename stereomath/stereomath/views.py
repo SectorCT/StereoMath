@@ -64,11 +64,9 @@ def solution(request):
         # ends here
     print(completion.choices[0].finish_reason)
     # Completion test
-    if(completion.choices[0].finish_reason == "stop"):
+    if(completion.choices[0].finish_reason == "stop" and check_c == 0 and check_s == 0):
         #c_message = json.loads(completion.choices[0].message.content)
         #s_message = json.loads(solution.choices[0].message.content)
-        if(check_c != 0 or check_s != 0):
-            return JsonResponse({'success': False, 'coordinates': 'Response not available', 'solution': 'Response not available'}, status=200)
         return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': 'Response not available', 'solution': 'Response not available'}, status=500)
