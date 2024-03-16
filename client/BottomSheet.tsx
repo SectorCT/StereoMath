@@ -34,7 +34,6 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
         sheetRef.flattenOffset();
 
         if (gesture.dy > 0) {
-          // dragging down
           if (gesture.dy <= THRESHOLD) {
             lastRef.current === MAX_Y ? autoSpring(MAX_Y) : autoSpring(MID_Y);
           } else if (lastRef.current === MAX_Y) {
@@ -43,7 +42,6 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
             autoSpring(MIN_Y);
           }
         } else {
-          // dragging up
           if (gesture.dy >= -THRESHOLD) {
             lastRef.current === MIN_Y ? autoSpring(MIN_Y) : autoSpring(MIN_Y);
           } else {
@@ -118,14 +116,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FF0000',
     width: '100%',
-    alignItems: 'center', // Center content horizontally
-    justifyContent: 'flex-end', // Align content to the bottom of the container
+    alignItems: 'center', 
+    justifyContent: 'flex-end', 
     display: 'flex',
     flexDirection: 'column',
   },
   contentView: {
-    ...StyleSheet.absoluteFillObject, // Fill the entire container
-    backgroundColor: 'transparent', // Set the background color to transparent
+    ...StyleSheet.absoluteFillObject, 
+    backgroundColor: 'transparent', 
   },
   scrollView: {
     alignItems: 'center',
@@ -140,7 +138,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
-    alignItems: 'center', // Center content horizontally
+    alignItems: 'center', 
   },
   dragbarContainer: {
     width: '100%',
