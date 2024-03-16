@@ -128,7 +128,6 @@ export default function CameraPage({ navigation, route }: Props) {
         const detectedText = responseJson.responses[0].fullTextAnnotation.text;
         console.log("Detected Text:", detectedText);
         setCapturedText(detectedText);
-        // Process the detected text as needed
       } else {
         console.log("No text detected");
       }
@@ -140,7 +139,6 @@ export default function CameraPage({ navigation, route }: Props) {
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({ base64: true });
-      // setCapturedPhoto(photo);
       recognizeTextFromImage(photo.base64);
     } else {
       console.error("Camera reference is not available.");
@@ -152,7 +150,6 @@ export default function CameraPage({ navigation, route }: Props) {
   };
 
   useEffect(() => {
-    // remove tabs and newlines from the text
     async function passToTextInput() {
       await setCapturedText(capturedText.replace(/[\t\n]/g, ""));
       navigation.navigate("TextInputPage", { problem: capturedText });
@@ -164,7 +161,6 @@ export default function CameraPage({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>StereoMath</Text>
       <Camera
         style={StyleSheet.compose(styles.camera, {
           width: width,
@@ -177,6 +173,9 @@ export default function CameraPage({ navigation, route }: Props) {
         zoom={0}
         onCameraReady={() => setIsCameraReady(true)}
       >
+        <View style={{ position: "absolute", top: 0, left: 0, width: width, height: "auto", alignItems: "center", justifyContent: "center" , paddingTop:40}}>
+          <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>StereoMath</Text>
+        </View>
         <View style={styles.buttonsContainer}>
           <Button
             text=""
