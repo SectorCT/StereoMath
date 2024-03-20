@@ -1,7 +1,13 @@
-{
+import 'dotenv/config';
+
+export default {
   "expo": {
     "name": "client",
     "slug": "client",
+    "extra": {
+      "GOOGLE_API_KEY": process.env.GOOGLE_API_KEY,
+      "API_URL": process.env.API_URL
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,9 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "android": {
-        "permissions": ["CAMERA"]
-      }
+      "permissions": ["CAMERA"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
