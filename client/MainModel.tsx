@@ -10,9 +10,6 @@ import { figureData } from './Types';
 
 
 
-
-
-
 function MainModel({animateEdge, data, centerCameraAroundShape}: 
 	{ 
 		animateEdge: (edge: string) => void
