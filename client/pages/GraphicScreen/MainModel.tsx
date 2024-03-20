@@ -44,6 +44,7 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 	return (
 
 		<CameraController shapeCenter={shapeCenter} centerCameraAroundShape={centerCameraAroundShape}> 
+			<Grid/>
 			<SceneContent data={data} selectedEdgeKey={selectedEdgeKey} setSelectedEdgeKey={setSelectedEdgeKey} animateEdge={animateEdge}/>
 		</CameraController>
 	);
