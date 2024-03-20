@@ -7,19 +7,19 @@ import {
 	Easing,
 	Dimensions,
 } from "react-native";
-import BottomSheet from "../BottomSheet";
-import MainModel from "../MainModel";
-import GraphicNavbar from "../GraphicNavbar";
+import BottomSheet from "../../BottomSheet";
+import MainModel from "./MainModel";
+import GraphicNavbar from "./GraphicNavbar";
 import { Image } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavStackParamList } from "../Navigation";
+import { NavStackParamList } from "../../Navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Suspense } from "react";
-import { figureData } from "../Types";
-import { requestSolution } from "../requests";
-import Button from "../Button";
+import { figureData } from "../../Types";
+import { requestSolution } from "../../requests";
+import Button from "../../Button";
 
 interface Props {
 	navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;

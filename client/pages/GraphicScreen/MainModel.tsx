@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, PanResponder, View, Dimensions} from 'react-native';
-import { Canvas, useThree, Euler as EulerType } from '@react-three/fiber';
 
 import { Quaternion, Vector3, Euler, Color, Camera } from 'three';
 
 import CameraController from './CameraController';
 
-import { figureData } from './Types';
+import { figureData } from '../../Types';
 
-
+import Grid from './Grid';
 
 function MainModel({animateEdge, data, centerCameraAroundShape}: 
 	{ 
@@ -62,18 +61,7 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 		<>
 			<ambientLight />
 			<pointLight position={[10, 10, 10]} intensity={2} />
-			<mesh position={[0, 0, 0]}>
-				<planeGeometry args={[50, 50, 50, 50]} />
-				<meshBasicMaterial color="#f9c74f" wireframe />
-			</mesh>
-			<mesh position={[0, 0, 0]} rotation={[1.5 * Math.PI, 0, 0] as EulerType}>
-				<planeGeometry args={[50, 50, 50, 50]} />
-				<meshBasicMaterial color="pink" wireframe />
-			</mesh>
-			<mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0] as EulerType}>
-				<planeGeometry args={[50, 50, 50, 50]} />
-				<meshBasicMaterial color="#80ffdb" wireframe />
-			</mesh>
+			
 			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 				let vertex = data.vertices[vertexName];
 				return <mesh key={vertexName}>{drawVertex(new Vector3(vertex[0], vertex[1], vertex[2] ))}</mesh>;
@@ -156,13 +144,6 @@ function drawVertex(vertex: Vector3) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		width: '100%',
-		backgroundColor: '#e9ecef',
-	},
-	header: {
-		fontSize: 30,
-	},
 });
 
 
