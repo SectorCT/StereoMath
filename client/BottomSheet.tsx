@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
-import { data } from './MainModel';
 import { FlatList } from 'react-native-gesture-handler';
+import { figureData } from './Types';
 
 const screenHeight = Dimensions.get('window').height;
 const sheetMaxHeight = screenHeight - 200;
@@ -13,7 +13,7 @@ const MIN_Y = 0;
 
 const THRESHOLD = 60;
 
-const BottomSheet = () => {
+const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [key: string]: number } }) => {
   const lastRef = useRef<number>(0);
   const sheetRef = useRef<Animated.Value>(new Animated.Value(0)).current;
 
@@ -34,7 +34,6 @@ const BottomSheet = () => {
         sheetRef.flattenOffset();
 
         if (gesture.dy > 0) {
-          // dragging down
           if (gesture.dy <= THRESHOLD) {
             lastRef.current === MAX_Y ? autoSpring(MAX_Y) : autoSpring(MID_Y);
           } else if (lastRef.current === MAX_Y) {
@@ -43,7 +42,6 @@ const BottomSheet = () => {
             autoSpring(MIN_Y);
           }
         } else {
-          // dragging up
           if (gesture.dy >= -THRESHOLD) {
             lastRef.current === MIN_Y ? autoSpring(MIN_Y) : autoSpring(MIN_Y);
           } else {
@@ -70,7 +68,6 @@ const BottomSheet = () => {
       extrapolate: 'clamp',
     }),
   };
-
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.sheetContainer, animatedStyles]} >
@@ -95,13 +92,13 @@ const BottomSheet = () => {
           </View>
           <Text style= {styles.header}>VALUES</Text>
           <ScrollView horizontal = {true} contentContainerStyle = {styles.valueContainer}>
-            {data.edges.map((item, index) => (
+            {data.edges?.map((item, index) => (
               <View style={styles.valueBox} key={index}>
                 <View style={styles.valueIndex}>
                   <Text style={styles.solutionIndexText}>{item[0] + item[1]}</Text>
                 </View>
                 <View style={styles.valueContent}>
-                  <Text style={styles.valueContentText}>17</Text>
+                  <Text style={styles.valueContentText}>{Math.round((edgesValues[item.join('')] + Number.EPSILON) * 100) / 100}</Text>
                 </View>
               </View>
             ))}
@@ -116,16 +113,17 @@ const BottomSheet = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#FF0000',
     width: '100%',
-    alignItems: 'center', // Center content horizontally
-    justifyContent: 'flex-end', // Align content to the bottom of the container
+    alignItems: 'center', 
+    justifyContent: 'flex-end', 
     display: 'flex',
     flexDirection: 'column',
   },
   contentView: {
-    ...StyleSheet.absoluteFillObject, // Fill the entire container
-    backgroundColor: 'transparent', // Set the background color to transparent
+    ...StyleSheet.absoluteFillObject, 
+    backgroundColor: 'transparent', 
   },
   scrollView: {
     alignItems: 'center',
@@ -140,7 +138,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 20,
-    alignItems: 'center', // Center content horizontally
+    alignItems: 'center', 
   },
   dragbarContainer: {
     width: '100%',

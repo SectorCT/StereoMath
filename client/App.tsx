@@ -1,13 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Camera from "./pages/CameraPage"
-import GraphicScreen from "./GraphicScreen"
+import React from 'react';
+
+import { NavigationContainer } from '@react-navigation/native';
+
+import NavStack from "./Navigation"
+
+
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']); 
+console.error= ()=>{};
+console.warn = ()=>{};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <GraphicScreen />
-    </View>
+      <NavigationContainer>
+        <NavStack />
+      </NavigationContainer>
   );
 }
 
