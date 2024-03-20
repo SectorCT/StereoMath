@@ -23,7 +23,9 @@ import { NavStackParamList } from "../Navigation";
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
-import { GOOGLE_API_KEY } from "../ENV";
+import Constants from 'expo-constants';
+const GOOGLE_API_KEY = Constants.expoConfig?.extra?.GOOGLE_API_KEY;
+console.log("GOOGLE_API_KEY", GOOGLE_API_KEY);
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
