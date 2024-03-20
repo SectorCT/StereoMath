@@ -116,7 +116,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
           style={styles.loading}
         >
           <Image
-            source={require("../assets/loading.png")}
+            source={require("../../assets/loading.png")}
             style={StyleSheet.compose(styles.image, {
               transform: [{ rotate: `${rotatedImageDeg}deg` }],
             })}
@@ -131,7 +131,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
         >
           <Image
             style={styles.image}
-            source={require("../assets/unableToSolve.png")}
+            source={require("../../assets/unableToSolve.png")}
           />
           <Text style={styles.waitingText}>Unable To Solve</Text>
           <Button

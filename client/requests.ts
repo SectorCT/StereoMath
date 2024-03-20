@@ -1,5 +1,8 @@
 import { figureData } from "./Types";
-import { API_URL } from "./ENV";
+
+import Constants from 'expo-constants';
+const API_URL = Constants.expoConfig?.extra?.API_URL;
+console.log("API_URL", API_URL);
 
 type resDataType = {
     coordinates: {
