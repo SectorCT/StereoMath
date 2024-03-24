@@ -2,12 +2,12 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import CameraPage from "./pages/CameraPage";
-import GraphicScreen from "./pages/graphicScreen/GraphicScreen";
-import TextInputPage from "./pages/TextInputPage";
+import CameraPage from "../pages/CameraPage";
+import GraphicScreen from "../pages/graphicScreen/GraphicScreen";
+import TextInputPage from "../pages/TextInputPage";
 import { View, Text } from "react-native";
 
-import { figureData } from "./Types";
+import { figureData } from "../Types";
 
 export type NavStackParamList = {
 	GraphicScreen: {

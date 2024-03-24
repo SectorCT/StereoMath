@@ -15,17 +15,15 @@ import {
   CameraCapturedPicture,
 } from "expo-camera";
 
-import Button from "../Button";
+import Button from "../components/Button";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavStackParamList } from "../Navigation";
+import { NavStackParamList } from "../components/Navigation";
 
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
-import Constants from 'expo-constants';
-const GOOGLE_API_KEY = Constants.expoConfig?.extra?.GOOGLE_API_KEY;
-console.log("GOOGLE_API_KEY", GOOGLE_API_KEY);
+import recognizeTextFromImage from "../components/textRecognition";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -83,46 +81,12 @@ export default function CameraPage({ navigation, route }: Props) {
     })();
   }, []);
 
-  const recognizeTextFromImage = async (base64Image: string | undefined) => {
-    const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`;
-
-    const requestPayload = {
-      requests: [
-        {
-          image: {
-            content: base64Image,
-          },
-          features: [{ type: "TEXT_DETECTION" }],
-        },
-      ],
-    };
-
-    try {
-      const response = await fetch(apiURL, {
-        method: "POST",
-        body: JSON.stringify(requestPayload),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const responseJson = await response.json();
-      if (responseJson.responses[0].fullTextAnnotation) {
-        const detectedText = responseJson.responses[0].fullTextAnnotation.text;
-        console.log("Detected Text:", detectedText);
-        setCapturedText(detectedText);
-      } else {
-        console.log("No text detected");
-      }
-    } catch (error) {
-      console.error("Error during text recognition:", error);
-    }
-  };
+  
 
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({ base64: true });
-      recognizeTextFromImage(photo.base64);
+      setCapturedText(await recognizeTextFromImage(photo.base64));
     } else {
       console.error("Camera reference is not available.");
     }
@@ -156,9 +120,7 @@ export default function CameraPage({ navigation, route }: Props) {
         zoom={0}
         onCameraReady={() => setIsCameraReady(true)}
       >
-        <View style={{ position: "absolute", top: 0, left: 0, width: width, height: "auto", alignItems: "center", justifyContent: "center" , paddingTop:40}}>
-          {/* <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>StereoMath</Text> */}
-        </View>
+        <Text style={styles.header}>Scan your problem</Text>
         <View style={styles.buttonsContainer}>
           <Button
             text=""
@@ -203,7 +165,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     backgroundColor: "black",
-    padding: 10,
+    position: "absolute",
+    top: 40,
+    width: Dimensions.get("screen").width
   },
   camera: {
     width: width,
@@ -219,5 +183,5 @@ const styles = StyleSheet.create({
   preview: {
     flex: 1,
     resizeMode: "cover",
-  },
+  }
 });
