@@ -108,6 +108,7 @@ export default function CameraPage({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>StereoMath</Text>
       <Camera
         style={StyleSheet.compose(styles.camera, {
           width: width,
@@ -120,7 +121,7 @@ export default function CameraPage({ navigation, route }: Props) {
         zoom={0}
         onCameraReady={() => setIsCameraReady(true)}
       >
-        <Text style={styles.header}>Scan your problem</Text>
+        
         <View style={styles.buttonsContainer}>
           <Button
             text=""
@@ -160,14 +161,18 @@ const styles = StyleSheet.create({
     height: width * screenAspectRatio,
   },
   header: {
-    textAlign: "center",
     fontSize: 30,
+    flexDirection: "row",
+    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
     fontWeight: "bold",
     color: "white",
-    backgroundColor: "black",
+    // backgroundColor: "00000000",
     position: "absolute",
     top: 40,
-    width: Dimensions.get("screen").width
+    width: Dimensions.get("window").width,
+    zIndex: 100,
   },
   camera: {
     width: width,
