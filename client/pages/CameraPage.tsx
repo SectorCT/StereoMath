@@ -36,15 +36,15 @@ interface Props {
 export default function CameraPage({ navigation, route }: Props) {
   const cameraRef = useRef<Camera>(null);
   const [hasPermission, setHasPermission] = useState(false);
-  const [cameraRatio, setCameraRatio] = useState("20:9"); // Default to 16:9
-  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9); // Default to 16:9
+  const [cameraRatio, setCameraRatio] = useState("20:9"); // Default to 20:9
+  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9); // Default to 20:9
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
   const isFocused = useIsFocused();
 
   const prepareRatio = async () => {
-    let desiredRatio = "16:9";
+    let desiredRatio = "20:9";
     if (Platform.OS === "android" && cameraRef.current) {
       const ratios = await cameraRef.current.getSupportedRatiosAsync();
       let bestRatio = desiredRatio;
@@ -63,6 +63,8 @@ export default function CameraPage({ navigation, route }: Props) {
       const parts = bestRatio.split(":");
       const ratioWidth = parseInt(parts[0], 10);
       const ratioHeight = parseInt(parts[1], 10);
+      console.log("Supported ratios: ", ratios);
+      console.log("Best Ratio: ", bestRatio);
       setCameraRatio(bestRatio);
       setCameraRatioNumber(ratioWidth / ratioHeight);
     }
@@ -73,10 +75,10 @@ export default function CameraPage({ navigation, route }: Props) {
   }
 
   useEffect(() => {
-    if (isCameraReady) {
+    if (isCameraReady && hasPermission) {
       prepareRatio();
     }
-  }, [isCameraReady]);
+  }, [isCameraReady, hasPermission]);
 
   useEffect(() => {
     (async () => {
@@ -162,8 +164,10 @@ export default function CameraPage({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: "flex-end",
     width: width,
     height: width * screenAspectRatio,
+    backgroundColor: "black",
   },
   header: {
     fontSize: 30,
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "00000000",
     position: "absolute",
     top: 40,
-    width: Dimensions.get("window").width,
+    width: Dimensions.get("screen").width,
     zIndex: 100,
   },
   camera: {
