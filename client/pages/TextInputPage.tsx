@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavStackParamList } from "../Navigation";
-import HamburgerMenu from "../HamburgerMenu";
+import { NavStackParamList } from "../components/Navigation";
+import HamburgerMenu from "../components/HamburgerMenu";
 
-import Button from "../Button";
+import Button from "../components/Button";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "TextInputPage">;

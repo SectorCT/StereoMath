@@ -1,112 +1,140 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-	Text,
-	View,
-	StyleSheet,
-	Animated,
-	Easing,
-	Dimensions,
+  Text,
+  View,
+  StyleSheet,
+  Animated,
+  Easing,
+  Dimensions,
 } from "react-native";
-import BottomSheet from "../../BottomSheet";
+import BottomSheet from "../../components/BottomSheet";
 import MainModel from "./MainModel";
 import GraphicNavbar from "./GraphicNavbar";
 import { Image } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavStackParamList } from "../../Navigation";
+import { NavStackParamList } from "../../components/Navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Suspense } from "react";
 import { figureData } from "../../Types";
 import { requestSolution } from "../../requests";
-import Button from "../../Button";
+import Button from "../../components/Button";
+import Constants from 'expo-constants';
 
 interface Props {
-	navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
-	route: { params: { problem: string } };
+  navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
+  route: { params: { problem: string } };
 }
 
 export default function GraphicScreen({ navigation, route }: Props) {
-	if (route.params === undefined) {
-		return (
-			<View style={styles.container}>
-				<Text>Error: no problem provided</Text>
-			</View>
-		);
-	}
-	const problem = route.params.problem;
+  if (route.params === undefined) {
+    return (
+      <View style={styles.container}>
+        <Text>Error: no problem provided</Text>
+      </View>
+    );
+  }
+  const problem = route.params.problem;
 
-	useEffect(() => {
-		requestSolution(problem).then(({ status, data }) => {
-			setSoultionReady(true);
-			if (status != "success") {
-				return;
-			}
-			setData(data);
-		});
-	}, []);
+  useEffect(() => {
+    const devMode = Constants.expoConfig?.extra?.DEVMODE == "true";
 
-	const [solutionReady, setSoultionReady] = useState(false);
-	const [data, setData] = useState<figureData | null>(null);
-	const [rotatedImageDeg, setRotatedImageDeg] = useState(0);
+    if (!devMode) {
+      requestSolution(problem).then(({ status, data }) => {
+        setSoultionReady(true);
+        if (status != "success") {
+          return;
+        }
+        setData(data);
+      });
+    } else {
+      setData({
+        "vertices": {
+          "A": [0, 0, 0],
+          "B": [3, 0, 0],
+          "C": [1.5, 2.598, 0],
+          "Q": [1.5, 0.866, 4],
+          "H": [1.5, 0.866, 0]
+        },
+        "edges": [
+          ["A", "B"],
+          ["B", "C"],
+          ["C", "A"],
+          ["A", "Q"],
+          ["B", "Q"],
+          ["C", "Q"],
+          ["A", "H"],
+          ["B", "H"],
+          ["C", "H"]
+        ],
+        "solution": []
+      });
+      setSoultionReady(true);
+    }
+  }, []);
 
-	const [shownEdge, setShownEdge] = useState<string | null>(null);
-	const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [solutionReady, setSoultionReady] = useState(false);
+  const [data, setData] = useState<figureData | null>(null);
+  const [rotatedImageDeg, setRotatedImageDeg] = useState(0);
 
-	const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(false);
+  const [shownEdge, setShownEdge] = useState<string | null>(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-	function toggleCenterCameraAroundShape() {
-		setCenterCameraAroundShape(!centerCameraAroundShape);
-	}
+  const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(false);
 
-	const [edgesValues, setEdgesValues] = useState<{ [key: string]: number }>({});
+  function toggleCenterCameraAroundShape() {
+    setCenterCameraAroundShape(!centerCameraAroundShape);
+  }
 
-	useEffect(() => {
-		const calculateEdgeLengths = () => {
-			const lengths: { [key: string]: number } = {};
-			data?.edges.forEach(edge => {
-				const edgeKey = edge.join('');
-				lengths[edgeKey] = calculateEdgeLength(edge);
-			});
-			setEdgesValues(lengths);
-		};
+  const [edgesValues, setEdgesValues] = useState<{ [key: string]: number }>({});
 
-		calculateEdgeLengths();
-	}, [data?.edges]);
+  useEffect(() => {
+    const calculateEdgeLengths = () => {
+      const lengths: { [key: string]: number } = {};
+      data?.edges.forEach(edge => {
+        const edgeKey = edge.join('');
+        lengths[edgeKey] = calculateEdgeLength(edge);
+      });
+      setEdgesValues(lengths);
+    };
+
+    calculateEdgeLengths();
+  }, [data?.edges]);
 
 
-	const animateEdge = (edge: string) => {
-		setShownEdge(edge);
-		fadeAnim.setValue(1);
-		Animated.timing(fadeAnim, {
-			toValue: 0,
-			duration: 1000,
-			easing: Easing.linear,
-			useNativeDriver: true,
-		}).start();
-	};
+  const animateEdge = (edge: string) => {
+    setShownEdge(edge);
+    fadeAnim.setValue(1);
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+  };
 
-	const calculateEdgeLength = (edge: string[]) => {
-		let vertex1 = edge[0];
-		let vertex2 = edge[1];
-		let vertex1Coords = [0, 0, 0];
-		let vertex2Coords = [0, 0, 0];
-		for (const [key, value] of Object.entries(data?.vertices ?? {})) {
-			if (vertex1 == key) {
-				vertex1Coords = value;
-			}
-		}
-		for (const [key, value] of Object.entries(data?.vertices ?? {})) {
-			if (vertex2 == key) {
-				vertex2Coords = value;
-			}
-		}
-		return Math.sqrt(
-			Math.pow(vertex1Coords[0] - vertex2Coords[0], 2) +
-			Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
-			Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
-		);
-	};
+  const calculateEdgeLength = (edge: string[]) => {
+    let vertex1 = edge[0];
+    let vertex2 = edge[1];
+    let vertex1Coords = [0, 0, 0];
+    let vertex2Coords = [0, 0, 0];
+    for (const [key, value] of Object.entries(data?.vertices ?? {})) {
+      if (vertex1 == key) {
+        vertex1Coords = value;
+      }
+    }
+    for (const [key, value] of Object.entries(data?.vertices ?? {})) {
+      if (vertex2 == key) {
+        vertex2Coords = value;
+      }
+    }
+    return Math.sqrt(
+      Math.pow(vertex1Coords[0] - vertex2Coords[0], 2) +
+      Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
+      Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
+    );
+  };
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
