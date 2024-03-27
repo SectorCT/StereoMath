@@ -8,6 +8,9 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
+
+import { useIsFocused } from '@react-navigation/native';
+
 import {
   Camera,
   CameraType,
@@ -40,6 +43,7 @@ export default function CameraPage({ navigation, route }: Props) {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
+  const isFocused = useIsFocused();
 
   const prepareRatio = async () => {
     let desiredRatio = "16:9";
@@ -144,7 +148,7 @@ export default function CameraPage({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
-      <Camera
+      {isFocused && <Camera
         style={StyleSheet.compose(styles.camera, {
           width: width,
           height: width * cameraRatioNumber,
@@ -188,6 +192,7 @@ export default function CameraPage({ navigation, route }: Props) {
           />
         </View>
       </Camera>
+}
     </View>
   );
 }
