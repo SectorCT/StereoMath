@@ -113,6 +113,7 @@ const BottomSheet = ({data, edgesValues} : {data : figureData,edgesValues: { [ke
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: 1,
     flex: 1,
     backgroundColor: '#FF0000',
     width: '100%',
