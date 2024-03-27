@@ -6,7 +6,8 @@ export default {
     "slug": "client",
     "extra": {
       "GOOGLE_API_KEY": process.env.GOOGLE_API_KEY,
-      "API_URL": process.env.API_URL
+      "API_URL": process.env.API_URL,
+      "DEVMODE": process.env.DEVMODE
     },
     "version": "1.0.0",
     "orientation": "portrait",
