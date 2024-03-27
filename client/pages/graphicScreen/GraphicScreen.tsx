@@ -7,19 +7,19 @@ import {
 	Easing,
 	Dimensions,
 } from "react-native";
-import BottomSheet from "../BottomSheet";
-import MainModel from "../MainModel";
-import GraphicNavbar from "../GraphicNavbar";
+import BottomSheet from "../../components/BottomSheet";
+import MainModel from "./MainModel";
+import GraphicNavbar from "./GraphicNavbar";
 import { Image } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavStackParamList } from "../Navigation";
+import { NavStackParamList } from "../../components/Navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Suspense } from "react";
-import { figureData } from "../Types";
-import { requestSolution } from "../requests";
-import Button from "../Button";
+import { figureData } from "../../Types";
+import { requestSolution } from "../../requests";
+import Button from "../../components/Button";
 
 interface Props {
 	navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -116,7 +116,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
           style={styles.loading}
         >
           <Image
-            source={require("../assets/loading.png")}
+            source={require("../../assets/loading.png")}
             style={StyleSheet.compose(styles.image, {
               transform: [{ rotate: `${rotatedImageDeg}deg` }],
             })}
@@ -131,7 +131,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
         >
           <Image
             style={styles.image}
-            source={require("../assets/unableToSolve.png")}
+            source={require("../../assets/unableToSolve.png")}
           />
           <Text style={styles.waitingText}>Unable To Solve</Text>
           <Button
@@ -165,7 +165,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
             ]}
           >
             <Text style={styles.animationText}>
-              {shownEdge} = {edgesValues[shownEdge == null ? 0 : shownEdge]}{" "}
+              {shownEdge} = {Math.round(((edgesValues[shownEdge == null ? 0 : shownEdge]) + Number.EPSILON) * 100) / 100}{" "}
             </Text>
           </Animated.View>
         </View>

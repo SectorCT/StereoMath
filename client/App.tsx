@@ -3,7 +3,7 @@ import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 
-import NavStack from "./Navigation"
+import NavStack from "./components/Navigation"
 
 
 import { LogBox } from 'react-native';
