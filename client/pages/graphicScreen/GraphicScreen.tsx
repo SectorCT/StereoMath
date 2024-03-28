@@ -51,6 +51,11 @@ export default function GraphicScreen({ navigation, route }: Props) {
     } else {
       setData({
         "vertices": {
+          // "A": [0, 0, 0],
+          // "B": [3, 0, 0],
+          // "C": [1.5, 0, 2.598],
+          // "Q": [1.5, 4, 0.866],
+          // "H": [1.5, 0, 0.866]
           "A": [0, 0, 0],
           "B": [3, 0, 0],
           "C": [1.5, 2.598, 0],

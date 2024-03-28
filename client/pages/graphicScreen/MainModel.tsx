@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, Dimensions} from 'react-native';
+import { StyleSheet, Text, Dimensions } from 'react-native';
 
-import { Quaternion, Vector3,  Color, Camera, PerspectiveCamera } from 'three';
+import { Quaternion, Vector3, Color, Camera, PerspectiveCamera } from 'three';
 
 import CameraController from './CameraController';
 
@@ -9,12 +9,12 @@ import { figureData } from '../../Types';
 
 import Grid from './Grid';
 
-function MainModel({animateEdge, data, centerCameraAroundShape}: 
-	{ 
+function MainModel({ animateEdge, data, centerCameraAroundShape }:
+	{
 		animateEdge: (edge: string) => void
 		data: figureData
 		centerCameraAroundShape: boolean
-	}){
+	}) {
 	const [selectedEdgeKey, setSelectedEdgeKey] = useState<string | null>(null);
 	const [shapeCenter, setShapeCenter] = useState(new Vector3(0, 0, 0));
 
@@ -42,9 +42,9 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 	}, [data]);
 
 	const cameraRef = useRef<Camera>();
-	const updateCameraRef = (newCamera:Camera) => {
-        cameraRef.current = newCamera;
-    };
+	const updateCameraRef = (newCamera: Camera) => {
+		cameraRef.current = newCamera;
+	};
 
 	const [cameraPosition, setCameraPosition] = useState<Vector3>(new Vector3(1, 1, 1));
 	const [cameraRotation, setCameraRotation] = useState<Vector3>(new Vector3(0, 0, 0));
@@ -54,91 +54,86 @@ function MainModel({animateEdge, data, centerCameraAroundShape}:
 		setCameraRotation(cameraRotation);
 	}
 
-
-	const calculateFontSize = (vertexPosition: Vector3) => {
-        if (!cameraRef.current) return 40; 
-
-        const distance = vertexPosition.distanceTo(cameraRef.current.position);
-
-        const maxFontSize = 40;
-        const minFontSize = 10;
-        const maxDistance = 10;
-        const minDistance = 50; 
-
-        return Math.max(minFontSize, maxFontSize - ((maxFontSize - minFontSize) * Math.min(distance, minDistance) / minDistance));
-    };
-
 	return (
 		<>
-		{
-			data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
-				const vertexPosition = new Vector3(...data.vertices[vertexName]);
+			{
+				data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
+					const vertexPosition = new Vector3(...data.vertices[vertexName]);
 
-				if(!cameraRef.current) return null;
-				const currentCamera = cameraRef.current as unknown as PerspectiveCamera;
-				const tempCamera = new PerspectiveCamera(
-					currentCamera.fov,
-					currentCamera.aspect,
-					currentCamera.near,
-					currentCamera.far
-				);
-				tempCamera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-				tempCamera.rotation.set(cameraRotation.x, cameraRotation.y, cameraRotation.z);
+					if (!cameraRef.current) return null;
+					const currentCamera = cameraRef.current as unknown as PerspectiveCamera;
+					const tempCamera = new PerspectiveCamera(
+						currentCamera.fov,
+						currentCamera.aspect,
+						currentCamera.near,
+						currentCamera.far
+					);
+					tempCamera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+					tempCamera.rotation.set(cameraRotation.x, cameraRotation.y, cameraRotation.z);
 
-				tempCamera.updateMatrixWorld();
-    			tempCamera.updateProjectionMatrix();
+					tempCamera.updateMatrixWorld();
+					tempCamera.updateProjectionMatrix();
 
-				const textPositionNDC = vertexPosition.project(tempCamera);
-				
+					const vertexPositionNDC = vertexPosition.project(tempCamera);
+					const shapeCenterNDC = shapeCenter.clone().project(tempCamera);
+					
+					const textPosition = {
+						x: Math.round((vertexPositionNDC.x + 1) * Dimensions.get('screen').width / 2),
+						y: Math.round((-vertexPositionNDC.y + 1) * Dimensions.get('screen').height / 2)
+					};
+					
+					// console.log(`${vertexName} - ${vertexPositionNDC.toArray()}, ${vertexPositionNDC.toArray()}`);
 
-				const textPosition = {
-					x: Math.round((textPositionNDC.x + 1) * Dimensions.get('screen').width / 2),
-					y: Math.round((-textPositionNDC.y + 1) * Dimensions.get('screen').height / 2)
-				};
-				return <Text style={
-					StyleSheet.compose(styles.text, {
-						top:textPosition.y, 
-						left:textPosition.x,
-						fontSize: calculateFontSize(vertexPosition)
-					})
-				}>
-					{vertexName}
-				</Text>;
-			})
-		}
-		<CameraController 
-			shapeCenter={shapeCenter} 
-			centerCameraAroundShape={centerCameraAroundShape} 
-			updateCameraRef={updateCameraRef}
-			updateCameraPosition={updateCameraPosition}
-		> 
-			<Grid/>
-			<SceneContent 
-				data={data} 
-				selectedEdgeKey={selectedEdgeKey} 
-				setSelectedEdgeKey={setSelectedEdgeKey} 
-				animateEdge={animateEdge}/>
-		</CameraController>
+					let xOffsetBool = vertexPositionNDC.x < shapeCenterNDC.x ? true : false;
+					xOffsetBool = (Math.abs(vertexPositionNDC.x - shapeCenterNDC.x) > 0.05) ? xOffsetBool : false;
+					let xOffset = xOffsetBool ? -30 : 10;
+
+					let yOffset = (vertexPositionNDC.y < shapeCenterNDC.y) ? 10 : -30
+					yOffset = (Math.abs(vertexPositionNDC.y - shapeCenterNDC.y) > 0.05)  ? yOffset : 10;
+
+					return <Text style={
+						StyleSheet.compose(styles.text, {
+							top: textPosition.y + yOffset,
+							left: textPosition.x + xOffset,
+						})
+					}>
+						{vertexName}
+					</Text>;
+				})
+			}
+			<CameraController
+				shapeCenter={shapeCenter}
+				centerCameraAroundShape={centerCameraAroundShape}
+				updateCameraRef={updateCameraRef}
+				updateCameraPosition={updateCameraPosition}
+			>
+				<Grid />
+				<SceneContent
+					data={data}
+					selectedEdgeKey={selectedEdgeKey}
+					setSelectedEdgeKey={setSelectedEdgeKey}
+					animateEdge={animateEdge} />
+			</CameraController>
 		</>
 	);
 }
 
 
-  function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge, data}: 
-	{ 
+function SceneContent({ selectedEdgeKey, setSelectedEdgeKey, animateEdge, data }:
+	{
 		data: figureData,
-		selectedEdgeKey: string | null, 
-		setSelectedEdgeKey: (key: string | null) => void, 
+		selectedEdgeKey: string | null,
+		setSelectedEdgeKey: (key: string | null) => void,
 		animateEdge: (edge: string) => void
 	}) {
 	return (
 		<>
 			<ambientLight />
 			<pointLight position={[10, 10, 10]} intensity={2} />
-			
+
 			{data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 				let vertex = data.vertices[vertexName];
-				return <mesh key={vertexName}>{drawVertex(new Vector3(vertex[0], vertex[1], vertex[2] ))}</mesh>;
+				return <mesh key={vertexName}>{drawVertex(new Vector3(vertex[0], vertex[1], vertex[2]))}</mesh>;
 			})}
 
 			{data.edges && data.edges.map((edge, index) => {
@@ -171,7 +166,7 @@ function calculate3DDistance(vertex1: Vector3, vertex2: Vector3): number {
 	return Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
 }
 
-function connectVertices(vertex1: Vector3, vertex2: Vector3, key: string, key2: string, nameOfEdge: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void){
+function connectVertices(vertex1: Vector3, vertex2: Vector3, key: string, key2: string, nameOfEdge: string, selectedEdgeKey: string | null, setSelectedEdgeKey: (key: string | null) => void, animateEdge: (edge: string) => void) {
 	let distance = calculate3DDistance(vertex1, vertex2);
 
 	let midX = (vertex1.x + vertex2.x) / 2;
@@ -195,35 +190,41 @@ function connectVertices(vertex1: Vector3, vertex2: Vector3, key: string, key2: 
 		<>
 			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key}>
 				<cylinderGeometry args={[0.05, 0.05, distance, 32]} />
-				<meshStandardMaterial color = {key == selectedEdgeKey ? selectedColor : colorEdge} />
+				<meshStandardMaterial color={key == selectedEdgeKey ? selectedColor : colorEdge} />
 			</mesh>
-			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => {setSelectedEdgeKey(key) ;animateEdge(nameOfEdge)}}>
+			<mesh position={[midX, midY, midZ]} quaternion={quaternion} key={key2} onClick={() => { setSelectedEdgeKey(key); animateEdge(nameOfEdge) }}>
 				<cylinderGeometry args={[0.15, 0.15, distance, 32]} />
-				<meshStandardMaterial  opacity={0} transparent={true} /> 
+				<meshStandardMaterial opacity={0} transparent={true} />
 			</mesh>
 		</>
 	);
 }
 
 function drawVertex(vertex: Vector3) {
-    return (
-        <>
-            <mesh position={[vertex.x, vertex.y, vertex.z]}>
-                <sphereGeometry args={[0.1, 16, 16]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-        </>
-    );
+	return (
+		<>
+			<mesh position={[vertex.x, vertex.y, vertex.z]}>
+				<sphereGeometry args={[0.1, 16, 16]} />
+				<meshStandardMaterial color="black" />
+			</mesh>
+		</>
+	);
 }
 
 const styles = StyleSheet.create({
 	text: {
 		color: 'bbbbbb',
-		fontSize: 40,
 		position: 'absolute',
 		top: 0,
 		left: 0,
-		zIndex: 2,
+		zIndex: 1,
+		width: "auto",
+		height: "auto",
+		margin: 0,
+		padding: 0,
+		lineHeight: 30,
+		backgroundColor: 'transparent',
+		fontSize: 30
 	}
 });
 
