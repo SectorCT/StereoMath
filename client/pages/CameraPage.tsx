@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "00000000",
     position: "absolute",
     top: 40,
-    width: Dimensions.get("screen").width,
+    width: Dimensions.get("window").width,
     zIndex: 100,
   },
   camera: {
