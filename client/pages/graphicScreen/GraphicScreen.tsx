@@ -51,17 +51,17 @@ export default function GraphicScreen({ navigation, route }: Props) {
     } else {
       setData({
         "vertices": {
-          "A": [0, 0, 0],
-          "B": [3, 0, 0],
-          "C": [1.5, 0, 2.598],
-          "Q": [1.5, 4, 0.866],
-          "H": [1.5, 0, 0.866] 
-          // flipped on the z
           // "A": [0, 0, 0],
           // "B": [3, 0, 0],
-          // "C": [1.5, 2.598, 0],
-          // "Q": [1.5, 0.866, 4],
-          // "H": [1.5, 0.866, 0]
+          // "C": [1.5, 0, 2.598],
+          // "Q": [1.5, 4, 0.866],
+          // "H": [1.5, 0, 0.866] 
+          // flipped on the z
+          "A": [0, 0, 0],
+          "B": [3, 0, 0],
+          "C": [1.5, 2.598, 0],
+          "Q": [1.5, 0.866, 4],
+          "H": [1.5, 0.866, 0]
         },
         "edges": [
           ["A", "B"],
@@ -93,7 +93,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
   const [shownEdge, setShownEdge] = useState<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(false);
+  const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(true);
 
   function toggleCenterCameraAroundShape() {
     setCenterCameraAroundShape(!centerCameraAroundShape);
