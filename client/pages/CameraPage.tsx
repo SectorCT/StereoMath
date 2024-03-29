@@ -3,18 +3,12 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   Dimensions,
-  Platform,
-  TouchableOpacity,
+  Image
 } from "react-native";
 
-import { useIsFocused } from '@react-navigation/native';
-
 import {
-  Camera,
-  CameraType,
-  FlashMode,
+  Camera as CameraType,
   CameraCapturedPicture,
 } from "expo-camera";
 
@@ -22,11 +16,13 @@ import Button from "../components/Button";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
+import Camera from "./Camera";
 
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
 import recognizeTextFromImage from "../components/textRecognition";
+import { useIsFocused } from "@react-navigation/native";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -34,73 +30,18 @@ interface Props {
 }
 
 export default function CameraPage({ navigation, route }: Props) {
-  const cameraRef = useRef<Camera>(null);
-  const [hasPermission, setHasPermission] = useState(false);
-  const [cameraRatio, setCameraRatio] = useState("20:9"); // Default to 20:9
-  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9); // Default to 20:9
-  const [isCameraReady, setIsCameraReady] = useState(false);
+  const cameraRef = useRef<CameraType>(null);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
   const isFocused = useIsFocused();
 
-  const prepareRatio = async () => {
-    let desiredRatio = "20:9";
-    if (Platform.OS === "android" && cameraRef.current) {
-      const ratios = await cameraRef.current.getSupportedRatiosAsync();
-      let bestRatio = desiredRatio;
-      let minDiff = Number.MAX_VALUE;
-      for (const ratio of ratios) {
-        const parts = ratio.split(":");
-        const ratioWidth = parseInt(parts[0], 10);
-        const ratioHeight = parseInt(parts[1], 10);
-        const aspectRatio = ratioWidth / ratioHeight;
-        const diff = Math.abs(aspectRatio - screenAspectRatio);
-        if (diff < minDiff) {
-          minDiff = diff;
-          bestRatio = ratio;
-        }
-      }
-      const parts = bestRatio.split(":");
-      const ratioWidth = parseInt(parts[0], 10);
-      const ratioHeight = parseInt(parts[1], 10);
-      console.log("Supported ratios: ", ratios);
-      console.log("Best Ratio: ", bestRatio);
-      setCameraRatio(bestRatio);
-      setCameraRatioNumber(ratioWidth / ratioHeight);
-    }
-  };
-
-  function toggleFlash() {
-    setFlashState(!flashState);
-  }
+  const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
 
   useEffect(() => {
-    if (isCameraReady && hasPermission) {
-      prepareRatio();
-    }
-  }, [isCameraReady, hasPermission]);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  
-
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({ base64: true });
-      setCapturedText(await recognizeTextFromImage(photo.base64));
-    } else {
-      console.error("Camera reference is not available.");
-    }
-  };
-
-  const handleCapturePress = () => {
-    takePicture();
-  };
+    setPhoto(null);
+    setCapturedText("");
+    setFlashState(false);
+  }, [isFocused]);
 
   useEffect(() => {
     async function passToTextInput() {
@@ -112,59 +53,74 @@ export default function CameraPage({ navigation, route }: Props) {
     }
   }, [capturedText]);
 
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync({ base64: true });
+      setPhoto(photo);
+      const text = await recognizeTextFromImage(photo.base64);
+      if (text) {
+        setCapturedText(text);
+      }else{
+        setPhoto(null);
+      }
+    } else {
+      console.error("Camera reference is not available.");
+    }
+  };
+
+  const handleCapturePress = () => {
+    takePicture();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>StereoMath</Text>
-      {isFocused && <Camera
-        style={StyleSheet.compose(styles.camera, {
-          width: width,
-          height: width * cameraRatioNumber,
-        })}
-        type={CameraType.back}
-        ratio={cameraRatio}
-        ref={cameraRef}
-        flashMode={flashState ? FlashMode.torch : FlashMode.off}
-        zoom={0}
-        onCameraReady={() => setIsCameraReady(true)}
-      >
-        
-        <View style={styles.buttonsContainer}>
-          <Button
-            text=""
-            size={40}
-            onPress={() => {
-              navigation.navigate("TextInputPage", { problem: "" });
-            }}
-            icon="keyboard"
-            color="white"
-            stylesProp={{ paddingBottom: 40 }}
-          />
-          <Button
-            text=""
-            size={70}
-            onPress={handleCapturePress}
-            icon="circle"
-            color="red"
-            stylesProp={{ paddingBottom: 40 }}
-          />
-          <Button
-            text=""
-            size={40}
-            onPress={toggleFlash}
-            icon={flashState ? "flash" : "flash-off"}
-            color="white"
-            stylesProp={{ paddingBottom: 40 }}
-          />
-        </View>
-      </Camera>
-}
+      {!photo ? <Camera
+        cameraRef={cameraRef}
+        flashState={flashState}
+      /> :
+      <View style={styles.preview}>
+        <Image
+          source={{ uri: photo.uri }}
+          style={styles.preview}
+        />
+      </View>
+    
+      }
+      <View style={styles.buttonsContainer}>
+        <Button
+          text=""
+          size={40}
+          onPress={() => {
+            navigation.navigate("TextInputPage", { problem: "" });
+          }}
+          icon="keyboard"
+          color="white"
+          stylesProp={{ paddingBottom: 40 }}
+        />
+        <Button
+          text=""
+          size={70}
+          onPress={handleCapturePress}
+          icon="circle"
+          color="red"
+          stylesProp={{ paddingBottom: 40 }}
+        />
+        <Button
+          text=""
+          size={40}
+          onPress={() => setFlashState(!flashState)}
+          icon={flashState ? "flash" : "flash-off"}
+          color="white"
+          stylesProp={{ paddingBottom: 40 }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "flex-end",
     width: width,
     height: width * screenAspectRatio,
     backgroundColor: "black",
@@ -177,7 +133,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     fontWeight: "bold",
     color: "white",
-    // backgroundColor: "00000000",
     position: "absolute",
     top: 40,
     width: Dimensions.get("window").width,
@@ -189,6 +144,10 @@ const styles = StyleSheet.create({
     flexDirection: "column-reverse",
   },
   buttonsContainer: {
+    zIndex: 10,
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
