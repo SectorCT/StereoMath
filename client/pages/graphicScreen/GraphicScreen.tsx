@@ -18,7 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import { Suspense } from "react";
 import { figureData } from "../../Types";
-import { requestSolution } from "../../requests";
+import { requestSolution } from "../../utils/requests";
 import Button from "../../components/Button";
 import Constants from 'expo-constants';
 
@@ -51,16 +51,17 @@ export default function GraphicScreen({ navigation, route }: Props) {
     } else {
       setData({
         "vertices": {
-          // "A": [0, 0, 0],
-          // "B": [3, 0, 0],
-          // "C": [1.5, 0, 2.598],
-          // "Q": [1.5, 4, 0.866],
-          // "H": [1.5, 0, 0.866]
           "A": [0, 0, 0],
           "B": [3, 0, 0],
-          "C": [1.5, 2.598, 0],
-          "Q": [1.5, 0.866, 4],
-          "H": [1.5, 0.866, 0]
+          "C": [1.5, 0, 2.598],
+          "Q": [1.5, 4, 0.866],
+          "H": [1.5, 0, 0.866] 
+          // flipped on the z
+          // "A": [0, 0, 0],
+          // "B": [3, 0, 0],
+          // "C": [1.5, 2.598, 0],
+          // "Q": [1.5, 0.866, 4],
+          // "H": [1.5, 0.866, 0]
         },
         "edges": [
           ["A", "B"],
@@ -73,7 +74,13 @@ export default function GraphicScreen({ navigation, route }: Props) {
           ["B", "H"],
           ["C", "H"]
         ],
-        "solution": []
+        "solution": [
+          "step 1",
+          "step 2",
+          "step 3",
+          "step 4",
+          "step 5",
+        ]
       });
       setSoultionReady(true);
     }

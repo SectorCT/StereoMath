@@ -1,4 +1,4 @@
-import { figureData } from "./Types";
+import { figureData } from "../Types";
 
 import Constants from 'expo-constants';
 const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -42,7 +42,6 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
         if (resData && resData.coordinates && resData.solution && typeof resData.success === 'boolean') {
             const vertices = coordinates["vertices"];
             const edges = coordinates["edges"];
-            // const solution = resData["solution"];
             const solution = await JSON.parse(resData["solution"]);
             const success = resData["success"];
             return {
