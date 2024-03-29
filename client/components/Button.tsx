@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Button({ text, onPress, icon, size, color, stylesProp }:
     {
-        text: string,
+        text?: string,
         onPress: () => void,
         icon: keyof typeof MaterialCommunityIcons.glyphMap,
         size: number | undefined,
@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
+        padding: 5,
+        height: "auto",
     },
     text: {
         color: 'white',

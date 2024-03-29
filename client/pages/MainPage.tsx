@@ -66,7 +66,7 @@ export default function CameraPage({ navigation, route }: Props) {
       const text = await recognizeTextFromImage(photo.base64);
       if (text) {
         setCapturedText(text);
-      }else{
+      } else {
         setPhoto(null);
       }
     } else {
@@ -85,42 +85,60 @@ export default function CameraPage({ navigation, route }: Props) {
         cameraRef={cameraRef}
         flashState={flashState}
       /> :
-      <View style={styles.preview}>
-        <Image
-          source={{ uri: photo.uri }}
-          style={styles.preview}
-        />
-      </View>
-    
+        <View style={styles.preview}>
+          <Image
+            source={{ uri: photo.uri }}
+            style={styles.preview}
+          />
+        </View>
+
       }
       <View style={styles.buttonsContainer}>
-        <Button
-          text=""
-          size={40}
-          onPress={() => {
-            navigation.navigate("TextInputPage", { problem: "" });
-          }}
-          icon="keyboard"
-          color="white"
-          stylesProp={{ paddingBottom: 40 }}
-        />
-        <Button
-          text=""
-          size={70}
-          onPress={handleCapturePress}
-          icon="circle"
-          color="red"
-          stylesProp={{ paddingBottom: 40 }}
-        />
-        <Button
-          text=""
-          size={40}
-          onPress={() => setFlashState(!flashState)}
-          icon={flashState ? "flash" : "flash-off"}
-          color="white"
-          stylesProp={{ paddingBottom: 40 }}
-        />
+        <View style={styles.bigNavbar} >
+          <Button
+            size={40}
+            onPress={() => {
+              navigation.navigate("TextInputPage", { problem: "" });
+            }}
+            icon="keyboard"
+            color="white"
+          />
+          <Button
+            size={80}
+            onPress={handleCapturePress}
+            icon="circle"
+            color="#db2339"
+          />
+          <Button
+            size={40}
+            onPress={() => {}}
+            icon="circle"
+            color="transparent"
+            stylesProp={{ opacity: 0 }}
+          />
+        </View>
+        <View style={styles.smallNavbar} >
+          <Button
+            icon="image-multiple-outline"
+            size={25}
+            onPress={() => {}}
+            color="white"
+          />
+          <Button
+            icon={flashState ? "flash" : "flash-off"}
+            size={25}
+            onPress={() => setFlashState(!flashState)}
+            color="white"
+          />
+          <Button
+            icon="history"
+            size={25}
+            onPress={() => { }}
+            color="white"
+          />
+        </View>
       </View>
+
     </View>
   );
 }
@@ -154,13 +172,31 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 25,
+    alignItems: "center",
+    paddingBottom: 30
+  },
+  preview: {
+    flex: 1,
+    resizeMode: "cover",
+  },
+  smallNavbar: {
+    zIndex: 10,
+    width: width,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 50,
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  bigNavbar: {
+    zIndex: 10,
+    width: width,
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
     paddingHorizontal: 10,
   },
-  preview: {
-    flex: 1,
-    resizeMode: "cover",
-  }
 });
