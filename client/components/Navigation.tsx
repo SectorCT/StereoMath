@@ -2,7 +2,7 @@ import React from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import CameraPage from "../pages/CameraPage";
+import CameraPage from "../pages/MainPage";
 import GraphicScreen from "../pages/graphicScreen/GraphicScreen";
 import TextInputPage from "../pages/TextInputPage";
 import { View, Text } from "react-native";

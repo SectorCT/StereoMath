@@ -9,9 +9,12 @@ import { figureData } from '../../Types';
 
 import Grid from './Grid';
 
-function MainModel({ animateEdge, data, centerCameraAroundShape }:
+import {addProblemToHistory} from '../../utils/history';
+
+function MainModel({ animateEdge, problem, data, centerCameraAroundShape }:
 	{
 		animateEdge: (edge: string) => void
+		problem: string
 		data: figureData
 		centerCameraAroundShape: boolean
 	}) {
@@ -39,6 +42,7 @@ function MainModel({ animateEdge, data, centerCameraAroundShape }:
 
 	useEffect(() => {
 		calculateShapeCenter();
+		addProblemToHistory(problem, data);
 	}, [data]);
 
 	const cameraRef = useRef<Camera>();

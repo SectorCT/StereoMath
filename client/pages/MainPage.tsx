@@ -23,6 +23,7 @@ let screenAspectRatio = height / width;
 
 import recognizeTextFromImage from "../components/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
+import { readHistory, clearHistory } from "../utils/history";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -41,6 +42,11 @@ export default function CameraPage({ navigation, route }: Props) {
     setPhoto(null);
     setCapturedText("");
     setFlashState(false);
+    async function logHistory() {
+      console.log("History: ", await readHistory());
+    }
+    // clearHistory();
+    logHistory();
   }, [isFocused]);
 
   useEffect(() => {

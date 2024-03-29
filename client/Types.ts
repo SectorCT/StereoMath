@@ -3,3 +3,7 @@ export type figureData = {
     edges: Array<[string, string]>
     solution: Array<string>
 }
+
+export type historyData = {
+    [key: string]: Array<{ problem: string, solution: figureData }>
+}
