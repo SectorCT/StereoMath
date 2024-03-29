@@ -191,6 +191,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
             toggleCameraFocus={toggleCenterCameraAroundShape}
           />
           <MainModel
+            problem={problem}
             data={data}
             animateEdge={animateEdge}
             centerCameraAroundShape={centerCameraAroundShape}
