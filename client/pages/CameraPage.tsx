@@ -16,7 +16,7 @@ import Button from "../components/Button";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
-import Camera from "./Camera";
+import Camera from "../components/Camera";
 
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
