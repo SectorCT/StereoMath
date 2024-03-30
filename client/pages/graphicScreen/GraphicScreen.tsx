@@ -24,7 +24,7 @@ import Constants from 'expo-constants';
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
-  route: { params: { problem: string } };
+  route: { params: { problem: string, data?: figureData } };
 }
 
 export default function GraphicScreen({ navigation, route }: Props) {
@@ -36,9 +36,16 @@ export default function GraphicScreen({ navigation, route }: Props) {
     );
   }
   const problem = route.params.problem;
+  const { data:paramData } = route.params;
 
   useEffect(() => {
-    const devMode = Constants.expoConfig?.extra?.DEVMODE == "true";
+    const devMode = process.env.DEVMODE == "true";
+
+    if (paramData) {
+      setData(paramData);
+      setSoultionReady(true);
+      return;
+    }
 
     if (!devMode) {
       requestSolution(problem).then(({ status, data }) => {
