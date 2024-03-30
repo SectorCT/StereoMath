@@ -20,7 +20,7 @@ import { Suspense } from "react";
 import { figureData } from "../../Types";
 import { requestSolution } from "../../utils/requests";
 import Button from "../../components/Button";
-import Constants from 'expo-constants';
+import { findProblemInHistory } from "../../utils/history";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -36,7 +36,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
     );
   }
   const problem = route.params.problem;
-  const { data:paramData } = route.params;
+  const { data: paramData } = route.params;
 
   useEffect(() => {
     const devMode = process.env.DEVMODE == "true";
@@ -47,15 +47,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
       return;
     }
 
-    if (!devMode) {
-      requestSolution(problem).then(({ status, data }) => {
-        setSoultionReady(true);
-        if (status != "success") {
-          return;
-        }
-        setData(data);
-      });
-    } else {
+    if (devMode) {
       setData({
         "vertices": {
           // "A": [0, 0, 0],
@@ -90,7 +82,27 @@ export default function GraphicScreen({ navigation, route }: Props) {
         ]
       });
       setSoultionReady(true);
+      return;
     }
+
+    async function checkSolution() {
+      console.log("problem", problem);
+      const solution = await findProblemInHistory(problem);
+      if (solution) {
+        setData(solution);
+        setSoultionReady(true);
+        console.log("found in history");
+      }else{
+        requestSolution(problem).then(({ status, data }) => {
+          setSoultionReady(true);
+          if (status != "success") {
+            return;
+          }
+          setData(data);
+        });
+      }
+    }
+    checkSolution();
   }, []);
 
   const [solutionReady, setSoultionReady] = useState(false);
