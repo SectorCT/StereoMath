@@ -140,7 +140,8 @@ export default function CameraPage({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    height: width * screenAspectRatio,
+    justifyContent: "center",
+    height: height,
     backgroundColor: "black",
   },
   header: {
