@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, StatusBar} from 'react-native';
 import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,9 +14,12 @@ console.warn = ()=>{};
 
 export default function App() {
   return (
+    <>
+      <StatusBar translucent backgroundColor="transparent" />
       <NavigationContainer>
         <NavStack />
       </NavigationContainer>
+      </>
   );
 }
 

@@ -1,22 +1,21 @@
-import 'dotenv/config';
 
 export default {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "StereoMath",
+    "slug": "StereoMath",
     "extra": {
-      "GOOGLE_API_KEY": process.env.GOOGLE_API_KEY,
-      "API_URL": process.env.API_URL,
-      "DEVMODE": process.env.DEVMODE
+      "eas": {
+        "projectId": process.env.EAS_PROJECT_ID,
+      }
     },
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#E1FCFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -30,9 +29,10 @@ export default {
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#E1FCFF"
       },
-      "permissions": ["CAMERA"]
+      "permissions": ["CAMERA"],
+      "package": "com.stereomath.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

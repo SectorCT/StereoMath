@@ -1,9 +1,6 @@
-import { useState } from "react";
-import Constants from 'expo-constants';
-
 
 export default async function recognizeTextFromImage (base64Image: string | undefined){
-    const GOOGLE_API_KEY = Constants.expoConfig?.extra?.GOOGLE_API_KEY;
+    const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
     const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`;
 
     const requestPayload = {
