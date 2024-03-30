@@ -2,8 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { figureData, historyData } from '../Types';
 
 export async function readHistory() {
-    const history = AsyncStorage.getItem('history');
-    return history;
+    const history = await AsyncStorage.getItem('history');
+    const historyData:historyData = JSON.parse(history ? history : 'null');
+    return historyData;
 }
 
 export function addProblemToHistory(problem: string, solution: figureData) {

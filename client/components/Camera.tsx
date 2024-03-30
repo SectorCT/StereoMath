@@ -74,7 +74,7 @@ export default function CameraComponent({ flashState, cameraRef}: Props){
 
   return (
     <View style={styles.container}>
-      {isFocused && <Camera
+      {isFocused && hasPermission && <Camera
         style={StyleSheet.compose(styles.camera, {
           width: width,
           height: width * cameraRatioNumber,

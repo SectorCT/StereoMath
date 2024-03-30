@@ -23,7 +23,7 @@ let screenAspectRatio = height / width;
 
 import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
-import { readHistory, clearHistory } from "../utils/history";
+import { clearHistory } from "../utils/history";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -42,11 +42,7 @@ export default function CameraPage({ navigation, route }: Props) {
     setPhoto(null);
     setCapturedText("");
     setFlashState(false);
-    async function logHistory() {
-      console.log("History: ", await readHistory());
-    }
     // clearHistory();
-    logHistory();
   }, [isFocused]);
 
   useEffect(() => {
@@ -97,9 +93,7 @@ export default function CameraPage({ navigation, route }: Props) {
         <View style={styles.bigNavbar} >
           <Button
             size={40}
-            onPress={() => {
-              navigation.navigate("TextInputPage", { problem: "" });
-            }}
+            onPress={() => navigation.navigate("TextInputPage", { problem: "" })}
             icon="keyboard"
             color="white"
           />
@@ -133,7 +127,7 @@ export default function CameraPage({ navigation, route }: Props) {
           <Button
             icon="history"
             size={25}
-            onPress={() => { }}
+            onPress={() => navigation.navigate("History")}
             color="white"
           />
         </View>
