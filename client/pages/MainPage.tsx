@@ -21,7 +21,7 @@ import Camera from "../components/Camera";
 const { width, height } = Dimensions.get("screen");
 let screenAspectRatio = height / width;
 
-import recognizeTextFromImage from "../components/textRecognition";
+import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
 import { readHistory, clearHistory } from "../utils/history";
 

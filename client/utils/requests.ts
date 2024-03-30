@@ -1,7 +1,8 @@
 import { figureData } from "../Types";
 
 import Constants from 'expo-constants';
-const API_URL = Constants.expoConfig?.extra?.API_URL;
+
+const API_URL = process.env.API_URL;
 console.log("API_URL", API_URL);
 
 type resDataType = {
@@ -18,7 +19,7 @@ type resDataType = {
 export async function requestSolution(problem: string): Promise<{ data: figureData | null, status: string }> {
     console.log(API_URL);
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(API_URL ? API_URL: "", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
