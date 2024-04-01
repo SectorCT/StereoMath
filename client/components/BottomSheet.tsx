@@ -61,10 +61,6 @@ const BottomSheet = ({ data, edgesValues }: { data: figureData, edgesValues: { [
 
 	});
 
-	useEffect(() => {
-		isExpandedGlobal = isExpanded;
-	}, [isExpanded]);
-
 	const autoSpring = (value: number) => {
 		lastRef.current = value;
 		Animated.spring(sheetRef, {
