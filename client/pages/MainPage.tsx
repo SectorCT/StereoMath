@@ -1,16 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Image
-} from "react-native";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 
-import {
-  Camera as CameraType,
-  CameraCapturedPicture,
-} from "expo-camera";
+import { Camera as CameraType, CameraCapturedPicture } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 
 import Button from "../components/Button";
 
@@ -24,6 +16,8 @@ let screenAspectRatio = height / width;
 import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
 import { clearHistory } from "../utils/history";
+
+import * as ImageManipulator from "expo-image-manipulator";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -58,6 +52,7 @@ export default function CameraPage({ navigation, route }: Props) {
   const takePicture = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({ base64: true });
+
       setPhoto(photo);
       const text = await recognizeTextFromImage(photo.base64);
       if (text) {
@@ -70,30 +65,55 @@ export default function CameraPage({ navigation, route }: Props) {
     }
   };
 
+  const getImageFromGallery = async () => {
+    if (cameraRef.current) {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        base64: true,
+        allowsMultipleSelection: false,
+      });
+      setPhoto(photo);
+      if (result && result.assets && result.assets.length > 0) {
+        const text = await recognizeTextFromImage(result.assets[0]);
+        if (text) {
+          setCapturedText(text);
+        } else {
+          setPhoto(null);
+        }
+      } else {
+        console.error("No image selected.");
+      }
+    } else {
+      console.error("Camera reference is not available.");
+    }
+  };
+
   const handleCapturePress = () => {
     takePicture();
+  };
+
+  const handleGalleryPress = () => {
+    getImageFromGallery();
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>StereoMath</Text>
-      {!photo ? <Camera
-        cameraRef={cameraRef}
-        flashState={flashState}
-      /> :
+      {!photo ? (
+        <Camera cameraRef={cameraRef} flashState={flashState} />
+      ) : (
         <View style={styles.preview}>
-          <Image
-            source={{ uri: photo.uri }}
-            style={styles.preview}
-          />
+          <Image source={{ uri: photo.uri }} style={styles.preview} />
         </View>
-
-      }
+      )}
       <View style={styles.buttonsContainer}>
-        <View style={styles.bigNavbar} >
+        <View style={styles.bigNavbar}>
           <Button
             size={40}
-            onPress={() => navigation.navigate("TextInputPage", { problem: "" })}
+            onPress={() =>
+              navigation.navigate("TextInputPage", { problem: "" })
+            }
             icon="keyboard"
             color="white"
           />
@@ -111,11 +131,11 @@ export default function CameraPage({ navigation, route }: Props) {
             stylesProp={{ opacity: 0 }}
           />
         </View>
-        <View style={styles.smallNavbar} >
+        <View style={styles.smallNavbar}>
           <Button
             icon="image-multiple-outline"
             size={25}
-            onPress={() => {}}
+            onPress={handleGalleryPress}
             color="white"
           />
           <Button
@@ -132,7 +152,6 @@ export default function CameraPage({ navigation, route }: Props) {
           />
         </View>
       </View>
-
     </View>
   );
 }
@@ -171,7 +190,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 25,
     alignItems: "center",
-    paddingBottom: 30
+    paddingBottom: 30,
   },
   preview: {
     flex: 1,
