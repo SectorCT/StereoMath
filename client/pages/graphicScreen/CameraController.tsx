@@ -69,8 +69,7 @@ export default function CameraController({
     
         await setCameraPosition(new Vector3(newX, newY, newZ));
     }
-    
-    
+
     const panResponder = useRef(PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: () => true,
@@ -131,6 +130,7 @@ export default function CameraController({
 	}, []);
 
     return (
+        <>
         <View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
 			<Canvas style={styles.canvas}>
 				{children}
@@ -143,12 +143,22 @@ export default function CameraController({
                 />
 			</Canvas>
 		</View>
+        </>
+        // <View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width, zIndex:-10 }}>
+        //     {/* <Canvas style={styles.canvas} >
+        //         {children}
+        //     </Canvas> */}
+        // </View>
+        // <View>
+
+        // </View>
     );
 
 }
 
 const styles = StyleSheet.create({
 	canvas: {
+        zIndex: -10,
 		width: '100%',
 		backgroundColor: '#e9ecef',
 	},

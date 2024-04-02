@@ -79,6 +79,21 @@ export default function GraphicScreen({ navigation, route }: Props) {
           "step 3",
           "step 4",
           "step 5",
+          "step 1",
+          "step 2",
+          "step 3",
+          "step 4",
+          "step 5",
+          "step 1",
+          "step 2",
+          "step 3",
+          "step 4",
+          "step 5",
+          "step 1",
+          "step 2",
+          "step 3",
+          "step 4",
+          "step 5",
         ]
       });
       setSoultionReady(true);
@@ -167,6 +182,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
     );
   };
 
+
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
       {!solutionReady && (
@@ -209,13 +225,14 @@ export default function GraphicScreen({ navigation, route }: Props) {
             navigation={navigation}
             toggleCameraFocus={toggleCenterCameraAroundShape}
           />
+          
           <MainModel
             problem={problem}
             data={data}
             animateEdge={animateEdge}
             centerCameraAroundShape={centerCameraAroundShape}
           />
-          <BottomSheet data={data} edgesValues={edgesValues} />
+          <BottomSheet data={data} edgesValues={edgesValues}/>
           <Animated.View
             style={[
               styles.animationContainer,

@@ -11,7 +11,7 @@ import Grid from './Grid';
 
 import {addProblemToHistory} from '../../utils/history';
 
-function MainModel({ animateEdge, problem, data, centerCameraAroundShape }:
+function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 	{
 		animateEdge: (edge: string) => void
 		problem: string
