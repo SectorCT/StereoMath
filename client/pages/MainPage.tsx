@@ -51,13 +51,28 @@ export default function CameraPage({ navigation, route }: Props) {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({ base64: true });
-
-      setPhoto(photo);
-      const text = await recognizeTextFromImage(photo.base64);
-      if (text) {
-        setCapturedText(text);
-      } else {
+      try {
+        const photo = await cameraRef.current.takePictureAsync();
+  
+        setPhoto(photo);
+        
+        const croppedImage = await ImageManipulator.manipulateAsync(
+          photo.uri,
+          [{ crop: { originX: 500, originY: 500, width: 500, height: 500 }}],
+          { compress: 1, format: ImageManipulator.SaveFormat.JPEG , base64: true}
+        );
+  
+        console.log("Image:", croppedImage);
+  
+        const text = await recognizeTextFromImage(croppedImage.base64);
+        if (text) {
+          setCapturedText(text);
+        } else {
+          console.error("Text recognition failed.");
+          setPhoto(null);
+        }
+      } catch (error) {
+        console.error("Error while taking picture:", error);
         setPhoto(null);
       }
     } else {
