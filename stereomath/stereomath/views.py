@@ -8,6 +8,7 @@ import json
 from openai import OpenAI
 from .regex_checks import r_check
 from .regex_checks import r_solution_check
+from .request_tests import jsonFy
 
 load_dotenv()
 
@@ -31,6 +32,7 @@ def solution(request):
 
     check_c = 1
     check_s = 1
+    result = ""
     for i in range(6):
         solution = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -43,31 +45,34 @@ def solution(request):
             max_tokens = 1000
             #stream=True
         )
-        check_c = r_solution_check(solution.choices[0].message.content)
-        if check_c == 0:
+        check_s = r_solution_check(solution.choices[0].message.content)
+        if check_s == 0:
             break
     for i in range(6):
         completion = client.chat.completions.create(    
-            model="gpt-3.5-turbo",
+            model="gpt-4-turbo",
             messages=[
-                {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry qustions."},
+                {"role": "system", "content": "You are a mathematical assistant and you are going to work on stereometry questions."},
                 {"role": "user", "content": problem},
+                {"role": "user", "content": "Translate the question in english."},
                 {"role": "user", "content": \
-                "Give me the 3d coordinates of the figure and the pairs of vertices connected by a line without anything else in JSON in this format: {le_format}"},
+                "Give me only the 3D coordinates of the figure and the corresponding vertex, separated by commas and without braces in one line without anything else. In this format: A,1,1,1,B,2,2,2. End with ; . After that print all the pairs of vertices connected by a line, separated with commas without you adding text. End the prompt blank."},
             ],
-            max_tokens = 300
+            max_tokens = 1000
         )
+        completion.choices[0].message.content = completion.choices[0].message.content.replace(" ", "").replace("\n", "")
+        print(completion.choices[0].message.content)
         # Format check
-        check_s = r_check(completion.choices[0].message.content)
-        if check_s == 0:
+        check_c = r_check(completion.choices[0].message.content)
+        if check_c == 0:
+            result = jsonFy(completion.choices[0].message.content)
             break
-        # ends here
     print(completion.choices[0].finish_reason)
     # Completion test
     if(completion.choices[0].finish_reason == "stop" and check_c == 0 and check_s == 0):
         #c_message = json.loads(completion.choices[0].message.content)
         #s_message = json.loads(solution.choices[0].message.content)
-        return JsonResponse({'success': True, 'coordinates': completion.choices[0].message.content, 'solution': solution.choices[0].message.content}, status=200)
+        return JsonResponse({'success': True, 'coordinates': result, 'solution': solution.choices[0].message.content}, status=200)
     else:
         return JsonResponse({'success': False, 'coordinates': 'Response not available', 'solution': 'Response not available'}, status=500)
     # ends here
