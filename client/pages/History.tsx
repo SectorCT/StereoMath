@@ -29,9 +29,9 @@ export default function History({ navigation, route }: Props) {
 
     const toggleDay = (day: string) => {
         if (expandedDay === day) {
-            setExpandedDay(null); // Collapse the day if it's already expanded
+            setExpandedDay(null);
         } else {
-            setExpandedDay(day); // Expand the new day
+            setExpandedDay(day);
         }
     };
 
@@ -66,7 +66,11 @@ export default function History({ navigation, route }: Props) {
                                     onPress={() => toggleDay(key)}
                                 >
                                     <Text>{key}</Text>
-                                    <MaterialCommunityIcons name="arrow-right" size={24} color="black" />
+                                    <MaterialCommunityIcons
+                                        name={(expandedDay === key) ? "arrow-down" : "arrow-right"}
+                                        size={24}
+                                        color="black"
+                                    />
 
                                 </TouchableOpacity>
                                 <View style={styles.allProblems}>
@@ -91,17 +95,17 @@ export default function History({ navigation, route }: Props) {
                 )}
             </ScrollView>
             <Button
-                    text="Clear history"
-                    textColor="black"
-                    color="red"
-                    icon="delete"
-                    size={25}
-                    onPress={() => {
-                        clearHistory();
-                        setHistory(null);
-                    }}
-                    stylesProp={styles.clearButton}
-                />
+                text="Clear history"
+                textColor="black"
+                color="red"
+                icon="delete"
+                size={25}
+                onPress={() => {
+                    clearHistory();
+                    setHistory(null);
+                }}
+                stylesProp={styles.clearButton}
+            />
         </View>
     );
 }
@@ -139,10 +143,10 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1,
         borderColor: "black",
-        
+
     },
     allProblems: {
-        
+
     },
     problem: {
         margin: 10,
