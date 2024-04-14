@@ -28,7 +28,7 @@ completion = client.chat.completions.create(
 )
 """
 def r_check(api_response):
-    pattern = r'(([A-Z]\d*),(-?\d+(\.\d+)?,*){3})+\;(([A-Z]\d*),)+([A-Z]\d*)(\,|\.|\;)*'
+    pattern = r'(([A-Z]\d*),(-?\d+(\.\d+)?,*){3})+\;(([A-Z]\d*)(,|-))+([A-Z]\d*)(\,|\.|\;)*'
 
     if re.fullmatch(pattern, api_response):
         #print(api_response)
