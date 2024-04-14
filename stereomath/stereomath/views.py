@@ -56,7 +56,7 @@ def solution(request):
                 {"role": "user", "content": problem},
                 {"role": "user", "content": "Translate the question in english."},
                 {"role": "user", "content": \
-                "Give me only the 3D coordinates of the figure and the corresponding vertex, separated by commas and without braces in one line without anything else. In this format: A,1,1,1,B,2,2,2. End with ; . After that print all the pairs of vertices connected by a line, separated with commas without you adding text. End the prompt blank."},
+                "Give me only the 3D coordinates of the figure and the corresponding vertex, separated by commas and without braces in one line without anything else. In this format: A,1,1,1,B,2,2,2. End with ; . After that show me which vertices connect to create an edge, separated with commas without you adding text. End the prompt blank."},
             ],
             max_tokens = 1000
         )

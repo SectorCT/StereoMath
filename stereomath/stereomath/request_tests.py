@@ -94,7 +94,7 @@ def jsonFy(api_result):
     if(coords[-1] == '.'): coords = coords[:-1]
     coords = coords.split(";")
     coords[0] = coords[0].split(",")
-    coords[1] = coords[1].split(",")
+    coords[1] = coords[1].replace("-", ",").split(",")
 
     t_coords = ""
     t_connections = ""
