@@ -15,7 +15,6 @@ let screenAspectRatio = height / width;
 
 import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
-import { clearHistory } from "../utils/history";
 
 import * as ImageManipulator from "expo-image-manipulator";
 
