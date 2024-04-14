@@ -105,7 +105,6 @@ export default function CameraController({
                     event.nativeEvent.touches[0].pageX - event.nativeEvent.touches[1].pageX,
                     event.nativeEvent.touches[0].pageY - event.nativeEvent.touches[1].pageY
                 );
-    
                 
                 const delta = distance/lastDistance.current;
                 orbitRadius *= (2-delta);

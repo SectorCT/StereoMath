@@ -7,7 +7,8 @@ import { historyData } from "../Types";
 import Button from "../components/Button";
 
 import { readHistory, clearHistory } from "../utils/history";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
     navigation: StackNavigationProp<NavStackParamList, "History">;
@@ -16,14 +17,23 @@ interface Props {
 
 export default function History({ navigation, route }: Props) {
     const [history, setHistory] = useState<historyData | null>(null);
+    const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
     useEffect(() => {
         async function readHistoryAsync() {
-            const currHistory= await readHistory();
-            if(currHistory) setHistory(currHistory);
+            const currHistory = await readHistory();
+            if (currHistory) setHistory(currHistory);
         }
         readHistoryAsync();
     }, []);
+
+    const toggleDay = (day: string) => {
+        if (expandedDay === day) {
+            setExpandedDay(null); // Collapse the day if it's already expanded
+        } else {
+            setExpandedDay(day); // Expand the new day
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -39,35 +49,48 @@ export default function History({ navigation, route }: Props) {
                     icon="arrow-left-thin"
                     size={25}
                     color="black"
-                    onPress={() => {}}
+                    onPress={() => { }}
                     stylesProp={{ opacity: 0 }}
                 />
             </View>
-            <View style={styles.allProblems}> 
+            <ScrollView contentContainerStyle={styles.fullHistory}>
                 {history ? (
-                    Object.keys(history).map((key, index) => {
+                    Object.keys(history).sort((a, b) => {
+                        return new Date(b).getTime() - new Date(a).getTime();
+                    }).map((key, index) => {
                         return (
                             <View key={index} style={styles.problemDayContainer}>
-                                <Text>{key}</Text>
-                                {history[key].map(({problem, solution}, index) => {
-                                    return (
-                                        <TouchableOpacity 
-                                            style={styles.problem}
-                                            onPress={() => {navigation.navigate("GraphicScreen", {problem: problem, data: solution})}}
-                                        >
-                                            <Text key={index}>
-                                            {problem}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    );
-                                })}
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.problemDay}
+                                    onPress={() => toggleDay(key)}
+                                >
+                                    <Text>{key}</Text>
+                                    <MaterialCommunityIcons name="arrow-right" size={24} color="black" />
+
+                                </TouchableOpacity>
+                                <View style={styles.allProblems}>
+                                    {(expandedDay === key) && history[key].map(({ problem, solution }, index) => {
+                                        return (
+                                            <TouchableOpacity
+                                                style={styles.problem}
+                                                onPress={() => { navigation.navigate("GraphicScreen", { problem: problem, data: solution }) }}
+                                            >
+                                                <Text key={index}>
+                                                    {problem}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
                             </View>
                         );
                     })
                 ) : (
                     <Text>No history</Text>
                 )}
-                <Button
+            </ScrollView>
+            <Button
                     text="Clear history"
                     textColor="black"
                     color="red"
@@ -77,8 +100,8 @@ export default function History({ navigation, route }: Props) {
                         clearHistory();
                         setHistory(null);
                     }}
+                    stylesProp={styles.clearButton}
                 />
-            </View>
         </View>
     );
 }
@@ -99,18 +122,27 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignItems: "center",
     },
-    allProblems: {
+    fullHistory: {
         marginTop: 20,
         width: "100%",
         alignItems: "center",
     },
     problemDayContainer: {
-        margin: 10,
-        padding: 10,
-        width: "90%",
+        flexDirection: "column",
+    },
+    problemDay: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: 0,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        width: "100%",
         borderWidth: 1,
         borderColor: "black",
-        borderRadius: 10,
+        
+    },
+    allProblems: {
+        
     },
     problem: {
         margin: 10,
@@ -122,5 +154,8 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 25,
+    },
+    clearButton: {
+        marginTop: 20,
     },
 });
