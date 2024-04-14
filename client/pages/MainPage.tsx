@@ -89,7 +89,7 @@ export default function CameraPage({ navigation, route }: Props) {
       });
       setPhoto(photo);
       if (result && result.assets && result.assets.length > 0) {
-        const text = await recognizeTextFromImage(result.assets[0]);
+        const text = await recognizeTextFromImage(result.assets[0].base64);
         if (text) {
           setCapturedText(text);
         } else {
