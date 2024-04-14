@@ -28,9 +28,10 @@ completion = client.chat.completions.create(
 )
 """
 def r_check(api_response):
-    pattern = r'\{\s*"vertices": \{(\s*".*": \[.+, .+, .+\],*\s*)+\},\s*"edges": \[(\s*\[".*", ".*"\]\s*,*)+\]\s*\}'
+    pattern = r'(([A-Z]\d*),(-?\d+(\.\d+)?,*){3})+\;(([A-Z]\d*),)+([A-Z]\d*)(\,|\.|\;)*'
 
-    if re.match(pattern, api_response):
+    if re.fullmatch(pattern, api_response):
+        #print(api_response)
         print("Pattern matched.")
         return 0
     else:
@@ -46,3 +47,5 @@ def r_solution_check(solution):
     else:
         print("Solution pattern not matched.")
         return -1
+
+#r_check("A,-0,0,0,B,3,0,0,C,1.5,sqrt(15)/2,0,Q,1.5,sqrt(15)/2,4")
