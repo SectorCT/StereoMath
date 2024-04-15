@@ -6,7 +6,7 @@ export default {
     "slug": "StereoMath",
     "extra": {
       "eas": {
-        "projectId": process.env.EAS_PROJECT_ID,
+        "projectId": process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
       }
     },
     "version": "0.1.0",

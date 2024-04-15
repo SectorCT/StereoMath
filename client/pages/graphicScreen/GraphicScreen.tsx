@@ -39,7 +39,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
   const { data: paramData } = route.params;
 
   useEffect(() => {
-    const devMode = process.env.DEVMODE == "true";
+    const devMode = process.env.EXPO_PUBLIC_DEVMODE == "true";
 
     if (paramData) {
       setData(paramData);
