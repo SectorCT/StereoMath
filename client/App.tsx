@@ -1,25 +1,42 @@
-import { StyleSheet, StatusBar} from 'react-native';
-import React from 'react';
+import { StyleSheet, StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 
-import NavStack from "./components/Navigation"
-
+import NavStack from "./components/Navigation";
 
 import { LogBox } from 'react-native';
 
-LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']); 
-console.error= ()=>{};
-console.warn = ()=>{};
+import AppPublished from './pages/AppPublished';
+
+LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']);
+console.error = () => { };
+console.warn = () => { };
 
 export default function App() {
+
+  const [isPublished, setIsPublished] = useState(false);
+  const [appPublishedUrl, setAppPublishedUrl] = useState('');
+
+  useEffect(() => {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    fetch(`${API_URL}/isAppPublished`).then(res => res.json()).then(data => {
+      setIsPublished(data.published);
+      setAppPublishedUrl(data.URL);
+    });
+    console.log('isPublished:', isPublished);
+  }, []);
+
   return (
     <>
-      <StatusBar translucent backgroundColor="transparent" />
-      <NavigationContainer>
-        <NavStack />
-      </NavigationContainer>
-      </>
+      {isPublished ? <AppPublished appPublishedUrl={appPublishedUrl} /> :
+      <>
+        <StatusBar translucent backgroundColor="transparent" />
+        <NavigationContainer>
+          <NavStack />
+        </NavigationContainer>
+      </>}
+    </>
   );
 }
 
