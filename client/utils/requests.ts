@@ -2,7 +2,7 @@ import { figureData } from "../Types";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "";
 export async function requestSolution(problem: string): Promise<{ data: figureData | null, status: string }> {
-    console.log(API_URL);
+    console.log(`${API_URL}/solution/`);
     try {
         const response = await fetch(`${API_URL}/solution/`, {
             method: 'POST',
