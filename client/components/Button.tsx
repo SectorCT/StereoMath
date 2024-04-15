@@ -7,7 +7,7 @@ export default function Button({ text, textColor, onPress, icon, size, color, st
         text?: string,
         textColor?: string,
         onPress: () => void,
-        icon: keyof typeof MaterialCommunityIcons.glyphMap,
+        icon?: keyof typeof MaterialCommunityIcons.glyphMap,
         size?: number,
         color?: string,
         stylesProp?: StyleProp<ViewStyle>
@@ -16,7 +16,7 @@ export default function Button({ text, textColor, onPress, icon, size, color, st
     return (
         <TouchableOpacity onPress={onPress} style={StyleSheet.compose(styles.button, stylesProp)}>
             {text && <Text style={StyleSheet.compose(styles.text, textColor ? {color:textColor} : {})}>{text}</Text>}
-            <MaterialCommunityIcons name={icon} size={size ? size : 20} color={color ? color : "black"} />
+            {icon && <MaterialCommunityIcons name={icon} size={size ? size : 20} color={color ? color : "black"} />}
         </TouchableOpacity>
     );
 }
