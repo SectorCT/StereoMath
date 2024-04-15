@@ -24,7 +24,7 @@ import { findProblemInHistory } from "../../utils/history";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
-  route: { params: { problem: string, data?: figureData } };
+  route: { params: { problem: string; data?: figureData } };
 }
 
 export default function GraphicScreen({ navigation, route }: Props) {
@@ -39,7 +39,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
   const { data: paramData } = route.params;
 
   useEffect(() => {
-    const devMode = process.env.DEVMODE == "true";
+    const devMode = process.env.EXPO_PUBLIC_DEVMODE == "true";
 
     if (paramData) {
       setData(paramData);
@@ -49,20 +49,20 @@ export default function GraphicScreen({ navigation, route }: Props) {
 
     if (devMode) {
       setData({
-        "vertices": {
+        vertices: {
           // "A": [0, 0, 0],
           // "B": [3, 0, 0],
           // "C": [1.5, 0, 2.598],
           // "Q": [1.5, 4, 0.866],
-          // "H": [1.5, 0, 0.866] 
+          // "H": [1.5, 0, 0.866]
           // flipped on the z
-          "A": [0, 0, 0],
-          "B": [3, 0, 0],
-          "C": [1.5, 2.598, 0],
-          "Q": [1.5, 0.866, 4],
-          "H": [1.5, 0.866, 0]
+          A: [0, 0, 0],
+          B: [3, 0, 0],
+          C: [1.5, 2.598, 0],
+          Q: [1.5, 0.866, 4],
+          H: [1.5, 0.866, 0],
         },
-        "edges": [
+        edges: [
           ["A", "B"],
           ["B", "C"],
           ["C", "A"],
@@ -71,9 +71,9 @@ export default function GraphicScreen({ navigation, route }: Props) {
           ["C", "Q"],
           ["A", "H"],
           ["B", "H"],
-          ["C", "H"]
+          ["C", "H"],
         ],
-        "solution": [
+        solution: [
           "step 1",
           "step 2",
           "step 3",
@@ -94,7 +94,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
           "step 3",
           "step 4",
           "step 5",
-        ]
+        ],
       });
       setSoultionReady(true);
       return;
@@ -107,7 +107,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
         setData(solution);
         setSoultionReady(true);
         console.log("found in history");
-      }else{
+      } else {
         requestSolution(problem).then(({ status, data }) => {
           setSoultionReady(true);
           if (status != "success") {
@@ -138,8 +138,8 @@ export default function GraphicScreen({ navigation, route }: Props) {
   useEffect(() => {
     const calculateEdgeLengths = () => {
       const lengths: { [key: string]: number } = {};
-      data?.edges.forEach(edge => {
-        const edgeKey = edge.join('');
+      data?.edges.forEach((edge) => {
+        const edgeKey = edge.join("");
         lengths[edgeKey] = calculateEdgeLength(edge);
       });
       setEdgesValues(lengths);
@@ -147,7 +147,6 @@ export default function GraphicScreen({ navigation, route }: Props) {
 
     calculateEdgeLengths();
   }, [data?.edges]);
-
 
   const animateEdge = (edge: string) => {
     setShownEdge(edge);
@@ -177,11 +176,10 @@ export default function GraphicScreen({ navigation, route }: Props) {
     }
     return Math.sqrt(
       Math.pow(vertex1Coords[0] - vertex2Coords[0], 2) +
-      Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
-      Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
+        Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
+        Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
     );
   };
-
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
@@ -225,14 +223,14 @@ export default function GraphicScreen({ navigation, route }: Props) {
             navigation={navigation}
             toggleCameraFocus={toggleCenterCameraAroundShape}
           />
-          
+
           <MainModel
             problem={problem}
             data={data}
             animateEdge={animateEdge}
             centerCameraAroundShape={centerCameraAroundShape}
           />
-          <BottomSheet data={data} edgesValues={edgesValues}/>
+          <BottomSheet data={data} edgesValues={edgesValues} />
           <Animated.View
             style={[
               styles.animationContainer,
@@ -242,7 +240,12 @@ export default function GraphicScreen({ navigation, route }: Props) {
             ]}
           >
             <Text style={styles.animationText}>
-              {shownEdge} = {Math.round(((edgesValues[shownEdge == null ? 0 : shownEdge]) + Number.EPSILON) * 100) / 100}{" "}
+              {shownEdge} ={" "}
+              {Math.round(
+                (edgesValues[shownEdge == null ? 0 : shownEdge] +
+                  Number.EPSILON) *
+                  100
+              ) / 100}{" "}
             </Text>
           </Animated.View>
         </View>

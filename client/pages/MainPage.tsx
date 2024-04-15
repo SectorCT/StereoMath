@@ -16,6 +16,7 @@ let screenAspectRatio = height / width;
 import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
 import { clearHistory } from "../utils/history";
+import ResizableCenteredView from "../components/resizeView";
 
 import * as ImageManipulator from "expo-image-manipulator";
 
@@ -31,6 +32,11 @@ export default function CameraPage({ navigation, route }: Props) {
   const isFocused = useIsFocused();
 
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
+
+  const [cropDimensions, setCropDimensions] = useState({
+    width: 100,
+    height: 100,
+  });
 
   useEffect(() => {
     setPhoto(null);
@@ -53,17 +59,30 @@ export default function CameraPage({ navigation, route }: Props) {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-  
+
         setPhoto(photo);
-        
+
         const croppedImage = await ImageManipulator.manipulateAsync(
           photo.uri,
-          [{ crop: { originX: 500, originY: 500, width: 500, height: 500 }}],
-          { compress: 1, format: ImageManipulator.SaveFormat.JPEG , base64: true}
+          [
+            {
+              crop: {
+                originX: 500,
+                originY: 500,
+                width: cropDimensions.width,
+                height: cropDimensions.height,
+              },
+            },
+          ],
+          {
+            compress: 1,
+            format: ImageManipulator.SaveFormat.JPEG,
+            base64: true,
+          }
         );
-  
+
         console.log("Image:", croppedImage);
-  
+
         const text = await recognizeTextFromImage(croppedImage.base64);
         if (text) {
           setCapturedText(text);
@@ -116,7 +135,10 @@ export default function CameraPage({ navigation, route }: Props) {
     <View style={styles.container}>
       <Text style={styles.header}>StereoMath</Text>
       {!photo ? (
-        <Camera cameraRef={cameraRef} flashState={flashState} />
+        <View>
+          <Camera cameraRef={cameraRef} flashState={flashState} />
+          <ResizableCenteredView setCropDimensions={setCropDimensions} />
+        </View>
       ) : (
         <View style={styles.preview}>
           <Image source={{ uri: photo.uri }} style={styles.preview} />

@@ -2,7 +2,7 @@ import { figureData } from "../Types";
 
 import Constants from 'expo-constants';
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 console.log("API_URL", API_URL);
 
 type resDataType = {
