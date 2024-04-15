@@ -95,6 +95,7 @@ export default function CameraPage({ navigation, route }: Props) {
         } else {
           setPhoto(null);
         }
+        
       } else {
         console.error("No image selected.");
       }

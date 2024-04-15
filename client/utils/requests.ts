@@ -1,25 +1,10 @@
 import { figureData } from "../Types";
 
-import Constants from 'expo-constants';
-
-const API_URL = process.env.API_URL;
-console.log("API_URL", API_URL);
-
-type resDataType = {
-    coordinates: {
-        vertices: {
-            [key: string]: [number, number, number]
-        },
-        edges: Array<[string, string]>,
-    },
-    solution: Array<string>,
-    success: boolean
-}
-
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "";
 export async function requestSolution(problem: string): Promise<{ data: figureData | null, status: string }> {
     console.log(API_URL);
     try {
-        const response = await fetch(API_URL ? API_URL: "", {
+        const response = await fetch(`${API_URL}/solution/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -37,9 +22,6 @@ export async function requestSolution(problem: string): Promise<{ data: figureDa
         const resData = await response.json();
         const coordinates = await JSON.parse(resData["coordinates"]);
 
-
-
-        // Check if resData has the necessary properties
         if (resData && resData.coordinates && resData.solution && typeof resData.success === 'boolean') {
             const vertices = coordinates["vertices"];
             const edges = coordinates["edges"];

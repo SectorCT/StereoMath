@@ -3,7 +3,7 @@ import { ImagePickerAsset } from "expo-image-picker";
 export default async function recognizeTextFromImage(
   base64Image: ImagePickerAsset | string | null | undefined
 ) {
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+  const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
   const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`;
 
   const requestPayload = {
