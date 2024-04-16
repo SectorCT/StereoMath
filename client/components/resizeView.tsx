@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { View, PanResponder, StyleSheet, Dimensions } from "react-native";
 

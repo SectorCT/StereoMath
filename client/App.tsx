@@ -24,7 +24,6 @@ export default function App() {
       setIsPublished(data.published);
       setAppPublishedUrl(data.URL);
     });
-    console.log('isPublished:', isPublished);
   }, []);
 
   return (
