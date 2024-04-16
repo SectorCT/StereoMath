@@ -15,8 +15,11 @@ let screenAspectRatio = height / width;
 
 import recognizeTextFromImage from "../utils/textRecognition";
 import { useIsFocused } from "@react-navigation/native";
+import ResizableCenteredView from "../components/resizeView";
 
 import * as ImageManipulator from "expo-image-manipulator";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -30,6 +33,13 @@ export default function CameraPage({ navigation, route }: Props) {
   const isFocused = useIsFocused();
 
   const [photo, setPhoto] = useState<CameraCapturedPicture | null>(null);
+
+  const [cropDimensions, setCropDimensions] = useState({
+    width: 100,
+    height: 100,
+    top: Dimensions.get("window").height / 2 - 100 / 2 - 150,
+    left: Dimensions.get("window").width / 2 - 100 / 2,
+  });
 
   useEffect(() => {
     setPhoto(null);
@@ -52,17 +62,28 @@ export default function CameraPage({ navigation, route }: Props) {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-  
+
         setPhoto(photo);
-        
+
         const croppedImage = await ImageManipulator.manipulateAsync(
           photo.uri,
-          [{ crop: { originX: 500, originY: 500, width: 500, height: 500 }}],
-          { compress: 1, format: ImageManipulator.SaveFormat.JPEG , base64: true}
+          [
+            {
+              crop: {
+                originX: (cropDimensions.left / Dimensions.get("window").width) * (photo.width) ,
+                originY: (cropDimensions.top / Dimensions.get("window").height) * (photo.height),
+                width: (cropDimensions.width / Dimensions.get("window").width) * (photo.width),
+                height: (cropDimensions.height / Dimensions.get("window").height) * (photo.height),
+              },
+            },
+          ],
+          {
+            compress: 1,
+            format: ImageManipulator.SaveFormat.JPEG,
+            base64: true,
+          }
         );
-  
-        console.log("Image:", croppedImage);
-  
+
         const text = await recognizeTextFromImage(croppedImage.base64);
         if (text) {
           setCapturedText(text);
@@ -116,7 +137,10 @@ export default function CameraPage({ navigation, route }: Props) {
     <View style={styles.container}>
       <Text style={styles.header}>StereoMath</Text>
       {!photo ? (
-        <Camera cameraRef={cameraRef} flashState={flashState} />
+        <View>
+          <Camera cameraRef={cameraRef} flashState={flashState} />
+          <ResizableCenteredView setCropDimensions={setCropDimensions} />
+        </View>
       ) : (
         <View style={styles.preview}>
           <Image source={{ uri: photo.uri }} style={styles.preview} />
@@ -167,6 +191,12 @@ export default function CameraPage({ navigation, route }: Props) {
           />
         </View>
       </View>
+      <MaterialCommunityIcons name="circle" size={24} color="black" style={{
+      position: "absolute",
+      top: cropDimensions.top,
+      left: cropDimensions.left,
+      zIndex: 999,
+    }}/>
     </View>
   );
 }
