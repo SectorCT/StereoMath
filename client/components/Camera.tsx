@@ -46,8 +46,6 @@ export default function CameraComponent({ flashState, cameraRef }: Props) {
       const parts = bestRatio.split(":");
       const ratioWidth = parseInt(parts[0], 10);
       const ratioHeight = parseInt(parts[1], 10);
-      console.log("Supported ratios: ", ratios);
-      console.log("Best Ratio: ", bestRatio);
       setCameraRatio(bestRatio);
       setCameraRatioNumber(ratioWidth / ratioHeight);
     }
