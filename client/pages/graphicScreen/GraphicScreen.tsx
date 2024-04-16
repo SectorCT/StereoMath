@@ -19,8 +19,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Suspense } from "react";
 import { figureData } from "../../Types";
 import { requestSolution } from "../../utils/requests";
-import Button from "../../components/Button";
 import { findProblemInHistory } from "../../utils/history";
+
+import CubeLoading from "../../components/CubeLoading";
+import Button from "../../components/Button";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -185,17 +187,12 @@ export default function GraphicScreen({ navigation, route }: Props) {
     <Suspense fallback={<Text>Loading...</Text>}>
       {!solutionReady && (
         <LinearGradient
-          colors={["#bde0fe", "#6685c4", "#445f96"]}
-          style={styles.loading}
-        >
-          <Image
-            source={require("../../assets/loading.png")}
-            style={StyleSheet.compose(styles.image, {
-              transform: [{ rotate: `${rotatedImageDeg}deg` }],
-            })}
-          />
-          <Text style={styles.waitingText}>Drawing...</Text>
-        </LinearGradient>
+        colors={["#bde0fe", "#6685c4", "#445f96"]}
+        style={styles.loading}
+      >
+        <CubeLoading size={200}/>
+        <Text style={styles.waitingText}>Drawing...</Text>
+      </LinearGradient>
       )}
       {solutionReady && data == null && (
         <LinearGradient
