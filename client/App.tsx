@@ -23,6 +23,8 @@ export default function App() {
     fetch(`${API_URL}/isAppPublished`).then(res => res.json()).then(data => {
       setIsPublished(data.published);
       setAppPublishedUrl(data.URL);
+    }).catch(err => {
+      console.log("isAppPublished", err);
     });
   }, []);
 
