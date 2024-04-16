@@ -191,12 +191,6 @@ export default function CameraPage({ navigation, route }: Props) {
           />
         </View>
       </View>
-      <MaterialCommunityIcons name="circle" size={24} color="black" style={{
-      position: "absolute",
-      top: cropDimensions.top,
-      left: cropDimensions.left,
-      zIndex: 999,
-    }}/>
     </View>
   );
 }
