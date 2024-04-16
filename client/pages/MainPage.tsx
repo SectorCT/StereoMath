@@ -139,13 +139,13 @@ export default function CameraPage({ navigation, route }: Props) {
       {!photo ? (
         <View>
           <Camera cameraRef={cameraRef} flashState={flashState} />
-          <ResizableCenteredView setCropDimensions={setCropDimensions} />
         </View>
       ) : (
         <View style={styles.preview}>
           <Image source={{ uri: photo.uri }} style={styles.preview} />
         </View>
       )}
+      <ResizableCenteredView setCropDimensions={setCropDimensions} />
       <View style={styles.buttonsContainer}>
         <View style={styles.bigNavbar}>
           <Button
