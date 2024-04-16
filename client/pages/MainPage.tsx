@@ -20,6 +20,8 @@ import ResizableCenteredView from "../components/resizeView";
 
 import * as ImageManipulator from "expo-image-manipulator";
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
   route: {};
@@ -36,6 +38,8 @@ export default function CameraPage({ navigation, route }: Props) {
   const [cropDimensions, setCropDimensions] = useState({
     width: 100,
     height: 100,
+    top: Dimensions.get("window").height / 2 - 100 / 2 - 150,
+    left: Dimensions.get("window").width / 2 - 100 / 2,
   });
 
   useEffect(() => {
@@ -67,10 +71,10 @@ export default function CameraPage({ navigation, route }: Props) {
           [
             {
               crop: {
-                originX: 500,
-                originY: 500,
-                width: cropDimensions.width,
-                height: cropDimensions.height,
+                originX: (cropDimensions.left / Dimensions.get("window").width) * (photo.width) ,
+                originY: (cropDimensions.top / Dimensions.get("window").height) * (photo.height),
+                width: (cropDimensions.width / Dimensions.get("window").width) * (photo.width),
+                height: (cropDimensions.height / Dimensions.get("window").height) * (photo.height),
               },
             },
           ],
@@ -80,8 +84,6 @@ export default function CameraPage({ navigation, route }: Props) {
             base64: true,
           }
         );
-
-        console.log("Image:", croppedImage);
 
         const text = await recognizeTextFromImage(croppedImage.base64);
         if (text) {
@@ -189,6 +191,12 @@ export default function CameraPage({ navigation, route }: Props) {
           />
         </View>
       </View>
+      <MaterialCommunityIcons name="circle" size={24} color="black" style={{
+      position: "absolute",
+      top: cropDimensions.top,
+      left: cropDimensions.left,
+      zIndex: 999,
+    }}/>
     </View>
   );
 }
