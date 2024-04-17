@@ -49,6 +49,24 @@ export async function findProblemInHistory(problem: string) {
     return null;
 }
 
+export async function deleteProblem(problem: string) {
+    const history = await AsyncStorage.getItem('history');
+    if (!history) return;
+    const historyData: historyData = JSON.parse(history);
+    for (const date in historyData) {
+        for (let i = 0; i < historyData[date].length; i++) {
+            if (historyData[date][i].problem.replaceAll(" ", '') === problem.replaceAll(" ", '')) {
+                historyData[date].splice(i, 1);
+                if (historyData[date].length === 0) {
+                    delete historyData[date];
+                }
+                AsyncStorage.setItem('history', JSON.stringify(historyData));
+                return;
+            }
+        }
+    }
+}
+
 export function clearHistory() {
     AsyncStorage.removeItem('history');
 }

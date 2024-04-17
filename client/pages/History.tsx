@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions, GestureResponderEvent } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
 import { historyData } from "../Types";
 
 import Button from "../components/Button";
 
-import { readHistory, clearHistory } from "../utils/history";
+import { readHistory, clearHistory, deleteProblem } from "../utils/history";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -19,11 +19,13 @@ export default function History({ navigation, route }: Props) {
     const [history, setHistory] = useState<historyData | null>(null);
     const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
+    async function readHistoryAsync() {
+        const currHistory = await readHistory();
+        if (currHistory) setHistory(currHistory);
+    }
+
     useEffect(() => {
-        async function readHistoryAsync() {
-            const currHistory = await readHistory();
-            if (currHistory) setHistory(currHistory);
-        }
+        
         readHistoryAsync();
     }, []);
 
@@ -34,6 +36,8 @@ export default function History({ navigation, route }: Props) {
             setExpandedDay(day);
         }
     };
+
+    const [problemToDelete, setProblemToDelete] = useState<string | null>(null);
 
     return (
         <View style={styles.container}>
@@ -59,7 +63,7 @@ export default function History({ navigation, route }: Props) {
                         return new Date(b).getTime() - new Date(a).getTime();
                     }).map((key, index) => {
                         return (
-                            <View key={index} style={styles.problemDayContainer}>
+                            <View key={index} style={[styles.problemDayContainer, (index === Object.keys(history).length - 1) ? styles.lastProblemDay : {}]}>
                                 <TouchableOpacity
                                     key={index}
                                     style={styles.problemDay}
@@ -73,20 +77,34 @@ export default function History({ navigation, route }: Props) {
                                     />
 
                                 </TouchableOpacity>
-                                <View style={styles.allProblems}>
-                                    {(expandedDay === key) && history[key].map(({ problem, solution }, index) => {
+                                {(expandedDay === key) && <View style={styles.allProblems}>
+                                    {history[key].map(({ problem, solution }, index) => {
                                         return (
                                             <TouchableOpacity
                                                 style={styles.problem}
-                                                onPress={() => { navigation.navigate("GraphicScreen", { problem: problem, data: solution }) }}
+                                                onPress={() => { 
+                                                    if (problemToDelete === problem) return;
+                                                    navigation.navigate("GraphicScreen", { problem: problem, data: solution }) 
+                                                }}
                                             >
-                                                <Text key={index}>
-                                                    {problem}
+                                                <Text key={index} style={styles.problemText}>
+                                                    {problem.replace(/\n/g, " ").trim()}
                                                 </Text>
+                                                <Button
+                                                    icon="trash-can-outline"
+                                                    size={24}
+                                                    color="black"
+                                                    // onPress={(event ) => handleDeleteProblem(event, problem)}
+                                                    onPress={async () => {
+                                                        setProblemToDelete(problem);
+                                                        await deleteProblem(problem);
+                                                        readHistoryAsync();
+                                                    }}
+                                                />
                                             </TouchableOpacity>
                                         );
                                     })}
-                                </View>
+                                </View>}
                             </View>
                         );
                     })
@@ -103,7 +121,7 @@ export default function History({ navigation, route }: Props) {
                 onPress={() => {
                     clearHistory();
                     setHistory(null);
-                }}
+                }} 
                 stylesProp={styles.clearButton}
             />
         </View>
@@ -127,12 +145,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     fullHistory: {
-        marginTop: 20,
+        marginTop: 15,
         width: "100%",
         alignItems: "center",
     },
     problemDayContainer: {
         flexDirection: "column",
+        justifyContent: "center",
     },
     problemDay: {
         flexDirection: "row",
@@ -143,18 +162,27 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1,
         borderColor: "black",
-
+        borderBottomWidth: 0,
+    },
+    lastProblemDay: {
+        borderBottomWidth: 1,
     },
     allProblems: {
-
+        borderTopWidth: 1,
     },
     problem: {
-        margin: 10,
+        paddingVertical: 20,
         padding: 10,
-        width: "90%",
         borderWidth: 1,
-        borderColor: "black",
         borderRadius: 10,
+        borderColor: "black",
+        marginHorizontal: 5,
+        marginVertical: 2,
+        flexDirection: "row",
+        // maxWidth: Dimensions.get("screen").width - 10
+    },
+    problemText: {
+        flex: 1,
     },
     text: {
         fontSize: 25,
