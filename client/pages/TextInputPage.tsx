@@ -3,7 +3,6 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
-import HamburgerMenu from "../components/HamburgerMenu";
 
 import Button from "../components/Button";
 
@@ -18,7 +17,10 @@ function TextInputPage({ navigation, route }: Props) {
 
   return (
     <>
-      <View style={styles.backgroundContainer}>
+      <LinearGradient
+        colors={["#4390F9", "#4091ff", "#1473f5"]}
+        style={{ flex: 1 }}
+      >
         <Button
           text=""
           onPress={() => navigation.goBack()}
@@ -56,7 +58,7 @@ function TextInputPage({ navigation, route }: Props) {
             />
           </View>
         </View>
-      </View>
+      </LinearGradient>
     </>
   );
 }
