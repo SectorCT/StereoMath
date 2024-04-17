@@ -3,32 +3,23 @@ import { ImagePickerAsset } from "expo-image-picker";
 export default async function recognizeTextFromImage(
   base64Image: ImagePickerAsset | string | null | undefined
 ) {
-  const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
-  const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`;
-
-  const requestPayload = {
-    requests: [
-      {
-        image: {
-          content: base64Image,
-        },
-        features: [{ type: "TEXT_DETECTION" }],
-      },
-    ],
-  };
+  const ServerUrl = process.env.EXPO_PUBLIC_API_URL;
 
   try {
-    const response = await fetch(apiURL, {
+    const response = await fetch(`${ServerUrl}/recognize_text`, {
       method: "POST",
-      body: JSON.stringify(requestPayload),
+      body: JSON.stringify({
+        image: base64Image,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     });
 
     const responseJson = await response.json();
-    if (responseJson.responses[0].fullTextAnnotation) {
-      const detectedText = responseJson.responses[0].fullTextAnnotation.text;
+    console.log(responseJson)
+    if (responseJson.text) {
+      const detectedText = responseJson.text;
       console.log("Detected Text:", detectedText);
       return detectedText;
     } else {
