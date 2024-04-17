@@ -6,6 +6,10 @@ import Button from "../components/Button";
 
 export default function UnableToSolve({ navigation} : { navigation: StackNavigationProp<any>}) {
     return (
+      <LinearGradient
+        colors={["#4390F9", "#4091ff", "#1473f5"]}
+        style={{ flex: 1 }}
+      >
         <View style={styles.loading}>
           <Text style={styles.waitingText}>Unable To Solve</Text>
 
@@ -22,6 +26,7 @@ export default function UnableToSolve({ navigation} : { navigation: StackNavigat
             stylesProp={styles.retryBtn}
           />
         </View>
+        </LinearGradient>
     );
 }
 
@@ -33,7 +38,6 @@ const styles = StyleSheet.create({
         height: Dimensions.get("screen").height,
         marginTop: 0,
         padding: 0,
-        backgroundColor: "#E1FCFF",
       },
       image: {
         height: 200,
@@ -55,5 +59,7 @@ const styles = StyleSheet.create({
         bottom: "-30%",
         backgroundColor: "black",
         borderRadius: 10,
+        padding: 10,
+        gap: 10,
       },
 });
