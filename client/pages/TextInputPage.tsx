@@ -18,10 +18,7 @@ function TextInputPage({ navigation, route }: Props) {
 
   return (
     <>
-      <LinearGradient
-        colors={["#bde0fe", "#6685c4", "#445f96"]}
-        style={{ flex: 1 }}
-      >
+      <View style={styles.backgroundContainer}>
         <Button
           text=""
           onPress={() => navigation.goBack()}
@@ -30,14 +27,15 @@ function TextInputPage({ navigation, route }: Props) {
           color="black"
           stylesProp={styles.backBtn}
         />
+
         <View style={styles.main}>
-          <Text style={styles.header}>StereoMath</Text>
+          <Text style={styles.header}>Customize your stereometric problem</Text>
 
           <TextInput
             style={styles.input}
             value={inputValue ? inputValue : ""}
             placeholder="Type your hardest stereometric math problem here..."
-            placeholderTextColor="lightgray"
+            placeholderTextColor="#4d4f4f"
             onChangeText={(text) => {
               setInputValue(text);
             }}
@@ -46,7 +44,7 @@ function TextInputPage({ navigation, route }: Props) {
           />
           <View style={styles.solve}>
             <Button
-              color="lightgray"
+              color="black"
               icon="arrow-right-thin"
               size={24}
               text="Solve"
@@ -58,12 +56,16 @@ function TextInputPage({ navigation, route }: Props) {
             />
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundContainer: {
+    flex: 1,
+    backgroundColor: "#E1FCFF",
+  },
   main: {
     position: "relative",
     flex: 1,
@@ -71,22 +73,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    fontSize: 50,
-    color: "white",
-    fontWeight: "bold",
+    fontSize: 30,
+    color: "black",
+    maxWidth: 200,
+    fontWeight: "800",
     fontFamily: "sans-serif-light",
-    textAlign: "center",
+    textAlign: "left",
     position: "relative",
-    top: -40,
-    textTransform: "uppercase",
+    top: -55,
+    left: 50,
+    alignSelf: "flex-start",
   },
   input: {
     fontSize: 20,
-    width: 300,
-    height: 200,
-    borderColor: "white",
-    color: "lightgray",
-    borderWidth: 1,
+    width: 350,
+    height: 300,
+    borderColor: "#868787",
+    color: "4d4f4f",
+    backgroundColor: "white",
+    borderWidth: 2,
     padding: 15,
     borderRadius: 15,
     textAlignVertical: "top",
@@ -97,7 +102,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+    borderWidth: 1,
+    borderColor: "#000000",
+    backgroundColor: "white",
+    borderRadius: 50,
+    color: "black",
+    alignSelf: "flex-end",
     top: 20,
+    left: -50,
   },
   solveText: {
     fontSize: 20,
