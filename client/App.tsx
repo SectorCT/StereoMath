@@ -9,9 +9,9 @@ import { LogBox } from 'react-native';
 
 import AppPublished from './pages/AppPublished';
 
-// LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']);
-// console.error = () => { };
-// console.warn = () => { };
+LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']);
+console.error = () => { };
+console.warn = () => { };
 
 export default function App() {
 
