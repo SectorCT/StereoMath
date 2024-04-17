@@ -127,23 +127,27 @@ const styles = StyleSheet.create({
     top: 0,
     borderBottomWidth: 0,
     borderRightWidth: 0,
+    borderTopLeftRadius: 10
   },
   topRightCorner: {
     right: 0,
     top: 0,
     borderBottomWidth: 0,
     borderLeftWidth: 0,
+    borderTopRightRadius: 10
   },
   bottomLeftCorner: {
     left: 0,
     bottom: 0,
     borderTopWidth: 0,
     borderRightWidth: 0,
+    borderBottomLeftRadius: 10
   },
   bottomRightCorner: {
     right: 0,
     bottom: 0,
     borderTopWidth: 0,
     borderLeftWidth: 0,
+    borderBottomRightRadius: 10
   },
 });
