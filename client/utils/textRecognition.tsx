@@ -20,7 +20,7 @@ export default async function recognizeTextFromImage(
     console.log(responseJson)
     if (responseJson.text) {
       const detectedText = responseJson.text;
-      console.log("Detected Text:", detectedText);
+      console.log("Detected Text:", detectedText.replace(/\n/g, " ").trim());
       return detectedText;
     } else {
       console.log("No text detected");
