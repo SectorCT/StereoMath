@@ -12,7 +12,7 @@ export default function UnableToSolve({ navigation} : { navigation: StackNavigat
         >
           <Image
             style={styles.image}
-            source={require("../../assets/unableToSolve.png")}
+            source={require("../assets/unableToSolve.png")}
           />
           <Text style={styles.waitingText}>Unable To Solve</Text>
           <Button
