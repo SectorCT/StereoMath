@@ -9,9 +9,9 @@ import { LogBox } from 'react-native';
 
 import AppPublished from './pages/AppPublished';
 
-LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']);
-console.error = () => { };
-console.warn = () => { };
+// LogBox.ignoreLogs(['_RNGestureHandlerModule.default.flushOperations']);
+// console.error = () => { };
+// console.warn = () => { };
 
 export default function App() {
 
@@ -23,6 +23,8 @@ export default function App() {
     fetch(`${API_URL}/isAppPublished`).then(res => res.json()).then(data => {
       setIsPublished(data.published);
       setAppPublishedUrl(data.URL);
+    }).catch(err => {
+      console.log("isAppPublished", err);
     });
   }, []);
 
