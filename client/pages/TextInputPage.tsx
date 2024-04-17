@@ -46,6 +46,7 @@ function TextInputPage({ navigation, route }: Props) {
           />
           <View style={styles.solve}>
             <Button
+              textColor="black"
               color="black"
               icon="arrow-right-thin"
               size={24}
@@ -81,8 +82,8 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontFamily: "sans-serif-light",
     textAlign: "left",
-    position: "relative",
-    top: -55,
+    position: "absolute",
+    top: 100,
     left: 50,
     alignSelf: "flex-start",
   },
