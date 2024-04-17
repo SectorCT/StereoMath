@@ -41,17 +41,24 @@ export default function ResizableCenteredView({
 
 
   let [recordedX0, setRecordedX0] = useState(0);
+  let [recordedY0, setRecordedY0] = useState(0);
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (event, gestureState) => {
       let xMultiplayer = 1;
+      let yMultiplayer = 1;
       // console.log("gestureState", gestureState.x0)
       // console.log("recorded x0", recordedX0)
       if (gestureState.x0 != 0) {
         setRecordedX0(gestureState.x0);
       };
+      if (gestureState.y0 != 0) {
+        setRecordedY0(gestureState.y0);
+      };
 
-      if (recordedX0 < Dimensions.get("screen").width/2) xMultiplayer = -xMultiplayer
+      if (recordedX0 < dimensions.left + dimensions.width/2) xMultiplayer = -xMultiplayer;
+      if (recordedY0 < dimensions.top + dimensions.height/2) yMultiplayer = -yMultiplayer;
+
 
       const newWidth = Math.min(
         maxWidth,
@@ -59,7 +66,7 @@ export default function ResizableCenteredView({
       );
       const newHeight = Math.min(
         maxHeight,
-        Math.max(initialHeight, dimensions.height + gestureState.dy)
+        Math.max(initialHeight, dimensions.height + (yMultiplayer * gestureState.dy))
       );
 
       setDimensions({
