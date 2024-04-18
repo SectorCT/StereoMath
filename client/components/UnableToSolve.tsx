@@ -7,7 +7,7 @@ import Button from "../components/Button";
 export default function UnableToSolve({ navigation} : { navigation: StackNavigationProp<any>}) {
     return (
       <LinearGradient
-        colors={["#4390F9", "#4091ff", "#1473f5"]}
+        colors={["#43a1e9", "#43a1e9", "#4393e9"]}
         style={{ flex: 1 }}
       >
         <View style={styles.loading}>
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
         padding: 0,
       },
       image: {
-        height: 200,
-        width: 200,
+        height: 270,
+        aspectRatio: 1,
       },
       waitingText: {
         position: "relative",

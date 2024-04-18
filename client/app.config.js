@@ -16,7 +16,7 @@ export default {
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#4390F9"
+      "backgroundColor": "#4393e9"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -30,7 +30,7 @@ export default {
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#4390F900"
+        "backgroundColor": "#4393e900"
       },
       "permissions": ["CAMERA"],
       "package": "com.stereomath.app"
