@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TextInput, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
@@ -18,7 +18,7 @@ function TextInputPage({ navigation, route }: Props) {
   return (
     <>
       <LinearGradient
-        colors={["#4390F9", "#4091ff", "#1473f5"]}
+        colors={["#43a1e9", "#43a1e9", "#4393e9"]}
         style={{ flex: 1 }}
       >
         <Button
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
     textAlign: "left",
     position: "absolute",
     top: 100,
-    left: 30,
+    left: "10%",
     alignSelf: "flex-start",
   },
   input: {
     fontSize: 20,
-    width: 340,
+    width: Dimensions.get("screen").width - 70,
     height: 300,
     borderColor: "#868787",
     backgroundColor: "white",

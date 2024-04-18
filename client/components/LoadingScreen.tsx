@@ -7,7 +7,7 @@ import CubeLoading from "../components/CubeLoading";
 export default function LoadingScreen({ navigation } : { navigation: StackNavigationProp<any>}) {
     return (
       <LinearGradient
-        colors={["#4390F9", "#4091ff", "#1473f5"]}
+        colors={["#43a1e9", "#43a1e9", "#4393e9"]}
         style={styles.loading}
       >
         <CubeLoading size={200}/>

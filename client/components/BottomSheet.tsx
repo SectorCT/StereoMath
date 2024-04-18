@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Text, View, Animated, PanResponder, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { figureData } from '../Types';
-import { is } from '@react-three/fiber/dist/declarations/src/core/utils';
+import { LinearGradient } from "expo-linear-gradient";
 
 const screenHeight = Dimensions.get('window').height;
 const sheetMaxHeight = screenHeight - 200;
@@ -84,8 +83,8 @@ const BottomSheet = ({ data, edgesValues }: { data: figureData, edgesValues: { [
 					</View>
 				</View>
 				<View style={styles.contentView}>
+						<Text style={StyleSheet.compose(styles.header, {height: (isExpanded ? 50 : sheetMinHeight)})}>Solution</Text>
 					<ScrollView contentContainerStyle={styles.scrollView}>
-						<Text style={styles.header}>Solution</Text>
 						<View style={styles.solutionContainer}>
 							{data.solution.map((name, index) => (
 								<View style={styles.solutionRow} key={index}>
@@ -143,7 +142,7 @@ const styles = StyleSheet.create({
 	},
 	sheetContainer: {
 		overflow: "hidden",
-		backgroundColor: '#219ebc',
+		backgroundColor: '#43a1e9',
 		color: "transparent",
 		bottom: 0,
 		width: '100%',
@@ -173,8 +172,11 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		color: "white",
+		backgroundColor: "#43a1e9",
 		position: "relative",
-		top: 40,
+		zIndex:20,
+		textAlign: "center",
+		top: 50,
 		fontSize: 30,
 		textTransform: "uppercase",
 		fontWeight: "bold",
@@ -188,32 +190,31 @@ const styles = StyleSheet.create({
 	solutionRow: {
 		display: 'flex',
 		flexDirection: "row",
-		backgroundColor: "pink",
 		marginBottom: 10,
 		borderRadius: 15,
 		width: "90%",
 	},
 	solutionContent: {
-		color: 'white',
 		alignItems: 'center',
 		flex: 6,
-		backgroundColor: 'pink',
+		backgroundColor: 'white',
 		padding: 10,
 		borderTopRightRadius: 15,
 		borderBottomRightRadius: 15,
 	},
 	solutionContentText: {
-
+		color:"black",
 	},
 	solutionIndex: {
 		color: "black",
-		backgroundColor: 'white',
+		backgroundColor: '#87b1f1',
 		padding: 10,
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
 		borderBottomLeftRadius: 15,
 		borderTopLeftRadius: 15
+		
 	},
 	solutionIndexText: {
 		fontSize: 25
@@ -229,7 +230,6 @@ const styles = StyleSheet.create({
 	valueBox: {
 		display: 'flex',
 		flexDirection: "row",
-		backgroundColor: "darkseagreen",
 		marginBottom: 10,
 		borderRadius: 15,
 		width: 140,
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
 		color: 'white',
 		alignItems: 'center',
 		flex: 1,
-		backgroundColor: 'greenyellow',
+		backgroundColor: '#87b1f1',
 		borderTopRightRadius: 15,
 		borderBottomRightRadius: 15,
 		justifyContent: "center",

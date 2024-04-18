@@ -16,7 +16,7 @@ export default {
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#4390F9"
+      "backgroundColor": "#4393e9"
     },
     "assetBundlePatterns": [
       "**/*"
