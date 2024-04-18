@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   animationContainer: {
     position: "absolute",
     top: "20%",
-    backgroundColor: "#219ebc",
+    backgroundColor: "#43a1e9",
     padding: 10,
     borderRadius: 5,
     width: "auto",
