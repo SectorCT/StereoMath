@@ -26,7 +26,7 @@ interface Props {
   route: {};
 }
 
-export default function CameraPage({ navigation, route }: Props) {
+export default function MainPage({ navigation, route }: Props) {
   const cameraRef = useRef<CameraType>(null);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
@@ -152,9 +152,7 @@ export default function CameraPage({ navigation, route }: Props) {
 
       </View>
       {!photo ? (
-        <View>
           <Camera cameraRef={cameraRef} flashState={flashState} />
-        </View>
       ) : (
         <View style={styles.preview}>
           <Image source={{ uri: photo.uri }} style={styles.preview} />
@@ -212,9 +210,8 @@ export default function CameraPage({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
+    flex: 1,
     justifyContent: "center",
-    height: height,
     backgroundColor: "black",
   },
   header: {

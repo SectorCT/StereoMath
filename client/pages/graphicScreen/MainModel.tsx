@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, Dimensions } from 'react-native';
+import { StyleSheet, Text, Dimensions, View } from 'react-native';
 
 import { Quaternion, Vector3, Color, Camera, PerspectiveCamera } from 'three';
 
@@ -73,7 +73,7 @@ function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 	}
 
 	return (
-		<>
+		<View style={{width:"100%", height:"100%", backgroundColor:"purple"}}>
 			{
 				data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 					const vertexPosition = new Vector3(...data.vertices[vertexName]);
@@ -132,7 +132,7 @@ function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 					setSelectedEdgeKey={setSelectedEdgeKey}
 					animateEdge={animateEdge} />
 			</CameraController>
-		</>
+		</View>
 	);
 }
 
