@@ -30,7 +30,7 @@ export default {
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#4393e900"
+        "backgroundColor": "#4393e9"
       },
       "permissions": ["CAMERA"],
       "package": "com.stereomath.app"
