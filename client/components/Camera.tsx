@@ -1,19 +1,10 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  RefObject,
-  forwardRef,
-} from "react";
-import { StyleSheet, View, Dimensions, Platform } from "react-native";
-
+import React, { useState, useEffect, useRef, RefObject } from "react";
+import { StyleSheet, View, Dimensions, Platform, SafeAreaView } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-
 import { Camera, CameraType, FlashMode } from "expo-camera";
 
-const { width, height } = Dimensions.get("screen");
-let screenAspectRatio = height / width;
-
+const window = Dimensions.get("window");
+const screenAspectRatio = window.height / window.width;
 interface Props {
   flashState: boolean;
   cameraRef: RefObject<Camera>;
@@ -21,8 +12,8 @@ interface Props {
 
 export default function CameraComponent({ flashState, cameraRef }: Props) {
   const [hasPermission, setHasPermission] = useState(false);
-  const [cameraRatio, setCameraRatio] = useState("20:9"); // Default to 20:9
-  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9); // Default to 20:9
+  const [cameraRatio, setCameraRatio] = useState("20:9");
+  const [cameraRatioNumber, setCameraRatioNumber] = useState(20 / 9);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const isFocused = useIsFocused();
 
@@ -47,14 +38,8 @@ export default function CameraComponent({ flashState, cameraRef }: Props) {
       const ratioWidth = parseInt(parts[0], 10);
       const ratioHeight = parseInt(parts[1], 10);
       setCameraRatio(bestRatio);
-      setCameraRatioNumber(ratioWidth / ratioHeight);
     }
   };
-  useEffect(() => {
-    if (isCameraReady && hasPermission) {
-      prepareRatio();
-    }
-  }, [isCameraReady, hasPermission]);
 
   useEffect(() => {
     (async () => {
@@ -63,59 +48,37 @@ export default function CameraComponent({ flashState, cameraRef }: Props) {
     })();
   }, []);
 
+  useEffect(() => {
+    if (isCameraReady && hasPermission) {
+      prepareRatio();
+    }
+  }, [isCameraReady, hasPermission]);
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {isFocused && hasPermission && (
         <Camera
-          style={StyleSheet.compose(styles.camera, {
-            width: width,
-            height: width * cameraRatioNumber,
-          })}
+          style={styles.camera}
           type={CameraType.back}
           ratio={cameraRatio}
           ref={cameraRef}
           flashMode={flashState ? FlashMode.torch : FlashMode.off}
-          zoom={0}
           onCameraReady={() => setIsCameraReady(true)}
-        ></Camera>
+        />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: width * screenAspectRatio,
-    backgroundColor: "black",
-  },
-  header: {
-    fontSize: 30,
-    flexDirection: "row",
-    textAlign: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    color: "white",
-    // backgroundColor: "00000000",
-    position: "absolute",
-    top: 40,
-    width: Dimensions.get("window").width,
-    zIndex: 80,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "purple",
   },
   camera: {
-    width: width,
-    height: width * screenAspectRatio,
-    flexDirection: "column-reverse",
-  },
-  buttonsContainer: {
-    zIndex: 10,
-    position: "absolute",
-    bottom: 0,
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    paddingHorizontal: 10,
+    height: "100%"
   },
 });
