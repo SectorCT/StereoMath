@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, RefObject } from "react";
-import { StyleSheet, View, Dimensions, Platform, SafeAreaView } from "react-native";
+import { StyleSheet, View, Dimensions, Platform, SafeAreaView, Text } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 
@@ -66,6 +66,10 @@ export default function CameraComponent({ flashState, cameraRef }: Props) {
           onCameraReady={() => setIsCameraReady(true)}
         />
       )}
+      {!hasPermission && 
+      <View style={styles.container}>
+        <Text>No access to camera</Text>
+      </View>}
     </SafeAreaView>
   );
 }
@@ -75,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "purple",
+    backgroundColor: "white",
   },
   camera: {
     width: "100%",
