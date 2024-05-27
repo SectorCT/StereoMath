@@ -5,5 +5,8 @@ export type figureData = {
 }
 
 export type historyData = {
-    [key: string]: Array<{ problem: string, solution: figureData }>
+    [key: string]: Array<{
+        problem: string, solution: figureData,
+        isFavorite: boolean
+    }>
 }
