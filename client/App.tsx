@@ -1,5 +1,6 @@
-import { StyleSheet, StatusBar } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { StyleSheet, StatusBar, View } from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -23,6 +24,7 @@ export default function App() {
     fetch(`${API_URL}/isAppPublished`).then(res => res.json()).then(data => {
       setIsPublished(data.published);
       setAppPublishedUrl(data.URL);
+      // setIsPublished(true);
     }).catch(err => {
       console.log("isAppPublished", err);
     });
@@ -30,13 +32,15 @@ export default function App() {
 
   return (
     <>
+    <StatusBar translucent backgroundColor="transparent" />
+    <SafeAreaView edges={['right', 'bottom', 'left']} style={styles.container}>
       {isPublished ? <AppPublished appPublishedUrl={appPublishedUrl} /> :
       <>
-        <StatusBar translucent backgroundColor="transparent" />
         <NavigationContainer>
           <NavStack />
         </NavigationContainer>
       </>}
+    </SafeAreaView>
     </>
   );
 }
@@ -44,8 +48,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

@@ -130,7 +130,7 @@ export default function CameraController({
 
     return (
         <>
-        <View {...panResponder.panHandlers} style={{ height: Dimensions.get("screen").height, width: Dimensions.get("screen").width }}>
+        <View {...panResponder.panHandlers} style={{ flex: 1 }}>
 			<Canvas style={styles.canvas}>
 				{children}
 				<CameraControl 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, Dimensions } from 'react-native';
+import { StyleSheet, Text, Dimensions, View } from 'react-native';
 
 import { Quaternion, Vector3, Color, Camera, PerspectiveCamera } from 'three';
 
@@ -22,22 +22,36 @@ function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 	const [shapeCenter, setShapeCenter] = useState(new Vector3(0, 0, 0));
 
 	function calculateShapeCenter() {
-		let xSum = 0;
-		let ySum = 0;
-		let zSum = 0;
-		let vertexCount = 0;
+
+		let furthestXNegative:number | undefined = undefined;
+		let furthestYNegative:number | undefined = undefined;
+		let furthestZNegative:number | undefined = undefined;
+
+		let furthestXPositive:number | undefined = undefined;
+		let furthestYPositive:number | undefined = undefined;
+		let furthestZPositive:number | undefined = undefined;
 
 		if (data.vertices) {
 			Object.keys(data.vertices).forEach((vertexName) => {
 				let vertex = data.vertices[vertexName];
-				xSum += vertex[0];
-				ySum += vertex[1];
-				zSum += vertex[2];
-				vertexCount++;
+				if (furthestXNegative === undefined || vertex[0] < furthestXNegative) furthestXNegative = vertex[0];
+				if (furthestYNegative === undefined || vertex[1] < furthestYNegative) furthestYNegative = vertex[1];
+				if (furthestZNegative === undefined || vertex[2] < furthestZNegative) furthestZNegative = vertex[2];
+
+				if (furthestXPositive === undefined || vertex[0] > furthestXPositive) furthestXPositive = vertex[0];
+				if (furthestYPositive === undefined || vertex[1] > furthestYPositive) furthestYPositive = vertex[1];
+				if (furthestZPositive === undefined || vertex[2] > furthestZPositive) furthestZPositive = vertex[2]
+
+				console.log(vertexName, vertex);
 			});
 		}
 
-		setShapeCenter(new Vector3(xSum / vertexCount, zSum / vertexCount, ySum / vertexCount));
+
+		let centerX = ((furthestXPositive || 0) + (furthestXNegative || 0)) / 2;
+		let centerY = ((furthestYPositive || 0) + (furthestYNegative || 0)) / 2;
+		let centerZ = ((furthestZPositive || 0) + (furthestZNegative || 0)) / 2;
+
+		setShapeCenter(new Vector3(centerX, centerY, centerZ));
 	}
 
 	useEffect(() => {
@@ -59,7 +73,7 @@ function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 	}
 
 	return (
-		<>
+		<View style={{width:"100%", height:"100%", backgroundColor:"purple"}}>
 			{
 				data.vertices && (Object.keys(data.vertices) as Array<keyof typeof data.vertices>).map((vertexName, index) => {
 					const vertexPosition = new Vector3(...data.vertices[vertexName]);
@@ -118,7 +132,7 @@ function MainModel({ animateEdge, problem, data, centerCameraAroundShape}:
 					setSelectedEdgeKey={setSelectedEdgeKey}
 					animateEdge={animateEdge} />
 			</CameraController>
-		</>
+		</View>
 	);
 }
 

@@ -21,8 +21,8 @@ import { figureData } from "../../Types";
 import { requestSolution } from "../../utils/requests";
 import { findProblemInHistory } from "../../utils/history";
 
-import CubeLoading from "../../components/CubeLoading";
-import Button from "../../components/Button";
+import LoadingScreen from "../../components/LoadingScreen";
+import UnableToSolve from "../../components/UnableToSolve";
 
 interface Props {
   navigation: StackNavigationProp<NavStackParamList, "GraphicScreen">;
@@ -185,35 +185,8 @@ export default function GraphicScreen({ navigation, route }: Props) {
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
-      {!solutionReady && (
-        <LinearGradient
-        colors={["#bde0fe", "#6685c4", "#445f96"]}
-        style={styles.loading}
-      >
-        <CubeLoading size={200}/>
-        <Text style={styles.waitingText}>Drawing...</Text>
-      </LinearGradient>
-      )}
-      {solutionReady && data == null && (
-        <LinearGradient
-          colors={["#bde0fe", "#6685c4", "#445f96"]}
-          style={styles.loading}
-        >
-          <Image
-            style={styles.image}
-            source={require("../../assets/unableToSolve.png")}
-          />
-          <Text style={styles.waitingText}>Unable To Solve</Text>
-          <Button
-            color="white"
-            text="Retry"
-            onPress={() => navigation.goBack()}
-            icon="keyboard-backspace"
-            size={24}
-            stylesProp={styles.retryBtn}
-          />
-        </LinearGradient>
-      )}
+      {!solutionReady && <LoadingScreen navigation={navigation} />}
+      {solutionReady && data == null && <UnableToSolve navigation={navigation}/>}
       {solutionReady && data !== null && (
         <View style={styles.container}>
           <GraphicNavbar
@@ -262,7 +235,7 @@ const styles = StyleSheet.create({
   animationContainer: {
     position: "absolute",
     top: "20%",
-    backgroundColor: "#219ebc",
+    backgroundColor: "#43a1e9",
     padding: 10,
     borderRadius: 5,
     width: "auto",
@@ -273,30 +246,5 @@ const styles = StyleSheet.create({
     color: "white",
     width: "auto",
     fontSize: 28,
-  },
-  loading: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: Dimensions.get("screen").height,
-    marginTop: 0,
-    padding: 0,
-    backgroundColor: "#bde0fe",
-  },
-  image: {
-    height: 180,
-    width: 200,
-  },
-  waitingText: {
-    position: "relative",
-    top: 50,
-    fontSize: 30,
-  },
-  retryBtn: {
-    color: "black",
-    position: "relative",
-    bottom: "-50%",
-    backgroundColor: "#219ebc",
-    borderRadius: 10,
   },
 });
