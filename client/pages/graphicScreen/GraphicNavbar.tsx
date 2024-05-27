@@ -28,12 +28,12 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         height: 100,
+        width: "100%",
         zIndex:1000,
         flex: 1,
         backgroundColor: '#ffffff00',
         alignItems: 'flex-end',
         paddingHorizontal: 20,
         justifyContent: 'space-between',
-        width: Dimensions.get("screen").width,
     },
 });

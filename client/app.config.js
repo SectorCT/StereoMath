@@ -9,7 +9,7 @@ export default {
         "projectId": process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
       }
     },
-    "version": "0.1.0",
+    "version": "0.9.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -30,7 +30,7 @@ export default {
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#4390F9"
+        "backgroundColor": "#4393e9"
       },
       "permissions": ["CAMERA"],
       "package": "com.stereomath.app"
