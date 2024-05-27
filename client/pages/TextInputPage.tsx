@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 20,
-    width: Dimensions.get("screen").width - 70,
+    width: "auto",
     height: 300,
     borderColor: "#868787",
     backgroundColor: "white",
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     textAlignVertical: "top",
+    marginHorizontal: "10%"
   },
   solve: {
     display: "flex",

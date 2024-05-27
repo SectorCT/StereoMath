@@ -133,8 +133,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "center",
-        width: Dimensions.get("screen").width,
-        height: Dimensions.get("screen").height,
     },
     header: {
         marginTop: 40,
@@ -179,7 +177,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         marginVertical: 2,
         flexDirection: "row",
-        // maxWidth: Dimensions.get("screen").width - 10
     },
     problemText: {
         flex: 1,
