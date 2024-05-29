@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, View, ImageBackground } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
@@ -17,19 +17,8 @@ function TextInputPage({ navigation, route }: Props) {
 
   return (
     <>
-      <LinearGradient
-        colors={["#43a1e9", "#43a1e9", "#4393e9"]}
-        style={{ flex: 1 }}
-      >
-        <Button
-          text=""
-          onPress={() => navigation.goBack()}
-          icon="keyboard-backspace"
-          size={24}
-          color="black"
-          stylesProp={styles.backBtn}
-        />
-
+      <ImageBackground
+        source={require('../assets/input-background.png')} style={styles.background}>
         <View style={styles.main}>
           <Text style={styles.header}>Customize your stereometric problem</Text>
 
@@ -44,7 +33,15 @@ function TextInputPage({ navigation, route }: Props) {
             multiline
             textAlignVertical="top"
           />
-          <View style={styles.solve}>
+          <View style={styles.buttons}><Button
+              textColor="black"
+              text="Back"
+              onPress={() => navigation.goBack()}
+              icon="keyboard-backspace"
+              size={24}
+              color="black"
+              stylesProp={styles.backBtn}
+            />
             <Button
               textColor="black"
               color="black"
@@ -56,75 +53,69 @@ function TextInputPage({ navigation, route }: Props) {
                   problem: inputValue ? inputValue : "",
                 });
               }}
-            />
-          </View>
+              stylesProp={styles.solve}
+            /></View>
+            
         </View>
-      </LinearGradient>
+      </ImageBackground>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundContainer: {
+  background:{
     flex: 1,
-    backgroundColor: "#E1FCFF",
   },
   main: {
-    position: "relative",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    maxWidth: "80%",
+    alignSelf: "center",
   },
   header: {
-    fontSize: 30,
-    color: "black",
-    width: 250,
+    fontSize: 19,
+    color: "white",
     fontWeight: "800",
-    fontFamily: "sans-serif-light",
-    textAlign: "left",
-    position: "absolute",
-    top: 100,
-    left: "10%",
-    alignSelf: "flex-start",
+    fontFamily: "Inter",
+    textAlign: "center",
+    textAlignVertical: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: "#43a1e9",
+    marginBottom: "10%",
+    paddingHorizontal: 30, //change this if possible
   },
   input: {
-    fontSize: 20,
-    width: "auto",
-    height: 300,
+    fontSize: 18,
     borderColor: "#868787",
-    backgroundColor: "white",
-    borderWidth: 2,
-    padding: 15,
+    backgroundColor: "rgba(255, 255, 255, 0.90)",
+    borderWidth: 1,
+    fontWeight: "bold",
     borderRadius: 15,
     textAlignVertical: "top",
-    marginHorizontal: "10%"
+    padding: 13,
+    height: "60%",
+    marginBottom: "5%",
+  },
+  buttons:{
+    width: "100%",
+    display: "flex",  
+    flexDirection: "row",
   },
   solve: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
     borderWidth: 1,
     borderColor: "#000000",
     backgroundColor: "white",
     borderRadius: 50,
-    color: "black",
     alignSelf: "flex-end",
-    top: 20,
-    left: -50,
-  },
-  solveText: {
-    fontSize: 20,
   },
   backBtn: {
     backgroundColor: "#ffffff",
     borderRadius: 50,
-    position: "relative",
-    top: 50,
-    left: 20,
-    maxWidth: 50,
-    maxHeight: 50,
+    borderColor: "#000000",
+    borderWidth: 1,
+    alignSelf: "flex-start",
   },
 });
 
