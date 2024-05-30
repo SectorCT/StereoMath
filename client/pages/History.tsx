@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Dimensions, GestureResponderEvent } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
 import { historyData } from "../Types";
@@ -7,7 +7,6 @@ import { historyData } from "../Types";
 import Button from "../components/Button";
 
 import { readHistory, clearHistory, deleteProblem } from "../utils/history";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
@@ -15,9 +14,58 @@ interface Props {
     route: {};
 }
 
+function Tabs({ selectedTab, setSelectedTab } : { selectedTab: "history" | "bookmarks", setSelectedTab: (tab: "history" | "bookmarks") => void }) {
+    const styles = StyleSheet.create({
+        tabs: {
+            flexDirection: 'row',
+            width: '100%',
+            height: 50,
+        },
+        tab: {
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            paddingBottom: 7,
+            borderBottomWidth: 1,
+            borderBottomColor: '#D9D9D9',
+        },
+        tabSelected: {
+            borderBottomWidth: 2,
+            borderBottomColor: '#4393e9',
+        },
+        tabText: {
+            color: '#000000',
+            fontSize: 16,
+        },
+        tabTextSelected: {
+            fontWeight: 'bold',
+        },
+    });
+    
+    return (
+        <View style={styles.tabs}>
+            <TouchableOpacity
+                style={[styles.tab, selectedTab === "history" && styles.tabSelected]}
+                onPress={() => setSelectedTab("history")}
+            >
+                <Text style={[styles.tabText, selectedTab === "history" && styles.tabTextSelected]}>History</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.tab, selectedTab === "bookmarks" && styles.tabSelected]}
+                onPress={() => setSelectedTab("bookmarks")}
+            >
+                <Text style={[styles.tabText, selectedTab === "bookmarks" && styles.tabTextSelected]}>Bookmarks</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+}
+
 export default function History({ navigation, route }: Props) {
     const [history, setHistory] = useState<historyData | null>(null);
     const [expandedDay, setExpandedDay] = useState<string | null>(null);
+
+    const [selectedTab, setSelectedTab] = useState<"history" | "bookmarks">("history")
 
     async function readHistoryAsync() {
         const currHistory = await readHistory();
@@ -25,7 +73,7 @@ export default function History({ navigation, route }: Props) {
     }
 
     useEffect(() => {
-        
+
         readHistoryAsync();
     }, []);
 
@@ -41,7 +89,7 @@ export default function History({ navigation, route }: Props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            <View style={styles.navigation}>
                 <Button
                     icon="arrow-left"
                     size={25}
@@ -49,14 +97,13 @@ export default function History({ navigation, route }: Props) {
                     onPress={() => navigation.goBack()}
                 />
                 <Text style={styles.text}>Solved problems</Text>
-                <Button
-                    icon="arrow-left-thin"
-                    size={25}
-                    color="black"
+                <TouchableOpacity
                     onPress={() => { }}
-                    stylesProp={{ opacity: 0 }}
-                />
+                >
+                    <Text>Delete</Text>
+                </TouchableOpacity>
             </View>
+            <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
             <ScrollView contentContainerStyle={styles.fullHistory}>
                 {history ? (
                     Object.keys(history).sort((a, b) => {
@@ -82,9 +129,9 @@ export default function History({ navigation, route }: Props) {
                                         return (
                                             <TouchableOpacity
                                                 style={styles.problem}
-                                                onPress={() => { 
+                                                onPress={() => {
                                                     if (problemToDelete === problem) return;
-                                                    navigation.navigate("GraphicScreen", { problem: problem, data: solution }) 
+                                                    navigation.navigate("GraphicScreen", { problem: problem, data: solution })
                                                 }}
                                             >
                                                 <Text key={index} style={styles.problemText}>
@@ -121,7 +168,7 @@ export default function History({ navigation, route }: Props) {
                 onPress={() => {
                     clearHistory();
                     setHistory(null);
-                }} 
+                }}
                 stylesProp={styles.clearButton}
             />
         </View>
@@ -134,7 +181,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
     },
-    header: {
+    navigation: {
         marginTop: 40,
         width: "100%",
         flexDirection: "row",
