@@ -2,19 +2,48 @@ import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../components/Navigation";
-import { historyData } from "../Types";
+import { historyData, historyProblemData } from "../Types";
 
 import Button from "../components/Button";
 
 import { readHistory, clearHistory, deleteProblem } from "../utils/history";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-interface Props {
-    navigation: StackNavigationProp<NavStackParamList, "History">;
-    route: {};
+
+function Navigation({ navigation }: { navigation: StackNavigationProp<NavStackParamList, "History"> }) {
+    const styles = StyleSheet.create({
+        navigation: {
+            marginTop: 40,
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 20,
+            alignItems: "center",
+        },
+        text: {
+            fontSize: 25,
+        },
+    })
+
+    return (
+        <View style={styles.navigation}>
+            <Button
+                icon="arrow-left"
+                size={25}
+                color="black"
+                onPress={() => navigation.goBack()}
+            />
+            <Text style={styles.text}>Solved problems</Text>
+            <TouchableOpacity
+                onPress={() => { }}
+            >
+                <Text>Delete</Text>
+            </TouchableOpacity>
+        </View>
+    );
 }
 
-function Tabs({ selectedTab, setSelectedTab } : { selectedTab: "history" | "bookmarks", setSelectedTab: (tab: "history" | "bookmarks") => void }) {
+function Tabs({ selectedTab, setSelectedTab }: { selectedTab: "history" | "bookmarks", setSelectedTab: (tab: "history" | "bookmarks") => void }) {
     const styles = StyleSheet.create({
         tabs: {
             flexDirection: 'row',
@@ -41,7 +70,7 @@ function Tabs({ selectedTab, setSelectedTab } : { selectedTab: "history" | "book
             fontWeight: 'bold',
         },
     });
-    
+
     return (
         <View style={styles.tabs}>
             <TouchableOpacity
@@ -59,6 +88,90 @@ function Tabs({ selectedTab, setSelectedTab } : { selectedTab: "history" | "book
         </View>
     );
 
+}
+
+function ProblemDay({ date, allProblems }: { date: string, allProblems: historyProblemData[] }) {
+    const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const currentDay = date.split("-")[0];
+    const currentMonth = Months[parseInt(date.split("-")[1], 10) - 1];
+    const currentYear = date.split("-")[2];
+
+    const styles = StyleSheet.create({
+        problemDayTitle: {
+            fontSize: 20,
+            fontWeight: "bold",
+            marginVertical: 10,
+        },
+        dayContainer: {
+            height: 50,
+            justifyContent: "flex-start",
+            paddingHorizontal: 15,
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        expandIcon: {
+            marginRight: 6,
+            paddingTop: 3,
+        },
+    });
+
+
+    return (
+        <TouchableOpacity style={styles.dayContainer}>
+            <MaterialCommunityIcons
+                color="black"
+                name="chevron-right"
+                size={30}
+                style={styles.expandIcon}
+            />
+            <Text style={styles.problemDayTitle}>
+                {currentMonth} {currentDay}, {currentYear}
+            </Text>
+        </TouchableOpacity>
+    );
+}
+
+function AllProblemDays({ history }: { history: historyData | null }) {
+    const styles = StyleSheet.create({
+        fullHistoryContainer: {
+            width: '100%',
+            flex: 1,
+            marginTop: 15,
+        },
+        fullHistory: {
+            flexGrow: 1,
+        }
+    });
+
+    return (
+        <View style={styles.fullHistoryContainer}>
+        <ScrollView contentContainerStyle={styles.fullHistory}>
+            {history ? (
+                Object.keys(history).sort((a, b) => {
+                    return new Date(b).getTime() - new Date(a).getTime();
+                }).map((key, index) => {
+                    return (
+                        <ProblemDay date={key} allProblems={history[key]} />
+                    )
+                })
+            ) : (
+                <Text>No history</Text>
+            )}
+        </ScrollView>
+        </View>
+    )
+}
+
+
+
+function ProblemEntry() {
+
+}
+
+interface Props {
+    navigation: StackNavigationProp<NavStackParamList, "History">;
+    route: {};
 }
 
 export default function History({ navigation, route }: Props) {
@@ -89,22 +202,10 @@ export default function History({ navigation, route }: Props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.navigation}>
-                <Button
-                    icon="arrow-left"
-                    size={25}
-                    color="black"
-                    onPress={() => navigation.goBack()}
-                />
-                <Text style={styles.text}>Solved problems</Text>
-                <TouchableOpacity
-                    onPress={() => { }}
-                >
-                    <Text>Delete</Text>
-                </TouchableOpacity>
-            </View>
+            <Navigation navigation={navigation} />
             <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-            <ScrollView contentContainerStyle={styles.fullHistory}>
+            <AllProblemDays history={history} />
+            {/* <ScrollView contentContainerStyle={styles.fullHistory}>
                 {history ? (
                     Object.keys(history).sort((a, b) => {
                         return new Date(b).getTime() - new Date(a).getTime();
@@ -158,7 +259,7 @@ export default function History({ navigation, route }: Props) {
                 ) : (
                     <Text>No history</Text>
                 )}
-            </ScrollView>
+            </ScrollView> */}
             <Button
                 text="Clear history"
                 textColor="black"
@@ -187,11 +288,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: 20,
-        alignItems: "center",
-    },
-    fullHistory: {
-        marginTop: 15,
-        width: "100%",
         alignItems: "center",
     },
     problemDayContainer: {
@@ -227,9 +323,6 @@ const styles = StyleSheet.create({
     },
     problemText: {
         flex: 1,
-    },
-    text: {
-        fontSize: 25,
     },
     clearButton: {
         marginTop: 20,
