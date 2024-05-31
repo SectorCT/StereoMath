@@ -24,7 +24,6 @@ function MainModel({ animateEdge, data, centerCameraAroundShape = true, showGrid
         const box = new Box3().setFromPoints(vertices);
 
         setBoundingBox(box);
-		console.log("bounding box", box)
 
 		const center = box.getCenter(new Vector3());
 		setShapeCenter(center);
@@ -48,25 +47,39 @@ function MainModel({ animateEdge, data, centerCameraAroundShape = true, showGrid
 	}
 
 	return (
-		<View style={{ width: "100%", height: "100%", backgroundColor: "black" }}>
-			{showVertices && <VerteciesText data={data} cameraRef={cameraRef} cameraPosition={cameraPosition} cameraRotation={cameraRotation} shapeCenter={shapeCenter} />}
-			<CameraController
-				shapeCenter={shapeCenter}
-                boundingBox={boundingBox}
-				centerCameraAroundShape={centerCameraAroundShape}
-				updateCameraRef={updateCameraRef}
-				updateCameraPosition={updateCameraPosition}
-				enabled={enableCameraController}
-			>
-				{showGrid && <Grid />}
-				<SceneContent
-					data={data}
-					selectedEdgeKey={selectedEdgeKey}
-					setSelectedEdgeKey={setSelectedEdgeKey}
-					animateEdge={animateEdge} />
-			</CameraController>
-		</View>
-	);
+        <>
+            {boundingBox && (
+                <View style={{ width: "100%", height: "100%", backgroundColor: "black" }}>
+                    {showVertices && (
+                        <VerteciesText 
+                            data={data} 
+                            cameraRef={cameraRef} 
+                            cameraPosition={cameraPosition} 
+                            cameraRotation={cameraRotation} 
+                            shapeCenter={shapeCenter} 
+                        />
+                    )}
+                    <CameraController
+                        shapeCenter={shapeCenter}
+                        boundingBox={boundingBox}
+                        centerCameraAroundShape={centerCameraAroundShape}
+                        updateCameraRef={updateCameraRef}
+                        updateCameraPosition={updateCameraPosition}
+                        enabled={enableCameraController}
+                        backgroundColor={backgroundColor}
+                    >
+                        {showGrid && <Grid />}
+                        <SceneContent
+                            data={data}
+                            selectedEdgeKey={selectedEdgeKey}
+                            setSelectedEdgeKey={setSelectedEdgeKey}
+                            animateEdge={animateEdge}
+                        />
+                    </CameraController>
+                </View>
+            )}
+        </>
+    );
 }
 
 function VerteciesText({ data, cameraRef, cameraPosition, cameraRotation, shapeCenter }: { data: figureData, cameraRef: React.MutableRefObject<Camera | undefined>, cameraPosition: Vector3, cameraRotation: Vector3, shapeCenter: Vector3 }) {

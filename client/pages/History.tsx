@@ -133,6 +133,8 @@ function ProblemEntry({ problem, index, navigation }: { problem: historyProblemD
                     showGrid={false}
                     showVertices={false}
                     enableCameraController={false}
+                    backgroundColor="white"
+                    centerCameraAroundShape={true}
                 />
             </View>
             <View style={styles.problemText}>
@@ -159,7 +161,7 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
     const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const currentDay = date.split("-")[0];
-    const currentMonth = Months[parseInt(date.split("-")[1], 10) - 1];
+    const currentMonth = Months[parseInt(date.split("-")[1], 10)];
     const currentYear = date.split("-")[2];
 
     const styles = StyleSheet.create({
@@ -332,6 +334,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "center",
+        backgroundColor: "#ffffff",
     },
     navigation: {
         marginTop: 40,

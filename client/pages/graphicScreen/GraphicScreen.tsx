@@ -66,10 +66,10 @@ export default function GraphicScreen({ navigation, route }: Props) {
           // "H": [1.5, 0, 0.866]
           // flipped on the z
           A: [0, 0, 0],
-          B: [3, 0, 0],
-          C: [1.5, 2.598, 0],
-          Q: [1.5, 0.866, 4],
-          H: [1.5, 0.866, 0],
+          B: [3*5, 0, 0],
+          C: [1.5*5, 2.598*5, 0],
+          Q: [1.5*5, 0.866*5, 4],
+          H: [1.5*5, 0.866*5, 0],
         },
         edges: [
           ["A", "B"],
