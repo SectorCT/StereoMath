@@ -92,7 +92,8 @@ function Tabs({ selectedTab, setSelectedTab }: { selectedTab: "history" | "bookm
 
 }
 
-function ProblemEntry({ problem, index, navigation }: { problem: historyProblemData, index: number,  navigation: StackNavigationProp<NavStackParamList, "History">}) {
+
+function ProblemEntry({ problem, index, navigation }: { problem: historyProblemData, index: number, navigation: StackNavigationProp<NavStackParamList, "History"> }) {
     const styles = StyleSheet.create({
         problem: {
             paddingVertical: 20,
@@ -219,7 +220,7 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
                 </Text>
             </TouchableOpacity>
             {expandedDay === date && (
-                allProblems.map((problem, index) => {
+                allProblems.toReversed().map((problem, index) => {
                     return (
                         <ProblemEntry problem={problem} index={index} navigation={navigation}/>
                     );
@@ -254,7 +255,9 @@ function AllProblemDays({ history, expandedDay, toggleDay, navigation }:
             <ScrollView contentContainerStyle={styles.fullHistory}>
                 {history ? (
                     Object.keys(history).sort((a, b) => {
-                        return new Date(b).getTime() - new Date(a).getTime();
+                        const splitA = a.split("-");
+                        const splitB = b.split("-");
+                        return new Date(parseInt(splitB[2]), parseInt(splitB[1]), parseInt(splitB[0])).getTime() - new Date(parseInt(splitA[2]), parseInt(splitA[1]), parseInt(splitA[0])).getTime();
                     }).map((key, index) => {
                         return (
                             <ProblemDay
