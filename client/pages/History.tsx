@@ -9,6 +9,8 @@ import Button from "../components/Button";
 import { readHistory, clearHistory, deleteProblem } from "../utils/history";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import Canva from '../components/Canva/Canva'
+
 
 function Navigation({ navigation }: { navigation: StackNavigationProp<NavStackParamList, "History"> }) {
     const styles = StyleSheet.create({
@@ -90,7 +92,70 @@ function Tabs({ selectedTab, setSelectedTab }: { selectedTab: "history" | "bookm
 
 }
 
-function ProblemDay({ date, allProblems }: { date: string, allProblems: historyProblemData[] }) {
+function ProblemEntry({ problem, index, navigation }: { problem: historyProblemData, index: number,  navigation: StackNavigationProp<NavStackParamList, "History">}) {
+    const styles = StyleSheet.create({
+        problem: {
+            paddingVertical: 20,
+            padding: 10,
+            borderWidth: 1,
+            borderRadius: 10,
+            borderColor: "black",
+            marginHorizontal: 5,
+            marginVertical: 2,
+            flexDirection: "row",
+        },
+        imagePreview: {
+            width: 86,
+            height: 86,
+            backgroundColor: "grey",
+            marginRight: 10,
+        },
+        problemText: {
+            flex: 1,
+            justifyContent: "center",
+        },
+    });
+
+    const [isDayFavorite, setIsDayFavorite] = useState(problem.isFavorite);
+
+    function toggleFavorite() {
+        setIsDayFavorite(!isDayFavorite);
+    }
+
+    return (
+        <TouchableOpacity
+            style={styles.problem}
+            onPress={() => { navigation.navigate("GraphicScreen", {problem:problem.problem, data:problem.solution})}}
+        >
+            <View style={styles.imagePreview}>
+                <Canva
+                    data={problem.solution}
+                    showGrid={false}
+                    showVertices={false}
+                    enableCameraController={false}
+                />
+            </View>
+            <View style={styles.problemText}>
+                <Text>{problem.problem.replaceAll("\n", " ")}</Text>
+            </View>
+            <Button
+                icon={isDayFavorite ? "star" : "star-outline"}
+                color="black"
+                onPress={toggleFavorite}
+                size={40}
+            />
+        </TouchableOpacity>
+    );
+}
+
+function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
+    {
+        date: string,
+        allProblems: historyProblemData[]
+        expandedDay: string | null,
+        toggleDay: (day: string) => void,
+        navigation: StackNavigationProp<NavStackParamList, "History">
+    }) {
     const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const currentDay = date.split("-")[0];
@@ -98,6 +163,11 @@ function ProblemDay({ date, allProblems }: { date: string, allProblems: historyP
     const currentYear = date.split("-")[2];
 
     const styles = StyleSheet.create({
+        problemDayContainer: {
+            width: "100%",
+            flexDirection: "column",
+            justifyContent: "center",
+        },
         problemDayTitle: {
             fontSize: 20,
             fontWeight: "bold",
@@ -105,7 +175,7 @@ function ProblemDay({ date, allProblems }: { date: string, allProblems: historyP
         },
         dayContainer: {
             height: 50,
-            justifyContent: "flex-start",
+            justifyContent: "space-between",
             paddingHorizontal: 15,
             flexDirection: "row",
             alignItems: "center",
@@ -114,25 +184,58 @@ function ProblemDay({ date, allProblems }: { date: string, allProblems: historyP
             marginRight: 6,
             paddingTop: 3,
         },
+        dateContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        numberOfProblems: {
+            fontSize: 16,
+            color: "grey",
+        },
+
     });
 
 
     return (
-        <TouchableOpacity style={styles.dayContainer}>
-            <MaterialCommunityIcons
-                color="black"
-                name="chevron-right"
-                size={30}
-                style={styles.expandIcon}
-            />
-            <Text style={styles.problemDayTitle}>
-                {currentMonth} {currentDay}, {currentYear}
-            </Text>
-        </TouchableOpacity>
+        <View style={styles.problemDayContainer}>
+            <TouchableOpacity style={styles.dayContainer}
+                onPress={() => toggleDay(date)}
+            >
+                <View style={styles.dateContainer}>
+                    <MaterialCommunityIcons
+                        color="black"
+                        name={expandedDay === date ? "chevron-up" : "chevron-down"}
+                        size={30}
+                        style={styles.expandIcon}
+                    />
+                    <Text style={styles.problemDayTitle}>
+                        {currentMonth} {currentDay}, {currentYear}
+                    </Text>
+                </View>
+                <Text style={styles.numberOfProblems}>
+                    {allProblems.length} {allProblems.length === 1 ? "problem" : "problems"}
+                </Text>
+            </TouchableOpacity>
+            {expandedDay === date && (
+                allProblems.map((problem, index) => {
+                    return (
+                        <ProblemEntry problem={problem} index={index} navigation={navigation}/>
+                    );
+                }
+            ))}
+        </View>
     );
 }
 
-function AllProblemDays({ history }: { history: historyData | null }) {
+
+function AllProblemDays({ history, expandedDay, toggleDay, navigation }:
+    {
+        history: historyData | null,
+        expandedDay: string | null,
+        toggleDay: (day: string) => void,
+        navigation: StackNavigationProp<NavStackParamList, "History">
+    }
+) {
     const styles = StyleSheet.create({
         fullHistoryContainer: {
             width: '100%',
@@ -146,28 +249,31 @@ function AllProblemDays({ history }: { history: historyData | null }) {
 
     return (
         <View style={styles.fullHistoryContainer}>
-        <ScrollView contentContainerStyle={styles.fullHistory}>
-            {history ? (
-                Object.keys(history).sort((a, b) => {
-                    return new Date(b).getTime() - new Date(a).getTime();
-                }).map((key, index) => {
-                    return (
-                        <ProblemDay date={key} allProblems={history[key]} />
-                    )
-                })
-            ) : (
-                <Text>No history</Text>
-            )}
-        </ScrollView>
+            <ScrollView contentContainerStyle={styles.fullHistory}>
+                {history ? (
+                    Object.keys(history).sort((a, b) => {
+                        return new Date(b).getTime() - new Date(a).getTime();
+                    }).map((key, index) => {
+                        return (
+                            <ProblemDay
+                                date={key}
+                                allProblems={history[key]}
+                                expandedDay={expandedDay}
+                                toggleDay={toggleDay}
+                                navigation={navigation}
+                            />
+                        )
+                    })
+                ) : (
+                    <Text>No history</Text>
+                )}
+            </ScrollView>
         </View>
     )
 }
 
 
 
-function ProblemEntry() {
-
-}
 
 interface Props {
     navigation: StackNavigationProp<NavStackParamList, "History">;
@@ -204,62 +310,7 @@ export default function History({ navigation, route }: Props) {
         <View style={styles.container}>
             <Navigation navigation={navigation} />
             <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-            <AllProblemDays history={history} />
-            {/* <ScrollView contentContainerStyle={styles.fullHistory}>
-                {history ? (
-                    Object.keys(history).sort((a, b) => {
-                        return new Date(b).getTime() - new Date(a).getTime();
-                    }).map((key, index) => {
-                        return (
-                            <View key={index} style={[styles.problemDayContainer, (index === Object.keys(history).length - 1) ? styles.lastProblemDay : {}]}>
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.problemDay}
-                                    onPress={() => toggleDay(key)}
-                                >
-                                    <Text>{key}</Text>
-                                    <MaterialCommunityIcons
-                                        name={(expandedDay === key) ? "arrow-down" : "arrow-right"}
-                                        size={24}
-                                        color="black"
-                                    />
-
-                                </TouchableOpacity>
-                                {(expandedDay === key) && <View style={styles.allProblems}>
-                                    {history[key].map(({ problem, solution }, index) => {
-                                        return (
-                                            <TouchableOpacity
-                                                style={styles.problem}
-                                                onPress={() => {
-                                                    if (problemToDelete === problem) return;
-                                                    navigation.navigate("GraphicScreen", { problem: problem, data: solution })
-                                                }}
-                                            >
-                                                <Text key={index} style={styles.problemText}>
-                                                    {problem.replace(/\n/g, " ").trim()}
-                                                </Text>
-                                                <Button
-                                                    icon="trash-can-outline"
-                                                    size={24}
-                                                    color="black"
-                                                    // onPress={(event ) => handleDeleteProblem(event, problem)}
-                                                    onPress={async () => {
-                                                        setProblemToDelete(problem);
-                                                        await deleteProblem(problem);
-                                                        readHistoryAsync();
-                                                    }}
-                                                />
-                                            </TouchableOpacity>
-                                        );
-                                    })}
-                                </View>}
-                            </View>
-                        );
-                    })
-                ) : (
-                    <Text>No history</Text>
-                )}
-            </ScrollView> */}
+            <AllProblemDays history={history} expandedDay={expandedDay} toggleDay={toggleDay} navigation={navigation} />
             <Button
                 text="Clear history"
                 textColor="black"

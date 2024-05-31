@@ -8,18 +8,17 @@ import {
   Dimensions,
 } from "react-native";
 import BottomSheet from "../../components/BottomSheet";
-import MainModel from "./MainModel";
+import Canva from "../../components/Canva/Canva";
 import GraphicNavbar from "./GraphicNavbar";
-import { Image } from "react-native";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavStackParamList } from "../../components/Navigation";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { Suspense } from "react";
 import { figureData } from "../../Types";
 import { requestSolution } from "../../utils/requests";
-import { findProblemInHistory } from "../../utils/history";
+import { findProblemInHistory, addProblemToHistory } from "../../utils/history";
+
 
 import LoadingScreen from "../../components/LoadingScreen";
 import UnableToSolve from "../../components/UnableToSolve";
@@ -39,6 +38,14 @@ export default function GraphicScreen({ navigation, route }: Props) {
   }
   const problem = route.params.problem;
   const { data: paramData } = route.params;
+
+  const [solutionReady, setSoultionReady] = useState(false);
+  const [data, setData] = useState<figureData | null>(null);
+
+  const [shownEdge, setShownEdge] = useState<string | null>(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(true);
 
   useEffect(() => {
     const devMode = process.env.EXPO_PUBLIC_DEVMODE == "true";
@@ -122,14 +129,9 @@ export default function GraphicScreen({ navigation, route }: Props) {
     checkSolution();
   }, []);
 
-  const [solutionReady, setSoultionReady] = useState(false);
-  const [data, setData] = useState<figureData | null>(null);
-  const [rotatedImageDeg, setRotatedImageDeg] = useState(0);
-
-  const [shownEdge, setShownEdge] = useState<string | null>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  const [centerCameraAroundShape, setCenterCameraAroundShape] = useState(true);
+  useEffect(() => {
+    if (data) addProblemToHistory(problem, data);
+  }, [data])
 
   function toggleCenterCameraAroundShape() {
     setCenterCameraAroundShape(!centerCameraAroundShape);
@@ -178,24 +180,22 @@ export default function GraphicScreen({ navigation, route }: Props) {
     }
     return Math.sqrt(
       Math.pow(vertex1Coords[0] - vertex2Coords[0], 2) +
-        Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
-        Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
+      Math.pow(vertex1Coords[1] - vertex2Coords[1], 2) +
+      Math.pow(vertex1Coords[2] - vertex2Coords[2], 2)
     );
   };
 
   return (
     <Suspense fallback={<Text>Loading...</Text>}>
       {!solutionReady && <LoadingScreen navigation={navigation} />}
-      {solutionReady && data == null && <UnableToSolve navigation={navigation}/>}
+      {solutionReady && data == null && <UnableToSolve navigation={navigation} />}
       {solutionReady && data !== null && (
         <View style={styles.container}>
           <GraphicNavbar
             navigation={navigation}
             toggleCameraFocus={toggleCenterCameraAroundShape}
           />
-
-          <MainModel
-            problem={problem}
+          <Canva
             data={data}
             animateEdge={animateEdge}
             centerCameraAroundShape={centerCameraAroundShape}
@@ -214,7 +214,7 @@ export default function GraphicScreen({ navigation, route }: Props) {
               {Math.round(
                 (edgesValues[shownEdge == null ? 0 : shownEdge] +
                   Number.EPSILON) *
-                  100
+                100
               ) / 100}{" "}
             </Text>
           </Animated.View>
