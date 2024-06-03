@@ -6,7 +6,7 @@ import { historyData, historyProblemData } from "../Types";
 
 import Button from "../components/Button";
 
-import { readHistory, clearHistory, deleteProblem } from "../utils/history";
+import { readHistory, clearHistory, deleteProblem, toggleFavorite } from "../utils/history";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Canva from '../components/Canva/Canva'
@@ -119,9 +119,15 @@ function ProblemEntry({ problem, index, navigation }: { problem: historyProblemD
 
     const [isDayFavorite, setIsDayFavorite] = useState(problem.isFavorite);
 
-    function toggleFavorite() {
+    function toggleFavoriteHandler() {
+        problem.isFavorite = !isDayFavorite;
+        toggleFavorite(problem.problem);
         setIsDayFavorite(!isDayFavorite);
     }
+
+    useEffect(() => {
+        setIsDayFavorite(problem.isFavorite);
+    }, [problem.isFavorite]);
 
     return (
         <TouchableOpacity
@@ -143,21 +149,22 @@ function ProblemEntry({ problem, index, navigation }: { problem: historyProblemD
             </View>
             <Button
                 icon={isDayFavorite ? "star" : "star-outline"}
-                color="black"
-                onPress={toggleFavorite}
+                color="#4393e9"
+                onPress={toggleFavoriteHandler}
                 size={40}
             />
         </TouchableOpacity>
     );
 }
 
-function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
+function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation, showOnlyFavorites }:
     {
         date: string,
         allProblems: historyProblemData[]
         expandedDay: string | null,
         toggleDay: (day: string) => void,
-        navigation: StackNavigationProp<NavStackParamList, "History">
+        navigation: StackNavigationProp<NavStackParamList, "History">,
+        showOnlyFavorites: boolean
     }) {
     const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -220,7 +227,9 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
                 </Text>
             </TouchableOpacity>
             {expandedDay === date && (
-                allProblems.toReversed().map((problem, index) => {
+                allProblems.filter((day) => {
+                    return !showOnlyFavorites || day.isFavorite;
+                }).toReversed().map((problem, index) => {
                     return (
                         <ProblemEntry problem={problem} index={index} navigation={navigation}/>
                     );
@@ -231,12 +240,13 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation }:
 }
 
 
-function AllProblemDays({ history, expandedDay, toggleDay, navigation }:
+function AllProblemDays({ history, expandedDay, toggleDay, navigation, showOnlyFavorites }:
     {
         history: historyData | null,
         expandedDay: string | null,
         toggleDay: (day: string) => void,
-        navigation: StackNavigationProp<NavStackParamList, "History">
+        navigation: StackNavigationProp<NavStackParamList, "History">,
+        showOnlyFavorites: boolean
     }
 ) {
     const styles = StyleSheet.create({
@@ -250,15 +260,23 @@ function AllProblemDays({ history, expandedDay, toggleDay, navigation }:
         }
     });
 
+    const problemsToMap = Object.keys(history ?? {}).sort((a, b) => {
+        const splitA = a.split("-");
+        const splitB = b.split("-");
+        return new Date(parseInt(splitB[2]), parseInt(splitB[1]), parseInt(splitB[0])).getTime() - new Date(parseInt(splitA[2]), parseInt(splitA[1]), parseInt(splitA[0])).getTime();
+    }).filter((day) => {
+        if (!showOnlyFavorites) return true;
+        if (!history) return false;
+
+        for(let problem of history[day]) {
+            if (problem.isFavorite) return true;
+        }
+        return false;
+    })
     return (
         <View style={styles.fullHistoryContainer}>
             <ScrollView contentContainerStyle={styles.fullHistory}>
-                {history ? (
-                    Object.keys(history).sort((a, b) => {
-                        const splitA = a.split("-");
-                        const splitB = b.split("-");
-                        return new Date(parseInt(splitB[2]), parseInt(splitB[1]), parseInt(splitB[0])).getTime() - new Date(parseInt(splitA[2]), parseInt(splitA[1]), parseInt(splitA[0])).getTime();
-                    }).map((key, index) => {
+                {history ? problemsToMap.map((key, index) => {
                         return (
                             <ProblemDay
                                 date={key}
@@ -266,12 +284,12 @@ function AllProblemDays({ history, expandedDay, toggleDay, navigation }:
                                 expandedDay={expandedDay}
                                 toggleDay={toggleDay}
                                 navigation={navigation}
+                                showOnlyFavorites={showOnlyFavorites}
                             />
                         )
-                    })
-                ) : (
-                    <Text>No history</Text>
-                )}
+                    }) : (
+                        <Text>No history yet</Text>
+                    )}
             </ScrollView>
         </View>
     )
@@ -297,7 +315,6 @@ export default function History({ navigation, route }: Props) {
     }
 
     useEffect(() => {
-
         readHistoryAsync();
     }, []);
 
@@ -315,7 +332,7 @@ export default function History({ navigation, route }: Props) {
         <View style={styles.container}>
             <Navigation navigation={navigation} />
             <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-            <AllProblemDays history={history} expandedDay={expandedDay} toggleDay={toggleDay} navigation={navigation} />
+            <AllProblemDays history={history} expandedDay={expandedDay} toggleDay={toggleDay} navigation={navigation} showOnlyFavorites={selectedTab=="bookmarks"} />
             <Button
                 text="Clear history"
                 textColor="black"
