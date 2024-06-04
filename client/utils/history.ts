@@ -16,6 +16,8 @@ export async function addProblemToHistory(problem: string, solution: figureData)
 
     const history = await AsyncStorage.getItem('history')
     if (history) {
+        if (await findProblemInHistory(problem)) return;
+
         const newHistory: historyData = JSON.parse(history);
         if (newHistory[dateStr]) {
             for (const entry of newHistory[dateStr]) {
@@ -49,7 +51,7 @@ export async function findProblemInHistory(problem: string) {
     return null;
 }
 
-export async function deleteProblem(problem: string) {
+export async function deleteProblemFromStorage(problem: string) {
     const history = await AsyncStorage.getItem('history');
     if (!history) return;
     const historyData: historyData = JSON.parse(history);
