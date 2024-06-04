@@ -6,13 +6,17 @@ import { historyData, historyProblemData } from "../Types";
 
 import Button from "../components/Button";
 
-import { readHistory, clearHistory, deleteProblem, toggleFavorite } from "../utils/history";
+import { readHistory, clearHistory, deleteProblemFromStorage, toggleFavorite } from "../utils/history";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Canva from '../components/Canva/Canva'
 
 
-function Navigation({ navigation }: { navigation: StackNavigationProp<NavStackParamList, "History"> }) {
+function Navigation({ navigation, setIsDeleting, isDeleting }: {
+    navigation: StackNavigationProp<NavStackParamList, "History">,
+    setIsDeleting: (state: boolean) => void,
+    isDeleting: boolean
+}) {
     const styles = StyleSheet.create({
         navigation: {
             marginTop: 40,
@@ -37,7 +41,7 @@ function Navigation({ navigation }: { navigation: StackNavigationProp<NavStackPa
             />
             <Text style={styles.text}>Solved problems</Text>
             <TouchableOpacity
-                onPress={() => { }}
+                onPress={() => { setIsDeleting(!isDeleting) }}
             >
                 <Text>Delete</Text>
             </TouchableOpacity>
@@ -93,7 +97,13 @@ function Tabs({ selectedTab, setSelectedTab }: { selectedTab: "history" | "bookm
 }
 
 
-function ProblemEntry({ problem, index, navigation }: { problem: historyProblemData, index: number, navigation: StackNavigationProp<NavStackParamList, "History"> }) {
+function ProblemEntry({ problem, index, navigation, isDeleting, DeleteProblem }: {
+    problem: historyProblemData,
+    index: number,
+    navigation: StackNavigationProp<NavStackParamList, "History">
+    isDeleting: boolean
+    DeleteProblem: (problem: string) => void
+}) {
     const styles = StyleSheet.create({
         problem: {
             paddingVertical: 20,
@@ -132,7 +142,7 @@ function ProblemEntry({ problem, index, navigation }: { problem: historyProblemD
     return (
         <TouchableOpacity
             style={styles.problem}
-            onPress={() => { navigation.navigate("GraphicScreen", {problem:problem.problem, data:problem.solution})}}
+            onPress={() => { navigation.navigate("GraphicScreen", { problem: problem.problem, data: problem.solution }) }}
         >
             <View style={styles.imagePreview}>
                 <Canva
@@ -147,30 +157,55 @@ function ProblemEntry({ problem, index, navigation }: { problem: historyProblemD
             <View style={styles.problemText}>
                 <Text>{problem.problem.replaceAll("\n", " ")}</Text>
             </View>
-            <Button
-                icon={isDayFavorite ? "star" : "star-outline"}
-                color="#4393e9"
-                onPress={toggleFavoriteHandler}
-                size={40}
-            />
+            {isDeleting ? (
+                <Button
+                    icon="delete"
+                    color="red"
+                    onPress={() => {
+                        DeleteProblem(problem.problem);
+                    }}
+                    size={40}
+                />
+            ) : (
+                <Button
+                    icon={isDayFavorite ? "star" : "star-outline"}
+                    color="#4393e9"
+                    onPress={toggleFavoriteHandler}
+                    size={40}
+                />
+            )}
+
         </TouchableOpacity>
     );
 }
 
-function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation, showOnlyFavorites }:
+function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation, showOnlyFavorites, isDeleting, DeleteDay}:
     {
         date: string,
         allProblems: historyProblemData[]
         expandedDay: string | null,
         toggleDay: (day: string) => void,
         navigation: StackNavigationProp<NavStackParamList, "History">,
-        showOnlyFavorites: boolean
+        showOnlyFavorites: boolean,
+        isDeleting: boolean,
+        DeleteDay: (day: string) => void,
     }) {
     const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     const currentDay = date.split("-")[0];
     const currentMonth = Months[parseInt(date.split("-")[1], 10)];
     const currentYear = date.split("-")[2];
+
+    const [problemsToMap, setProblemsToMap] = useState<historyProblemData[]>(allProblems);
+
+    function DeleteProblem(problem: string) {
+        deleteProblemFromStorage(problem);
+       
+        setProblemsToMap(problemsToMap.filter((problemEntry) => problemEntry.problem !== problem));
+        if (problemsToMap.length === 1) {
+            DeleteDay(date);
+        }
+    }
 
     const styles = StyleSheet.create({
         problemDayContainer: {
@@ -206,6 +241,7 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation, sho
     });
 
 
+    if (problemsToMap.length === 0) return null;
     return (
         <View style={styles.problemDayContainer}>
             <TouchableOpacity style={styles.dayContainer}
@@ -223,30 +259,31 @@ function ProblemDay({ date, allProblems, expandedDay, toggleDay, navigation, sho
                     </Text>
                 </View>
                 <Text style={styles.numberOfProblems}>
-                    {allProblems.length} {allProblems.length === 1 ? "problem" : "problems"}
+                    {problemsToMap.length} {problemsToMap.length === 1 ? "problem" : "problems"}
                 </Text>
             </TouchableOpacity>
             {expandedDay === date && (
-                allProblems.filter((day) => {
+                problemsToMap.filter((day) => {
                     return !showOnlyFavorites || day.isFavorite;
                 }).toReversed().map((problem, index) => {
                     return (
-                        <ProblemEntry problem={problem} index={index} navigation={navigation}/>
+                        <ProblemEntry problem={problem} index={index} navigation={navigation} isDeleting={isDeleting} DeleteProblem={DeleteProblem} />
                     );
                 }
-            ))}
+                ))}
         </View>
     );
 }
 
 
-function AllProblemDays({ history, expandedDay, toggleDay, navigation, showOnlyFavorites }:
+function AllProblemDays({ history, expandedDay, toggleDay, navigation, showOnlyFavorites, isDeleting }:
     {
         history: historyData | null,
         expandedDay: string | null,
         toggleDay: (day: string) => void,
         navigation: StackNavigationProp<NavStackParamList, "History">,
-        showOnlyFavorites: boolean
+        showOnlyFavorites: boolean,
+        isDeleting: boolean
     }
 ) {
     const styles = StyleSheet.create({
@@ -257,39 +294,63 @@ function AllProblemDays({ history, expandedDay, toggleDay, navigation, showOnlyF
         },
         fullHistory: {
             flexGrow: 1,
-        }
+        },
+        noProblemsText: {
+            fontSize: 20,
+            textAlign: "center",
+            marginTop: 20,
+        },
     });
 
-    const problemsToMap = Object.keys(history ?? {}).sort((a, b) => {
-        const splitA = a.split("-");
-        const splitB = b.split("-");
-        return new Date(parseInt(splitB[2]), parseInt(splitB[1]), parseInt(splitB[0])).getTime() - new Date(parseInt(splitA[2]), parseInt(splitA[1]), parseInt(splitA[0])).getTime();
-    }).filter((day) => {
-        if (!showOnlyFavorites) return true;
-        if (!history) return false;
+    const [daysToMap, setDaysToMap] = useState<string[]>([]);
+    useState<historyProblemData[] | null>(null);
 
-        for(let problem of history[day]) {
-            if (problem.isFavorite) return true;
+    useEffect(() => {
+        setDaysToMap(Object.keys(history ?? {}).sort((a, b) => {
+            const splitA = a.split("-");
+            const splitB = b.split("-");
+            return new Date(parseInt(splitB[2]), parseInt(splitB[1]), parseInt(splitB[0])).getTime() - new Date(parseInt(splitA[2]), parseInt(splitA[1]), parseInt(splitA[0])).getTime();
+        }).filter((day) => {
+            if (!showOnlyFavorites) return true;
+            if (!history) return false;
+
+            for (let problem of history[day]) {
+                if (problem.isFavorite) return true;
+            }
+            return false;
+        }))
+    }, [history, showOnlyFavorites]);
+
+
+    function DeleteDay(day: string) {
+        if (!history) return;
+        for (let problem of history[day]) {
+            deleteProblemFromStorage(problem.problem);
         }
-        return false;
-    })
+        delete history[day];
+        setDaysToMap(daysToMap.filter((dayEntry) => dayEntry !== day));
+    }
+    
+
     return (
         <View style={styles.fullHistoryContainer}>
             <ScrollView contentContainerStyle={styles.fullHistory}>
-                {history ? problemsToMap.map((key, index) => {
-                        return (
-                            <ProblemDay
-                                date={key}
-                                allProblems={history[key]}
-                                expandedDay={expandedDay}
-                                toggleDay={toggleDay}
-                                navigation={navigation}
-                                showOnlyFavorites={showOnlyFavorites}
-                            />
-                        )
-                    }) : (
-                        <Text>No history yet</Text>
-                    )}
+                {(history && daysToMap.length)  ? daysToMap.map((key, index) => {
+                    return (
+                        <ProblemDay
+                            date={key}
+                            allProblems={history[key]}
+                            expandedDay={expandedDay}
+                            toggleDay={toggleDay}
+                            navigation={navigation}
+                            showOnlyFavorites={showOnlyFavorites}
+                            isDeleting={isDeleting}
+                            DeleteDay={DeleteDay}
+                        />
+                    )
+                }) : (
+                    <Text style={styles.noProblemsText}>{showOnlyFavorites ? "No bookmarked problems" : "No problems solved yet"}</Text>
+                )}
             </ScrollView>
         </View>
     )
@@ -326,79 +387,29 @@ export default function History({ navigation, route }: Props) {
         }
     };
 
-    const [problemToDelete, setProblemToDelete] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            backgroundColor: "#ffffff",
+        },
+    });
 
     return (
         <View style={styles.container}>
-            <Navigation navigation={navigation} />
+            <Navigation navigation={navigation} setIsDeleting={setIsDeleting} isDeleting={isDeleting} />
             <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-            <AllProblemDays history={history} expandedDay={expandedDay} toggleDay={toggleDay} navigation={navigation} showOnlyFavorites={selectedTab=="bookmarks"} />
-            <Button
-                text="Clear history"
-                textColor="black"
-                color="red"
-                icon="delete"
-                size={25}
-                onPress={() => {
-                    clearHistory();
-                    setHistory(null);
-                }}
-                stylesProp={styles.clearButton}
+            <AllProblemDays
+                history={history}
+                expandedDay={expandedDay}
+                toggleDay={toggleDay}
+                navigation={navigation}
+                showOnlyFavorites={selectedTab == "bookmarks"}
+                isDeleting={isDeleting}
             />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "flex-start",
-        alignItems: "center",
-        backgroundColor: "#ffffff",
-    },
-    navigation: {
-        marginTop: 40,
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingHorizontal: 20,
-        alignItems: "center",
-    },
-    problemDayContainer: {
-        flexDirection: "column",
-        justifyContent: "center",
-    },
-    problemDay: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        margin: 0,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        width: "100%",
-        borderWidth: 1,
-        borderColor: "black",
-        borderBottomWidth: 0,
-    },
-    lastProblemDay: {
-        borderBottomWidth: 1,
-    },
-    allProblems: {
-        borderTopWidth: 1,
-    },
-    problem: {
-        paddingVertical: 20,
-        padding: 10,
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: "black",
-        marginHorizontal: 5,
-        marginVertical: 2,
-        flexDirection: "row",
-    },
-    problemText: {
-        flex: 1,
-    },
-    clearButton: {
-        marginTop: 20,
-    },
-});
