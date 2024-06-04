@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef, RefObject } from "react";
 import { StyleSheet, View, Dimensions, Platform, SafeAreaView, Text } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { Camera, CameraType, CameraView, FlashMode } from "expo-camera";
+import { Camera, CameraView } from "expo-camera";
 
-const window = Dimensions.get("window");
-const screenAspectRatio = window.height / window.width;
 interface Props {
   flashState: boolean;
   cameraRef: RefObject<CameraView>;
@@ -12,8 +10,6 @@ interface Props {
 
 export default function CameraComponent({ flashState, cameraRef }: Props) {
   const [hasPermission, setHasPermission] = useState(false);
-  const [isCameraReady, setIsCameraReady] = useState(false);
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     (async () => {
@@ -24,16 +20,17 @@ export default function CameraComponent({ flashState, cameraRef }: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {isFocused && hasPermission && (
-        <CameraView
-          style={styles.camera}
-          facing="back"
-          autofocus="on"
-          renderToHardwareTextureAndroid={true}
-          enableTorch={flashState}
-          ref={cameraRef}          
-          onCameraReady={() => setIsCameraReady(true)}
-        />
+      {hasPermission && (
+        <View style={styles.cameraContainer}>
+          <CameraView
+            style={styles.camera}
+            facing="back"
+            autofocus="on"
+            renderToHardwareTextureAndroid={true}
+            enableTorch={flashState}
+            ref={cameraRef}          
+          />
+        </View>
       )}
       {!hasPermission && 
       <View style={styles.container}>
@@ -50,8 +47,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: "white",
   },
-  camera: {
+  cameraContainer: {
     width: "100%",
-    height: "100%"
+    height: "100%",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  camera: {
+    flex: 1,
   },
 });
