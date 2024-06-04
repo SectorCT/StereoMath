@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#43a1e9",
     marginBottom: "10%",
-    paddingHorizontal: 30, //change this if possible
+    paddingHorizontal: 30,
+    paddingVertical: 5,
   },
   input: {
     fontSize: 18,
@@ -102,20 +103,24 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",  
     flexDirection: "row",
+    justifyContent: "space-between",
   },
   solve: {
     borderWidth: 1,
     borderColor: "#000000",
     backgroundColor: "white",
     borderRadius: 50,
-    alignSelf: "flex-end",
+    alignItems: "center",
+    
   },
   backBtn: {
     backgroundColor: "#ffffff",
     borderRadius: 50,
     borderColor: "#000000",
     borderWidth: 1,
-    alignSelf: "flex-start",
+    flexDirection: "row-reverse",
+    paddingHorizontal: 10,
+    alignItems: "center",
   },
 });
 
