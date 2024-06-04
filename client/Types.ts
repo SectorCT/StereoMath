@@ -4,9 +4,12 @@ export type figureData = {
     solution: Array<string>
 }
 
+export type historyProblemData = {
+    problem: string,
+    solution: figureData,
+    isFavorite: boolean
+}
+
 export type historyData = {
-    [key: string]: Array<{
-        problem: string, solution: figureData,
-        isFavorite: boolean
-    }>
+    [key: string]: Array<historyProblemData>
 }
