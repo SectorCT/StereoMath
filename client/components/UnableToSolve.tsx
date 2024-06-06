@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Image, StyleSheet, Dimensions, View} from "react-native";
+import { Text, Image, StyleSheet, View} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Button from "../components/Button";
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: Dimensions.get("screen").height,
+        flex:1,
         marginTop: 0,
         padding: 0,
       },

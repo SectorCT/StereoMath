@@ -16,6 +16,8 @@ export async function addProblemToHistory(problem: string, solution: figureData)
 
     const history = await AsyncStorage.getItem('history')
     if (history) {
+        if (await findProblemInHistory(problem)) return;
+
         const newHistory: historyData = JSON.parse(history);
         if (newHistory[dateStr]) {
             for (const entry of newHistory[dateStr]) {
@@ -23,14 +25,14 @@ export async function addProblemToHistory(problem: string, solution: figureData)
                     return;
                 }
             }
-            newHistory[dateStr].push({ problem, solution });
+            newHistory[dateStr].push({ problem, solution, isFavorite: false});
         } else {
-            newHistory[dateStr] = [{ problem, solution }];
+            newHistory[dateStr] = [{ problem, solution, isFavorite: false}];
         }
         AsyncStorage.setItem('history', JSON.stringify(newHistory));
     } else {
         const history: historyData = {}
-        history[dateStr] = [{ problem, solution }];
+        history[dateStr] = [{ problem, solution, isFavorite: false}];
         AsyncStorage.setItem('history', JSON.stringify(history));
     }
 }
@@ -49,7 +51,7 @@ export async function findProblemInHistory(problem: string) {
     return null;
 }
 
-export async function deleteProblem(problem: string) {
+export async function deleteProblemFromStorage(problem: string) {
     const history = await AsyncStorage.getItem('history');
     if (!history) return;
     const historyData: historyData = JSON.parse(history);
@@ -60,6 +62,21 @@ export async function deleteProblem(problem: string) {
                 if (historyData[date].length === 0) {
                     delete historyData[date];
                 }
+                AsyncStorage.setItem('history', JSON.stringify(historyData));
+                return;
+            }
+        }
+    }
+}
+
+export async function toggleFavorite(problem: string) {
+    const history = await AsyncStorage.getItem('history');
+    if (!history) return;
+    const historyData: historyData = JSON.parse(history);
+    for (const date in historyData) {
+        for (let i = 0; i < historyData[date].length; i++) {
+            if (historyData[date][i].problem.replaceAll(" ", '') === problem.replaceAll(" ", '')) {
+                historyData[date][i].isFavorite = !historyData[date][i].isFavorite;
                 AsyncStorage.setItem('history', JSON.stringify(historyData));
                 return;
             }

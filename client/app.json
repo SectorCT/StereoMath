@@ -7,7 +7,7 @@
         "projectId": "9960e10c-4e9d-493a-adf6-ca0c38615386"
       }
     },
-    "version": "0.9.0",
+    "version": "0.9.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -29,7 +29,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#4393e900"
+        "backgroundColor": "#4393e9"
       },
       "permissions": [
         "CAMERA"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 
-import { Camera as CameraType, CameraCapturedPicture } from "expo-camera";
+import { CameraCapturedPicture, CameraType, CameraView } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 
 import Button from "../components/Button";
@@ -26,8 +26,8 @@ interface Props {
   route: {};
 }
 
-export default function CameraPage({ navigation, route }: Props) {
-  const cameraRef = useRef<CameraType>(null);
+export default function MainPage({ navigation, route }: Props) {
+  const cameraRef = useRef<CameraView>(null);
   const [flashState, setFlashState] = useState(false);
   const [capturedText, setCapturedText] = useState<string>("");
   const isFocused = useIsFocused();
@@ -62,6 +62,8 @@ export default function CameraPage({ navigation, route }: Props) {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
+
+        if(!photo) return console.error("No photo taken.");
 
         setPhoto(photo);
 
@@ -152,9 +154,7 @@ export default function CameraPage({ navigation, route }: Props) {
 
       </View>
       {!photo ? (
-        <View>
           <Camera cameraRef={cameraRef} flashState={flashState} />
-        </View>
       ) : (
         <View style={styles.preview}>
           <Image source={{ uri: photo.uri }} style={styles.preview} />
@@ -212,9 +212,8 @@ export default function CameraPage({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
+    flex: 1,
     justifyContent: "center",
-    height: height,
     backgroundColor: "black",
   },
   header: {
