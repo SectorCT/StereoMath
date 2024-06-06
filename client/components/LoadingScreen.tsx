@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Image, StyleSheet, Dimensions } from "react-native";
+import { Text, Image, StyleSheet} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import CubeLoading from "../components/CubeLoading";
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: Dimensions.get("screen").height,
+        flex:1,
         marginTop: 0,
         padding: 0,
         backgroundColor: "#bde0fe",
