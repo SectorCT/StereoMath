@@ -1,8 +1,0 @@
-Django==4.1.7
-django-cors-headers==3.14.0
-djangorestframework==3.14.0
-requests==2.31.0
-openai==1.14.0
-python-dotenv==1.0.1
-whitenoise==6.6.0
-gunicorn

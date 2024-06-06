@@ -1,0 +1,10 @@
+install posgres and django in docker:
+docker pull django
+docker pull postgres:13
+start:
+docker-compose build
+docker-compose up
+migrate:
+docker-compose exec web python manage.py migrate
+collect static files:
+docker-compose exec web python manage.py collectstatic --noinput
