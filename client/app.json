@@ -1,12 +1,10 @@
-import 'dotenv/config';
-
-export default {
+{
   "expo": {
     "name": "StereoMath",
     "slug": "StereoMath",
     "extra": {
       "eas": {
-        "projectId": process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
+        "projectId": "9960e10c-4e9d-493a-adf6-ca0c38615386"
       }
     },
     "version": "0.9.1",
@@ -25,14 +23,17 @@ export default {
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to display it as a background."
-      }
+      },
+      "bundleIdentifier": "com.stereomath.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#4393e9"
       },
-      "permissions": ["CAMERA"],
+      "permissions": [
+        "CAMERA"
+      ],
       "package": "com.stereomath.app"
     },
     "web": {
