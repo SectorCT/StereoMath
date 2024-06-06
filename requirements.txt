@@ -6,3 +6,5 @@ openai==1.14.0
 python-dotenv==1.0.1
 whitenoise==6.6.0
 gunicorn
+dj-database-url==2.1.0
+psycopg2==2.9.9
