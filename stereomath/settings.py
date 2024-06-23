@@ -13,20 +13,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import dj_database_url
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv()
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+DATABASE_URL = os.getenv('DATABASE_URL')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-SECRET_KEY = 'django-insecure-9^^j#+kvcardvp48v7$z7d-lgb56k0%b33nl+nks_0mf=lx%%z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 
@@ -75,7 +76,7 @@ WSGI_APPLICATION = 'stereomath.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'postgres://stereomath:stereomath2627@localhost/stereomath'),
+        default=os.environ.get('DATABASE_URL', DATABASE_URL),
         conn_max_age=600
     )
 }
