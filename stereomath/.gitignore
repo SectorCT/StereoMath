@@ -1,3 +1,6 @@
 Lib/
 Scripts/
 __pycache__/
+
+.env
+*.local
