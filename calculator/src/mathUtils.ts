@@ -34,6 +34,39 @@ export class Vector3 {
         );
     }
 
+    rotatePoint(point: Vector3): Vector3 {
+        // Convert angles from degrees to radians
+        const radX = degToRad(this.x);
+        const radY = degToRad(this.y);
+        const radZ = degToRad(this.z);
+
+        // Rotation matrices around each axis
+        const cosX = Math.cos(radX);
+        const sinX = Math.sin(radX);
+        const cosY = Math.cos(radY);
+        const sinY = Math.sin(radY);
+        const cosZ = Math.cos(radZ);
+        const sinZ = Math.sin(radZ);
+
+        // Combined rotation matrix
+        const m11 = cosY * cosZ;
+        const m12 = -cosY * sinZ;
+        const m13 = sinY;
+        const m21 = sinX * sinY * cosZ + cosX * sinZ;
+        const m22 = -sinX * sinY * sinZ + cosX * cosZ;
+        const m23 = -sinX * cosY;
+        const m31 = -cosX * sinY * cosZ + sinX * sinZ;
+        const m32 = cosX * sinY * sinZ + sinX * cosZ;
+        const m33 = cosX * cosY;
+
+        // Apply rotation
+        const x = point.x * m11 + point.y * m12 + point.z * m13;
+        const y = point.x * m21 + point.y * m22 + point.z * m23;
+        const z = point.x * m31 + point.y * m32 + point.z * m33;
+
+        return new Vector3(fixPrecision(x), fixPrecision(y), fixPrecision(z));
+    }
+
     // Print vector info
     print(): void {
         console.log(`(${this.x}, ${this.y}, ${this.z})`);
@@ -87,6 +120,7 @@ export class RotationVector3 extends Vector3 {
             fixPrecision(zRotX)
         );
     }
+    
 }
 
 export function radToDeg(rad: number): number {
