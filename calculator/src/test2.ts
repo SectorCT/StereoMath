@@ -1,6 +1,6 @@
-import { RotationVector3, Vector3, fixPrecision } from "./mathUtils"; // Importing the Vector3 class from a utility file.
-
 import { triangleFormulas } from "./formulas";
+import { Vector3 } from "./vector3";
+
 
 // Vertex class definition
 class Vertex {
@@ -132,9 +132,9 @@ export class Triangle {
     public angleBCA: Angle;
     public angleCAB: Angle;
 
-    private orientation: Vector3; // Rotation orientation for the triangle
+    private planeNormal: Vector3 = new Vector3(0, 0, 1); // Default plane normal
 
-    constructor(vA: Vertex, vB: Vertex, vC: Vertex, orientation: Vector3) {
+    constructor(vA: Vertex, vB: Vertex, vC: Vertex, planeNormal: Vector3) {
         if (vA === vB || vB === vC || vC === vA) {
             throw new Error("Vertices cannot be the same.");
         }
@@ -151,7 +151,7 @@ export class Triangle {
         this.angleBCA = new Angle(vB, vC, vA);
         this.angleCAB = new Angle(vC, vA, vB);
 
-        this.orientation = orientation || new Vector3(0, 0, 0); // Default orientation
+        this.planeNormal = planeNormal.normalize();
     }
 
     setLineLength(number: number, lineName: string): void {
@@ -258,70 +258,47 @@ export class Triangle {
         );
     }
 
-    public buildTriangle(): void {
-        // Check how many vertices have defined positions
-        const definedVertices = [this.vA, this.vB, this.vC].filter(
-            (v) => v.isPositionDefined()
-        );
-
-        if (definedVertices.length === 0) {
-            // None of the vertices have positions defined
-            // Set vA at (0, 0, 0)
-            this.vA.setPosition(new Vector3(0, 0, 0));
-
-            // Place vB along the x-axis at (c, 0, 0)
-            const c = this.lineAB.getLength(); // Length between vA and vB
-
-            if (c == null) {
-                throw new Error("Cannot build triangle: side length c is not defined");
-            }
-
-            this.vB.setPosition(new Vector3(c, 0, 0));
-
-            // Compute vC's position
-            const a = this.lineBC.getLength(); // Length between vB and vC
-            const b = this.lineCA.getLength(); // Length between vC and vA
-
-            if (a == null || b == null) {
-                throw new Error("Cannot build triangle: side lengths a or b are not defined");
-            }
-
-            // Compute x coordinate of vC
-            const x = (b ** 2 - a ** 2 + c ** 2) / (2 * c);
-
-            // Compute y coordinate of vC
-            const ySquared = b ** 2 - x ** 2;
-            if (ySquared < 0) {
-                throw new Error("Cannot build triangle: invalid triangle dimensions");
-            }
-            const y = Math.sqrt(ySquared);
-
-            // Set vC position
-            this.vC.setPosition(new Vector3(x, y, 0));
-
-            // Apply rotation based on orientation
-            if (this.orientation) {
-                this.rotateTriangle();
-            }
-        } else {
-            throw new Error("This buildTriangle function currently supports only the case when no vertices are defined.");
+    getLineBetweenVertices(v1: Vertex, v2: Vertex): Line {
+        if (
+            (v1 === this.vA && v2 === this.vB) ||
+            (v1 === this.vB && v2 === this.vA)
+        ) {
+            return this.lineAB;
         }
+
+        if (
+            (v1 === this.vB && v2 === this.vC) ||
+            (v1 === this.vC && v2 === this.vB)
+        ) {
+            return this.lineBC;
+        }
+
+        if (
+            (v1 === this.vC && v2 === this.vA) ||
+            (v1 === this.vA && v2 === this.vC)
+        ) {
+            return this.lineCA;
+        }
+
+        throw new Error("Vertices not connected by a line.");
     }
 
-    private rotateTriangle(): void {
-        // Rotate each vertex around the origin
-        const rotation = this.orientation;
+    public buildTriangle(): void {
+        // Check how many vertices have defined positions
+        const definedVertices = [this.vA, this.vB, this.vC].filter((v) =>
+            v.isPositionDefined()
+        );
 
-        const rotatePoint = (point: Vector3): Vector3 => {
-            // Translate point to origin (already at origin in this case)
-            // Apply rotation
-            const rotated = rotation.rotatePoint(point);
-            return rotated;
-        };
+        console.log("not implemented yet");
+        return;
+    }
+    
 
-        this.vA.setPosition(rotatePoint(this.vA.getPosition()));
-        this.vB.setPosition(rotatePoint(this.vB.getPosition()));
-        this.vC.setPosition(rotatePoint(this.vC.getPosition()));
+    private translateTriangle(referencePosition: Vector3): void {
+        // Translate each vertex by adding the translation vector to their current position
+        this.vA.setPosition(Vector3.add(this.vA.getPosition(), referencePosition));
+        this.vB.setPosition(Vector3.add(this.vB.getPosition(), referencePosition));
+        this.vC.setPosition(Vector3.add(this.vC.getPosition(), referencePosition));
     }
 
     print(): void {
@@ -349,19 +326,19 @@ export class Triangle {
 
 // Main logic (entry point)
 function main() {
-    const vA = new Vertex("A");
+    const vA = new Vertex("A", new Vector3(1, 1, 1));
     const vB = new Vertex("B");
     const vC = new Vertex("C");
 
     // Add an orientation (e.g., 45 degrees rotation around Z-axis)
-    const orientation = new RotationVector3(0, 0, 0);
+    const planeNormal = new Vector3(0, 1, 0);
 
-    const t = new Triangle(vA, vB, vC, orientation);
+    const t = new Triangle(vA, vB, vC, planeNormal);
 
-    t.setLineLength(5, "CB");
-    t.setLineLength(5, "CA");
+    t.setLineLength(20, "CB");
+    t.setLineLength(18, "CA");
 
-    t.setAngleValue(30, "BAC");
+    t.setAngleValue(60, "BAC");
 
     t.calculateTriangle(); // Calculate the rest of the triangle
 
