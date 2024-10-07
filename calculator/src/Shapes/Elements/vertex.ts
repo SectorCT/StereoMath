@@ -1,6 +1,7 @@
-import { Vector3 } from "../vector3";
+import { Vector3 } from "../../vector3";
+import Decimal from "decimal.js";
 
-class Vertex {
+export default class Vertex {
     private name: string;
     private position: Vector3;
     private isDefined: boolean;
@@ -8,7 +9,7 @@ class Vertex {
 
     constructor(name: string, position?: Vector3) {
         this.name = name;
-        this.position = position || new Vector3(0, 0, 0); // Default position as (0,0,0)
+        this.position = position || new Vector3(new Decimal(0), new Decimal(0), new Decimal(0));
         this.isDefined = !!position;
         this.connectedVertices = [];
     }
