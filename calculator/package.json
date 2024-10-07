@@ -4,6 +4,7 @@
     "tsx": "^4.19.1"
   },
   "scripts": {
-    "start": "tsx"
+    "start": "tsx",
+    "dev": "tsx watch .\\src\\index.ts"
   }
 }
