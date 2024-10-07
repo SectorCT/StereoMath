@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "decimal.js": "^10.4.3",
     "tsx": "^4.19.1"
   },
   "scripts": {
