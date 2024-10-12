@@ -1,4 +1,4 @@
-import { Vector3 } from "./vector3";
+import { Vector2, Vector3 } from "./vector";
 import { Vertex } from "./Shapes/Elements";
 import { Triangle } from "./Shapes";
 
@@ -11,8 +11,8 @@ Decimal.config({
 
 
 function main() {
-    const vA = new Vertex("A", new Vector3(new Decimal(0), new Decimal(0), new Decimal(1)));
-    const vB = new Vertex("B");
+    const vA = new Vertex("A", new Vector2(new Decimal(0), new Decimal(0)));
+    const vB = new Vertex("B", new Vector2(new Decimal(5), new Decimal(0)));
     const vC = new Vertex("C");
 
     // Add an orientation (e.g., 45 degrees rotation around Z-axis)
@@ -29,7 +29,7 @@ function main() {
 
     t.buildTriangle(); // Build the triangle (set vertex coordinates based on lengths and angles)
 
-    t.print(); // Print the triangle details
+    t.print()
 }
 
 main();
