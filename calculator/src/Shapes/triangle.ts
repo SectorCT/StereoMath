@@ -186,15 +186,13 @@ export default class Triangle {
             v.isLocalPositionDefined()
         );
 
-        if (definedVertices.length === 3) return;
-
-        if (definedVertices.length === 2) {
-            const undefinedVertex = [this.vA, this.vB, this.vC].find((v) => !definedVertices.includes(v));
+        function buildTriangleWithTwoDefinedVertices(triangle: Triangle, definedVertices: Vertex[]) {
+            const undefinedVertex = [triangle.vA, triangle.vB, triangle.vC].find((v) => !definedVertices.includes(v));
 
             if (!undefinedVertex) throw new Error("No undefined vertex found");
 
-            const circleA = new Circle(definedVertices[0].getLocalPosition(), this.lineAB.getLength());
-            const circleB = new Circle(definedVertices[1].getLocalPosition(), this.lineBC.getLength());
+            const circleA = new Circle(definedVertices[0].getLocalPosition(), triangle.getLineBetweenVertices(definedVertices[0], undefinedVertex).getLength());
+            const circleB = new Circle(definedVertices[1].getLocalPosition(), triangle.getLineBetweenVertices(definedVertices[1], undefinedVertex).getLength());
 
             const intersectionPoints = Circle.findIntersectionPoints(circleA, circleB);
 
@@ -219,8 +217,47 @@ export default class Triangle {
                     return curr;
                 })
             );
-               
         }
+
+        function buildTriangleWithOneDefinedVertex(triangle: Triangle, definedVertices: Vertex[]) {
+            const definedVertex = definedVertices[0];
+
+            const undefinedVertices = [triangle.vA, triangle.vB, triangle.vC].filter((v) => !definedVertices.includes(v));
+            
+            const undefinedVertex = undefinedVertices.reduce((prev, curr) => {
+                if(!prev) return curr;
+
+                if(curr.getName().localeCompare(prev.getName()) < 0) return curr;
+
+                return prev;
+            });
+
+            undefinedVertex.setLocalPosition(new Vector2(definedVertex.getLocalPosition().x.plus(triangle.getLineBetweenVertices(definedVertex, undefinedVertex).getLength()), definedVertex.getLocalPosition().y));
+            
+            buildTriangleWithTwoDefinedVertices(triangle, [definedVertex, undefinedVertex]);
+        }
+
+        function buildTriangleWithNoDefinedVertices(triangle: Triangle) {
+            let vertexToDefine = [triangle.vA, triangle.vB, triangle.vC].reduce((prev, curr) => {
+                if(!prev) return curr;
+
+                if(curr.getName().localeCompare(prev.getName()) < 0) return curr;
+
+                return prev;
+            });
+
+            vertexToDefine.setLocalPosition(new Vector2(new Decimal(0), new Decimal(0)));
+
+            buildTriangleWithOneDefinedVertex(triangle, [vertexToDefine]);
+        }
+
+        if (definedVertices.length === 3) return;
+
+        if (definedVertices.length === 2) buildTriangleWithTwoDefinedVertices(this, definedVertices);
+
+        if (definedVertices.length === 1) buildTriangleWithOneDefinedVertex(this, definedVertices);
+
+        if (definedVertices.length === 0) buildTriangleWithNoDefinedVertices(this);
 
         return;
     }

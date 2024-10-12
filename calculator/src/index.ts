@@ -11,8 +11,8 @@ Decimal.config({
 
 
 function main() {
-    const vA = new Vertex("A", new Vector2(new Decimal(0), new Decimal(0)));
-    const vB = new Vertex("B", new Vector2(new Decimal(5), new Decimal(0)));
+    const vA = new Vertex("A");
+    const vB = new Vertex("B");
     const vC = new Vertex("C");
 
     // Add an orientation (e.g., 45 degrees rotation around Z-axis)

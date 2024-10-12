@@ -26,6 +26,10 @@ export default class Vertex {
         this.connectedVertices = [];
     }
 
+    getName(): string {
+        return this.name;
+    }
+
     // Set position of the vertex
     setGlobalPosition(position: Vector3): void {
         this.globalPosition = position;
