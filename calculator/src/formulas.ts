@@ -321,7 +321,9 @@ const sumOfAngles = new Formula(
         if (triangleData.angleCAB.equals(new Decimal(0)) &&
             !triangleData.angleABC.equals(new Decimal(0)) &&
             !triangleData.angleBCA.equals(new Decimal(0))) {
-            const calculation = new Decimal(180).minus(triangleData.angleABC).minus(triangleData.angleBCA);
+            const calculation = new Decimal(180)
+                .minus(triangleData.angleABC)
+                .minus(triangleData.angleBCA);
             result.angleCAB = calculation.toDecimalPlaces(5);
         }
 
@@ -329,7 +331,9 @@ const sumOfAngles = new Formula(
         if (triangleData.angleABC.equals(new Decimal(0)) &&
             !triangleData.angleABC.equals(new Decimal(0)) &&
             !triangleData.angleBCA.equals(new Decimal(0))) {
-            const calculation = new Decimal(180).minus(triangleData.angleABC).minus(triangleData.angleBCA);
+            const calculation = new Decimal(180)
+                .minus(triangleData.angleCAB)
+                .minus(triangleData.angleBCA);
             result.angleABC = calculation.toDecimalPlaces(5);
         }
 
@@ -337,13 +341,16 @@ const sumOfAngles = new Formula(
         if (triangleData.angleBCA.equals(new Decimal(0)) &&
             !triangleData.angleABC.equals(new Decimal(0)) &&
             !triangleData.angleABC.equals(new Decimal(0))) {
-            const calculation = new Decimal(180).minus(triangleData.angleABC).minus(triangleData.angleABC);
+            const calculation = new Decimal(180)
+                .minus(triangleData.angleCAB)
+                .minus(triangleData.angleABC);
             result.angleBCA = calculation.toDecimalPlaces(5);
         }
 
         return result;
     }
 );
+
 
 
 // Exporting the formulas

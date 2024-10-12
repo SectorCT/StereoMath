@@ -1,33 +1,58 @@
-import { Vector3 } from "../../vector3";
+import { Vector3, Vector2 } from "../../vector";
 import Decimal from "decimal.js";
 
 export default class Vertex {
     private name: string;
-    private position: Vector3;
-    private isDefined: boolean;
+    private globalPosition: Vector3;
+    private localPosition: Vector2;
+
+    private isGlobalDefined: boolean;
+    private isLocalDefined: boolean;
     private connectedVertices: Vertex[];
 
-    constructor(name: string, position?: Vector3) {
+    constructor(name: string, localPosition?: Vector2) {
         this.name = name;
-        this.position = position || new Vector3(new Decimal(0), new Decimal(0), new Decimal(0));
-        this.isDefined = !!position;
+        this.localPosition = localPosition || new Vector2(new Decimal(0), new Decimal(0));
+        
+
+        this.isGlobalDefined = false;
+        this.isLocalDefined = false;
+
+        if(localPosition) {
+            this.isLocalDefined = true;
+        }
+        
+        
         this.connectedVertices = [];
     }
 
     // Set position of the vertex
-    setPosition(position: Vector3): void {
-        this.position = position;
-        this.isDefined = true;
+    setGlobalPosition(position: Vector3): void {
+        this.globalPosition = position;
+        this.isGlobalDefined = true;  
+    }
+
+    setLocalPosition(position: Vector2): void {
+        this.localPosition = position;
+        this.isLocalDefined = true;
     }
 
     // Get position of the vertex
-    getPosition(): Vector3 {
-        return this.position;
+    getGlobalPosition(): Vector3 {
+        return this.globalPosition;
+    }
+
+    getLocalPosition(): Vector2 {
+        return this.localPosition;
     }
 
     // Check if the vertex is defined
-    isPositionDefined(): boolean {
-        return this.isDefined;
+    isGlobalPositionDefined(): boolean {
+        return this.isGlobalDefined;
+    }
+
+    isLocalPositionDefined(): boolean {
+        return this.isLocalDefined;
     }
 
     // Connect this vertex to another vertex
@@ -45,12 +70,12 @@ export default class Vertex {
     }
 
     print(): void {
-        if (this.isDefined) {
+        if (this.isGlobalPositionDefined()) {
             console.log(
-                `${this.name} (${this.position.x}, ${this.position.y}, ${this.position.z})`
+                `${this.name} ${this.globalPosition.toString()}`
             );
         } else {
-            console.log(`${this.name}`);
+            console.log(`${this.name} ${this.localPosition.toString()}`);
         }
     }
 }

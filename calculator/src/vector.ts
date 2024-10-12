@@ -78,9 +78,79 @@ export class Vector3 {
     toString(): string {
         return `(${this.x}, ${this.y}, ${this.z})`;
     }
+}
 
-    // Print vector info
-    print(): void {
-        console.log(`(${this.x}, ${this.y}, ${this.z})`);
+export class Vector2 {
+    public x: Decimal;
+    public y: Decimal;
+
+    constructor(x?: Decimal, y?: Decimal) {
+        this.x = x || new Decimal(0);
+        this.y = y || new Decimal(0);
+    }
+
+    static add(vector1: Vector2, vector2: Vector2): Vector2 {
+        return new Vector2(
+            vector1.x.plus(vector2.x),
+            vector1.y.plus(vector2.y)
+        );
+    }
+
+    static subtract(vector1: Vector2, vector2: Vector2): Vector2 {
+        return new Vector2(
+            vector1.x.minus(vector2.x),
+            vector1.y.minus(vector2.y)
+        );
+    }
+
+    static dot(vector1: Vector2, vector2: Vector2): Decimal {
+        return vector1.x.times(vector2.x).plus(vector1.y.times(vector2.y));
+    }
+
+    static cross(vector1: Vector2, vector2: Vector2): Decimal {
+        return vector1.x.times(vector2.y).minus(vector1.y.times(vector2.x));
+    }
+
+    static angleBetween(vector1: Vector2, vector2: Vector2): Decimal {
+        const dotProduct = Vector2.dot(vector1, vector2);
+        const magnitude1 = vector1.getMagnitude();
+        const magnitude2 = vector2.getMagnitude();
+        return Decimal.acos(dotProduct.dividedBy(magnitude1.times(magnitude2)));
+    }
+
+    static areEqual(vector1: Vector2, vector2: Vector2): boolean {
+        return vector1.x === vector2.x && vector1.y === vector2.y;
+    }
+
+    static distance(vector1: Vector2, vector2: Vector2): Decimal {
+        return Vector2.subtract(vector1, vector2).getMagnitude();
+    }
+
+    getMagnitude(): Decimal {
+        return this.x.pow(2).plus(this.y.pow(2)).sqrt();
+    }
+
+    normalize(): Vector2 {
+        const length = this.getMagnitude();
+        return new Vector2(
+            this.x.dividedBy(length),
+            this.y.dividedBy(length)
+        );
+    }
+
+    multiplyScalar(scalar: number): Vector2 {
+        return new Vector2(
+            this.x.times(scalar),
+            this.y.times(scalar)
+        );
+    }
+
+    toString(): string {
+        return `(${this.x}, ${this.y})`;
+    }
+
+    toVector3(): Vector3 {
+        return new Vector3(this.x, this.y, new Decimal(0));
     }
 }
+    

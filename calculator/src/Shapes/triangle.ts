@@ -1,5 +1,6 @@
-import { Vector3 } from "../vector3";
+import { Vector2, Vector3 } from "../vector";
 import { Vertex, Line, Angle } from "./Elements";
+import { Circle } from "./";
 
 import { triangleFormulas } from "../formulas";
 
@@ -82,13 +83,12 @@ export default class Triangle {
     }
 
     calculateTriangle() {
-        let changesMade = true;
+        let changesMade = false;
 
-        while (changesMade) {
+        do {
             changesMade = false;
             for (let formula of triangleFormulas) {
                 let result = formula.execute(this);
-                console.log(result);
 
                 if (result.lineBC && !result.lineBC.equals(new Decimal(0)) && !result.lineBC.equals(this.lineBC.getLength())) {
                     this.lineBC.setLength(result.lineBC);
@@ -97,7 +97,6 @@ export default class Triangle {
 
                 if (result.lineCA && !result.lineCA.equals(new Decimal(0)) && !result.lineCA.equals(this.lineCA.getLength())) {
                     this.lineCA.setLength(result.lineCA);
-                    console.log("lineCA", result.lineCA, this.lineCA.getLength());
                     changesMade = true;
                 }
 
@@ -121,7 +120,7 @@ export default class Triangle {
                     changesMade = true;
                 }
             }
-        }
+        } while (changesMade);
     }
 
     isTriangleValid(): boolean {
@@ -181,26 +180,49 @@ export default class Triangle {
         throw new Error("Vertices not connected by a line.");
     }
 
-    public buildTriangle(): void {
+    buildTriangle(): void {
         // Check how many vertices have defined positions
         const definedVertices = [this.vA, this.vB, this.vC].filter((v) =>
-            v.isPositionDefined()
+            v.isLocalPositionDefined()
         );
 
-        console.log("not implemented yet");
+        if (definedVertices.length === 3) return;
+
+        if (definedVertices.length === 2) {
+            const undefinedVertex = [this.vA, this.vB, this.vC].find((v) => !definedVertices.includes(v));
+
+            if (!undefinedVertex) throw new Error("No undefined vertex found");
+
+            const circleA = new Circle(definedVertices[0].getLocalPosition(), this.lineAB.getLength());
+            const circleB = new Circle(definedVertices[1].getLocalPosition(), this.lineBC.getLength());
+
+            const intersectionPoints = Circle.findIntersectionPoints(circleA, circleB);
+
+            if(!intersectionPoints || intersectionPoints.length === 0) throw new Error("Trinagle is not possible with given data");
+            
+            
+            undefinedVertex.setLocalPosition(
+                intersectionPoints.reduce((prev, curr) => {
+                    // If prev is not defined, set curr as the new point
+                    if (!prev) return curr;
+            
+                    // Check if both points are in Quadrant 1 (x > 0 and y > 0)
+                    const prevInQuadrantOne = prev.x.greaterThan(0) && prev.y.greaterThan(0);
+                    const currInQuadrantOne = curr.x.greaterThan(0) && curr.y.greaterThan(0);
+            
+                    // If only one point is in Quadrant 1, prefer that one
+                    if (prevInQuadrantOne && !currInQuadrantOne) return prev;
+                    if (!prevInQuadrantOne && currInQuadrantOne) return curr;
+            
+                    // If both points are in Quadrant 1, choose the one with the higher x value
+                    if ((prev.x.plus(prev.y)).greaterThan((curr.x.plus(curr.y)))) return prev;
+                    return curr;
+                })
+            );
+               
+        }
+
         return;
-    }
-
-    private translateTriangle(referencePosition: Vector3): void {
-        this.vA.setPosition(
-            Vector3.add(this.vA.getPosition(), referencePosition)
-        );
-        this.vB.setPosition(
-            Vector3.add(this.vB.getPosition(), referencePosition)
-        );
-        this.vC.setPosition(
-            Vector3.add(this.vC.getPosition(), referencePosition)
-        );
     }
 
     print(): void {
