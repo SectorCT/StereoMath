@@ -78,6 +78,10 @@ export class Vector3 {
     toString(): string {
         return `(${this.x}, ${this.y}, ${this.z})`;
     }
+
+    toDecimalPlaces(places: number): Vector3 {
+        return new Vector3(this.x.toDecimalPlaces(places), this.y.toDecimalPlaces(places), this.z.toDecimalPlaces(places));
+    }
 }
 
 export class Vector2 {
@@ -151,6 +155,10 @@ export class Vector2 {
 
     toVector3(): Vector3 {
         return new Vector3(this.x, this.y, new Decimal(0));
+    }
+
+    toDecimalPlaces(places: number): Vector2 {
+        return new Vector2(this.x.toDecimalPlaces(places), this.y.toDecimalPlaces(places));
     }
 }
     
