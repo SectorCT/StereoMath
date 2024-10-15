@@ -5,6 +5,7 @@ import { Circle } from "./";
 import { triangleFormulas } from "../formulas";
 
 import Decimal from "decimal.js";
+import Plane from "./Elements/plane";
 
 export default class Triangle {
     public vA: Vertex;
@@ -19,13 +20,9 @@ export default class Triangle {
     public angleBCA: Angle;
     public angleCAB: Angle;
 
-    private planeNormal: Vector3 = new Vector3(
-        new Decimal(0),
-        new Decimal(0),
-        new Decimal(1)
-    );
+    public plane: Plane;
 
-    constructor(vA: Vertex, vB: Vertex, vC: Vertex, planeNormal: Vector3) {
+    constructor(vA: Vertex, vB: Vertex, vC: Vertex, plane: Plane) {
         if (vA === vB || vB === vC || vC === vA) {
             throw new Error("Vertices cannot be the same.");
         }
@@ -42,7 +39,7 @@ export default class Triangle {
         this.angleBCA = new Angle(vB, vC, vA);
         this.angleCAB = new Angle(vC, vA, vB);
 
-        this.planeNormal = planeNormal.normalize();
+        this.plane = plane;
     }
 
     setLineLength(number: Decimal, lineName: string): void {
@@ -183,7 +180,7 @@ export default class Triangle {
     buildTriangle(): void {
         // Check how many vertices have defined positions
         const definedVertices = [this.vA, this.vB, this.vC].filter((v) =>
-            v.isLocalPositionDefined()
+            v.isPositionDefined()
         );
 
         function buildTriangleWithTwoDefinedVertices(triangle: Triangle, definedVertices: Vertex[]) {
@@ -215,7 +212,8 @@ export default class Triangle {
                     // If both points are in Quadrant 1, choose the one with the higher x value
                     if ((prev.x.plus(prev.y)).greaterThan((curr.x.plus(curr.y)))) return prev;
                     return curr;
-                })
+                }),
+                triangle.plane
             );
         }
 
@@ -232,7 +230,8 @@ export default class Triangle {
                 return prev;
             });
 
-            undefinedVertex.setLocalPosition(new Vector2(definedVertex.getLocalPosition().x.plus(triangle.getLineBetweenVertices(definedVertex, undefinedVertex).getLength()), definedVertex.getLocalPosition().y));
+            let position = new Vector2(definedVertex.getLocalPosition().x.plus(triangle.getLineBetweenVertices(definedVertex, undefinedVertex).getLength()), definedVertex.getLocalPosition().y);
+            undefinedVertex.setLocalPosition(position, triangle.plane);
             
             buildTriangleWithTwoDefinedVertices(triangle, [definedVertex, undefinedVertex]);
         }
@@ -246,7 +245,7 @@ export default class Triangle {
                 return prev;
             });
 
-            vertexToDefine.setLocalPosition(new Vector2(new Decimal(0), new Decimal(0)));
+            vertexToDefine.setLocalPosition(new Vector2(new Decimal(0), new Decimal(0)), triangle.plane);
 
             buildTriangleWithOneDefinedVertex(triangle, [vertexToDefine]);
         }
@@ -268,15 +267,9 @@ export default class Triangle {
         console.log(`${this.lineBC.toString()} = ${this.lineBC.getLength()}`);
         console.log(`${this.lineCA.toString()} = ${this.lineCA.getLength()}`);
 
-        console.log(
-            `${this.angleCAB.toString()} = ${this.angleCAB.getAngle()}`
-        );
-        console.log(
-            `${this.angleABC.toString()} = ${this.angleABC.getAngle()}`
-        );
-        console.log(
-            `${this.angleBCA.toString()} = ${this.angleBCA.getAngle()}`
-        );
+        console.log(`${this.angleCAB.toString()} = ${this.angleCAB.getAngle()}`);
+        console.log(`${this.angleABC.toString()} = ${this.angleABC.getAngle()}`);
+        console.log(`${this.angleBCA.toString()} = ${this.angleBCA.getAngle()}`);
 
         console.log("Vertices: ");
         this.vA.print();

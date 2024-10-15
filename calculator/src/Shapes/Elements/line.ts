@@ -7,12 +7,23 @@ export default class Line {
 
     private length: Decimal = new Decimal(0);
 
+    public static allLines: Line[] = [];
+
     constructor(start: Vertex, end: Vertex) {
         this.start = start;
         this.end = end;
 
         start.connectVertex(end);
         end.connectVertex(start);
+
+        for (let line of Line.allLines) {
+            if (line.toString() === this.toString()) {
+                console.log("[Error] Line already exists");
+                throw new Error("[Error] Line already exists");
+            }
+        }
+
+        Line.allLines.push(this);
     }
 
     toString(): string {

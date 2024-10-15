@@ -1,8 +1,9 @@
 import { Vector2, Vector3 } from "./vector";
-import { Vertex } from "./Shapes/Elements";
+import { Vertex, Line, Angle } from "./Shapes/Elements";
 import { Triangle } from "./Shapes";
 
 import Decimal from "decimal.js";
+import Plane from "./Shapes/Elements/plane";
 
 Decimal.config({
     precision: 50,
@@ -16,9 +17,9 @@ function main() {
     const vC = new Vertex("C");
 
     // Add an orientation (e.g., 45 degrees rotation around Z-axis)
-    const planeNormal = new Vector3(new Decimal(0), new Decimal(0), new Decimal(1));
+    const plane = new Plane(new Vector3(new Decimal(0), new Decimal(0), new Decimal(0)), new Vector3(new Decimal(0), new Decimal(1), new Decimal(1)));
 
-    const t = new Triangle(vA, vB, vC, planeNormal);
+    const t = new Triangle(vA, vB, vC, plane);
 
     t.setAngleValue(new Decimal(90), "BCA"); // Set angle value
     t.setAngleValue(new Decimal(30), "ABC"); // Set angle value
