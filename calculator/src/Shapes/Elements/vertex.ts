@@ -1,29 +1,38 @@
 import { Vector3, Vector2 } from "../../vector";
 import Decimal from "decimal.js";
+import Plane from "./plane";
 
 export default class Vertex {
     private name: string;
     private globalPosition: Vector3;
     private localPosition: Vector2;
 
-    private isGlobalDefined: boolean;
-    private isLocalDefined: boolean;
+    private isPositionDefinedFlag: boolean;
     private connectedVertices: Vertex[];
+
+    public static allVertices: Vertex[] = [];
 
     constructor(name: string, localPosition?: Vector2) {
         this.name = name;
-        this.localPosition = localPosition || new Vector2(new Decimal(0), new Decimal(0));
-        
+        this.localPosition =
+            localPosition || new Vector2(new Decimal(0), new Decimal(0));
 
-        this.isGlobalDefined = false;
-        this.isLocalDefined = false;
+        this.isPositionDefinedFlag = false;
 
-        if(localPosition) {
-            this.isLocalDefined = true;
+        if (localPosition) {
+            this.isPositionDefinedFlag = true;
         }
-        
-        
+
         this.connectedVertices = [];
+
+        for (let vertex of Vertex.allVertices) {
+            if (vertex.getName() === this.name) {
+                console.log("[Error] Vertex already exists");
+                throw new Error("[Error] Vertex already exists");
+            }
+        }
+
+        Vertex.allVertices.push(this);
     }
 
     getName(): string {
@@ -31,14 +40,16 @@ export default class Vertex {
     }
 
     // Set position of the vertex
-    setGlobalPosition(position: Vector3): void {
+    setGlobalPosition(position: Vector3, plane: Plane): void {
         this.globalPosition = position;
-        this.isGlobalDefined = true;  
+        this.localPosition = plane.convertWorldToLocal(position);
+        this.isPositionDefinedFlag = true;
     }
 
-    setLocalPosition(position: Vector2): void {
+    setLocalPosition(position: Vector2, plane: Plane): void {
         this.localPosition = position;
-        this.isLocalDefined = true;
+        this.globalPosition = plane.convertLocalToWorld(position);
+        this.isPositionDefinedFlag = true;
     }
 
     // Get position of the vertex
@@ -51,12 +62,8 @@ export default class Vertex {
     }
 
     // Check if the vertex is defined
-    isGlobalPositionDefined(): boolean {
-        return this.isGlobalDefined;
-    }
-
-    isLocalPositionDefined(): boolean {
-        return this.isLocalDefined;
+    isPositionDefined(): boolean {
+        return this.isPositionDefinedFlag;
     }
 
     // Connect this vertex to another vertex
@@ -74,12 +81,6 @@ export default class Vertex {
     }
 
     print(): void {
-        if (this.isGlobalPositionDefined()) {
-            console.log(
-                `${this.name} ${this.globalPosition.toString()}`
-            );
-        } else {
-            console.log(`${this.name} ${this.localPosition.toString()}`);
-        }
+        console.log(`${this.name} ${this.globalPosition.toString()}`);
     }
 }

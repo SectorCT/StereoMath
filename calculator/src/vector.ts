@@ -13,9 +13,9 @@ export class Vector3 {
 
     static add(vector1: Vector3, vector2: Vector3): Vector3 {
         return new Vector3(
-            vector1.x.plus(vector2.x),
-            vector1.y.plus(vector2.y),
-            vector1.z.plus(vector2.z)
+            vector1.x.plus(vector2.x).toDecimalPlaces(5),
+            vector1.y.plus(vector2.y).toDecimalPlaces(5),
+            vector1.z.plus(vector2.z).toDecimalPlaces(5)
         );
     }
 
@@ -67,7 +67,7 @@ export class Vector3 {
         );
     }
 
-    multiplyScalar(scalar: number): Vector3 {
+    multiplyScalar(scalar: Decimal): Vector3 {
         return new Vector3(
             this.x.times(scalar),
             this.y.times(scalar),
